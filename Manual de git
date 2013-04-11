@@ -1,0 +1,19 @@
+Todos clonan a windows
+crear un branch 	"git checkout -b desarrollo"
+con "git branch" veo en cual estoy
+"git checkout nombre" cambio de branchu
+"git pull origin nombrebranch" traigo lo del repo
+
+-desarrollo
+
+verificar que este en desarrollo
+"git status" me dice que ha cambiado
+"git add -A" añado todo
+"git commit -m "Mensaje" " Actualizar cambios locales
+"git push origin desarrollo"  Actualizo repo.
+
+para actualizar master
+"git checkout master"
+"git pull origin desarrollo"
+si hay conflictos organizar
+"git push origin master"
