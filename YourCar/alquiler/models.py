@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Vehiculo(models.Model):
 	placa = models.CharField(max_length=6,primary_key=True)
@@ -29,17 +30,14 @@ class Vehiculo(models.Model):
 
 # Extender de User 
 class ClienteAlquiler(models.Model):
-	nombres = models.CharField(max_length=20)
-	apellidos = models.CharField(max_length=20)
-	#contrasena
-	tipoPersona = models.CharField(max_length=10) #natural, legal
-	tipoDocumento  = models.CharField(max_length=10) #que tipos hay?
-	numDocumento = models.IntegerField(primary_key=True)
-	correo = models.EmailField()
+	user = models.ForeignKey(User, unique=True)	
 	fechaNacimiento = models.DateField()
 	telFijo = models.CharField(max_length=10)
 	telCelular = models.CharField(max_length=10)
 	genero = models.CharField(max_length=1)
+	tipoPersona = models.CharField(max_length=10) #natural, legal
+	tipoDocumento  = models.CharField(max_length=10) #que tipos hay?
+	numDocumento = models.IntegerField(primary_key=True)		
 	paisResidencia = models.CharField(max_length=10)
 	ciudadResidencia = models.CharField(max_length=10)
 	dirResidencia = models.CharField(max_length=30)
@@ -47,7 +45,7 @@ class ClienteAlquiler(models.Model):
 	telContacto = models.IntegerField()
 	direccionContacto = models.CharField(max_length=30)	
 	def __unicode__(self):
-		return self.nombres+" "+self.apellidos
+		return self.user.first_name+" "+self.user.last_name
 	class Meta:
 		verbose_name_plural=u'Clientes de Alquiler'
 

@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Your Car - {% block titulo %}Inicio{% endblock %}</title>
+		<link rel="stylesheet" type="text/css" href="/media/css/estilos.css"/>		
+	</head>
+
+	<body>
+		<nav>
+			<ul>
+				<li>Inicio</li>
+				<li>Perfil</li>
+				<li>Vehiculos</li>
+				<li>Reservas</li>
+			</ul>
+		</nav>
+		{% block contenido %}{% endblock %}
+		{% block footer %}
+			<p>Gracias por visitar nuestro sitio.</p>
+		{% endblock %}
+	</body>
+</html>

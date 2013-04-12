@@ -1,0 +1,15 @@
+{%extends "base.html"%}
+{% block titulo %}Vehiculos{% endblock %}
+{% block contenido %}
+	<h2>Estas viendo todos los vehiculos:</h2>
+	{% if vehiculos %}
+    <p>Tenemos en total {{ vehiculos|length }} vehiculo{{vehiculos|pluralize}}.</p>
+    <ul>
+        {% for v in vehiculos %}
+        	<li>{{v.marca}} {{v.referencia}} Placa: {{ v.placa}} </li>
+        {% endfor %}
+    </ul>
+	{% else %}
+	    <p>No hay ningun vehiculo.</p>
+	{% endif %}
+{% endblock %}

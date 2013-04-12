@@ -1,7 +1,7 @@
 Todos clonan a windows
 crear un branch 	"git checkout -b desarrollo"
 con "git branch" veo en cual estoy
-"git checkout nombre" cambio de branchu
+"git checkout nombre" cambio de branch
 "git pull origin nombrebranch" traigo lo del repo
 
 -desarrollo

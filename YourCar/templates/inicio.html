@@ -1,0 +1,9 @@
+{%extends "base.html"%}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+    {%if not conectado %}
+        <h2>Te invitamos a que te registres</h2>
+    {%else %}
+	   <h2>Bienvenido {{usuario.nombre}} </h2>	
+    {%endif%}
+{% endblock %}
