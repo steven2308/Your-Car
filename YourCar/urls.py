@@ -3,8 +3,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('YourCar.alquiler.views',
+	url(r'^$', 'inicioControl', name='vistaPrincipal'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^login/$', 'loginControl', name='vistaLogin'),
-    url(r'^inicio/$', 'inicioControl', name='vistaInicio'),
+    url(r'^login/$', 'loginControl', name='vistaLogin'),    
+    url(r'^portal/$', 'portalControl', name='vistaPortal'),    
     url(r'^vehiculos/$', 'vehiculosPrueba', name='vistaVehiculos'),
 )
+	

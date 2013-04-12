@@ -12,7 +12,7 @@ def loginControl(request):
 		usuario = authenticate(username=username, password=password)
 		if usuario is not None and usuario.is_active:
 			login(request, usuario)
-			return HttpResponseRedirect('/inicio')
+			return HttpResponseRedirect('/portal')
 	except:
 		return HttpResponseRedirect('/')
 	loginFailed = True
@@ -20,16 +20,20 @@ def loginControl(request):
 
 
 def inicioControl(request):
+	return render_to_response ('inicio.html',locals(), context_instance = RequestContext(request))
+		
+
+def portalControl(request):
 	if request.user.is_authenticated():
 		if request.user.is_superuser:
 			return HttpResponseRedirect('/admin')
 		else:
 			usuario = request.user
 			conectado= True
-			return render_to_response('inicio.html',locals())
+			return render_to_response('portal.html',locals(), context_instance = RequestContext(request))
 	else:
 		conectado=False
-		return render_to_response('login.html',locals())	
+		return render_to_response('portal.html',locals(), context_instance = RequestContext(request))
 
 def vehiculosPrueba(request):
 	vehiculos = Vehiculo.objects.all()	
