@@ -1,21 +1,33 @@
 {%extends "base.html"%}
 {% block titulo %}Inicio{% endblock %}
 {% block contenido %}	
-	<form method="POST" action="/login/" name="login">
-		{% csrf_token %}
-			<h3>Inicio de Sesion</h3>
-			<div>
-		        <label>Nombre de usuario:</label>
-		        <input type="text" name="username" required="true"/>
-		    </div>
-		    <div>
-		        <label>Contraseña:</label>
-		        <input type="password" name="password" required="true"/>
-		    </div>
-		    <div class="bottom">
-		        <input type="submit" value="Login" name="login"/>
-		    </div>
-	</form>
+	
+	{%if conectado%}
+		<form action="/logout/" name="logout">
+			{% csrf_token %}
+				<p>Estás logueado como {{nombre}}, quieres iniciar sesión como alguien más?</p>
+				<div>
+			        <label>Cerrar sesión:</label>			        
+			        <input type="submit" value="Log out" name="logout"/>
+			    </div>
+		</form>
+	{%else %}
+		<form method="POST" action="/login/" name="login">
+			{% csrf_token %}
+				<h3>Inicio de Sesion</h3>
+				<div>
+			        <label>Nombre de usuario:</label>
+			        <input type="text" name="username" required="true"/>
+			    </div>
+			    <div>
+			        <label>Contraseña:</label>
+			        <input type="password" name="password" required="true"/>
+			    </div>
+			    <div>
+			        <input type="submit" value="Log In" name="login"/>
+			    </div>
+		</form>
+	{%endif %}
 {% endblock %}
 
                     

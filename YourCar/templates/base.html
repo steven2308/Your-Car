@@ -8,10 +8,22 @@
 	<body>
 		<nav>
 			<ul>
-				<li>Inicio</li>
-				<li>Perfil</li>
-				<li>Vehiculos</li>
-				<li>Reservas</li>
+				<li><a href="/">Inicio</a></li>
+				<li><a href="/portal">Portal</a></li>
+				<li><a href="/vehiculos">Vehículos</a></li>				
+				<li>Reservas</li>				
+				{% if request.user.is_staff %}
+					<li>Agregar vehículos</li>
+					<li>Estadísticas</li>
+					<li>Alertas</li>
+				{% endif %}
+				{% if request.user.is_authenticated %}
+					<li><a href="/logout">Cerrar sesión</a></li>
+				{% else %}
+					<li><a href="/registro">Regístrate</a></li>
+				{% endif %}				
+				
+
 			</ul>
 		</nav>
 		{% block contenido %}{% endblock %}

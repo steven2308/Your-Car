@@ -1,0 +1,96 @@
+{%extends "base.html"%}
+{% block titulo %}Registro{% endblock %}
+{% block contenido %}	
+	
+	{%if conectado%}
+		<form action="/logout/" name="logout">
+			{% csrf_token %}
+				<p>Ya estás registrado y logueado como {{request.user.username}}, para crear un nuevo usuario debes cerrar cesión primero</p>
+				<div>
+			        <label>Cerrar sesión:</label>			        
+			        <input type="submit" value="Log out" name="logout"/>
+			    </div>
+		</form>
+	{%else %}
+		<form method="POST" action="/registro/" name="registro">
+			{% csrf_token %}
+				<h3>Ingresa tus datos</h3>
+				<div>
+			        <label>Nombre de usuario:</label>
+			        <input type="text" name="nombreUsuario" required="true"/>
+			    </div>
+			    <div>
+			        <label>Contraseña:</label>
+			        <input type="password" name="contrasena" required="true"/>
+			    </div>
+			    <div>
+			        <label>Email:</label>
+			        <input type="email" name="email" required="true"/>
+			    </div>
+			    <div>
+			        <label>Nombres:</label>
+			        <input type="text" name="nombre" required="true"/>
+			    </div>
+			    <div>
+			        <label>Apellidos:</label>
+			        <input type="text" name="apellido" required="true"/>
+			    </div>
+			    <div>
+			        <label>Fecha de nacimiento:</label>
+			        <input type="date" name="fechaNacimiento" required="true"/>
+			    </div>
+			    <div>
+			        <label>Telefono fijo:</label>
+			        <input type="text" name="telFijo" required="true"/>
+			    </div>
+			    <div>
+			        <label>Telefono celular:</label>
+			        <input type="text" name="telCelular" required="true"/>
+			    </div>
+			    <div>
+			        <label>Género:</label>
+			        <input type="text" name="genero" required="true"/>
+			    </div>
+			    <div>
+			        <label>Tipo de persona:</label>
+			        <input type="text" name="tipoPersona" required="true"/>
+			    </div>
+			    <div>
+			        <label>Tipo de Documento:</label>
+			        <input type="text" name="tipoDocumento" required="true"/>
+			    </div>
+			    <div>
+			        <label>Número de documento:</label>
+			        <input type="text" name="numDocumento" required="true"/>
+			    </div>
+			    <div>
+			        <label>Pais de residencia:</label>
+			        <input type="text" name="paisResidencia" required="true"/>
+			    </div>
+			    <div>
+			        <label>Ciudad de residencia:</label>
+			        <input type="text" name="ciudadResidencia" required="true"/>
+			    </div>
+			    <div>
+			        <label>Dirección de residencia:</label>
+			        <input type="text" name="dirResidencia" required="true"/>
+			    </div>
+			    <h4>Datos de persona de contacto:</h4>
+			    <div>
+			        <label>Nombre:</label>
+			        <input type="text" name="nombrePersonaContacto" required="true"/>
+			    </div>
+			    <div>
+			        <label>Teléfono:</label>
+			        <input type="text" name="telContacto" required="true"/>
+			    </div>		
+			    <div>
+			        <label>Dirección:</label>
+			        <input type="text" name="direccionContacto" required="true"/>
+			    </div>		    
+			    <div>
+			        <input type="submit" value="Registrar" name="registrar"/>
+			    </div>
+		</form>
+	{%endif %}
+{% endblock %}
