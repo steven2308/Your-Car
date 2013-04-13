@@ -7,13 +7,19 @@ from YourCar.alquiler.models import Vehiculo,ClienteAlquiler
 from django.contrib.auth.models import User
 
 def loginControl(request):
+	mensaje=''
 	try:
 		username = request.POST['username']
-		password = request.POST['password']
+		password = request.POST['password']		
+		if '@' in username:			
+			correo = username
+			username = User.objects.get(email=correo).username				
 		usuario = authenticate(username=username, password=password)
 		if usuario is not None and usuario.is_active:
 			login(request, usuario)
 			return HttpResponseRedirect('/portal')
+		else:
+			mensaje= 'El nombre de usuario (o correo) y la contrasena no coinciden'
 	except:
 		return HttpResponseRedirect('/')
 	loginFailed = True

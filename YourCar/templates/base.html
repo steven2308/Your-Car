@@ -1,13 +1,17 @@
+</body>
+</html lang="es">
 <!DOCTYPE HTML>
 <html>
 	<head>
 		<title>Your Car - {% block titulo %}Inicio{% endblock %}</title>
-		<link rel="stylesheet" type="text/css" href="/media/css/estilos.css"/>		
+		{%block css%} 
+		<link rel="stylesheet" type="text/css" href="/media/css/estilos.css"/>
+		{% endblock%}
 	</head>
 
 	<body>
 		<nav>
-			<ul>
+			
 				<li><a href="/">Inicio</a></li>
 				<li><a href="/portal">Portal</a></li>
 				<li><a href="/vehiculos">Vehículos</a></li>				
@@ -22,9 +26,7 @@
 				{% else %}
 					<li><a href="/registro">Regístrate</a></li>
 				{% endif %}				
-				
 
-			</ul>
 		</nav>
 		{% block contenido %}{% endblock %}
 		{% block footer %}

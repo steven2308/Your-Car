@@ -1,7 +1,6 @@
 {%extends "base.html"%}
 {% block titulo %}Inicio{% endblock %}
-{% block contenido %}	
-	
+{% block contenido %}		
 	{%if conectado%}
 		<form action="/logout/" name="logout">
 			{% csrf_token %}
@@ -16,7 +15,7 @@
 			{% csrf_token %}
 				<h3>Inicio de Sesion</h3>
 				<div>
-			        <label>Nombre de usuario:</label>
+			        <label>Nombre de usuario o correo:</label>
 			        <input type="text" name="username" required="true"/>
 			    </div>
 			    <div>
@@ -26,6 +25,9 @@
 			    <div>
 			        <input type="submit" value="Log In" name="login"/>
 			    </div>
+			    {%if loginFailed%}
+					<p>El nombre de usuario (o correo) y la contraseña no coinciden</p>
+				{%endif%}
 		</form>
 	{%endif %}
 {% endblock %}

@@ -6,3 +6,7 @@ body{
 	text-shadow:1px 1px 1px #fff;
 	overflow-y:scroll;
 }
+li
+{
+display:inline;
+}
