@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block titulo %}No Autorizado{% endblock %}
+{% block contenido %}
+	{%if onlyAdmin %}
+        <h2>Solo el administrador puede acceder a esta página</h2>
+    {%else if  onlyLogged%}
+    	<h2>Debes estar logueado para ver esta página</h2>
+    {% endif %}
+	       
+{% endblock %}

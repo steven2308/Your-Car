@@ -14,14 +14,19 @@
 		<form method="POST" action="/login/" name="login">
 			{% csrf_token %}
 				<h3>Inicio de Sesion</h3>
-				<div>
-			        <label>Nombre de usuario o correo:</label>
-			        <input type="text" name="username" required="true"/>
-			    </div>
-			    <div>
-			        <label>Contraseña:</label>
-			        <input type="password" name="password" required="true"/>
-			    </div>
+				<table table>
+					<tbody>
+						<tr>
+					        
+					        <td><label>Nombre de usuario o correo:</label></td>
+					        <td><input type="text" name="username" required="true"/></td>
+					    </tr>
+					    <tr>
+					        <td><label>Contraseña:</label></td>
+					        <td><input type="password" name="password" required="true"/></td>
+					    </tr>			    
+				    </tbody>
+				</table>
 			    <div>
 			        <input type="submit" value="Log In" name="login"/>
 			    </div>
