@@ -2,8 +2,6 @@
 {% block titulo %}Inicio{% endblock %}
 {% block contenido %}		
 	<div class="container-fluid">
-		<div class="row-fluid">			
-
 				<div class="span3">
 					<h2>Misión</h2>
 					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, sit, accusamus nostrum delectus maxime possimus quas nesciunt molestiae unde temporibus amet iusto odit doloribus. Commodi, facilis atque dolores obcaecati natus.</p>
@@ -21,17 +19,18 @@
 					{%if conectado%}
 						<form action="/logout/" name="logout">
 							{% csrf_token %}
+								<h3>Inicio de Sesión</h3>
 								<p>Estás logueado como {{nombre}}, quieres iniciar sesión como alguien más?</p>
 								<div>
-							        <label>Cerrar sesión:</label>			        
+							        <label>Cerrar sesión:</label>       
 							        <input type="submit" value="Log out" name="logout"/>
 							    </div>
 						</form>
 					{%else %}
 						<form method="POST" action="/login/" name="login">
 							{% csrf_token %}
-								<h3>Inicio de Sesion</h3>
-								<table table>
+								<h3>Inicio de Sesión</h3>
+								<table class ="table-hover">
 									<tbody>
 										<tr>
 									        
@@ -52,8 +51,7 @@
 								{%endif%}
 						</form>
 					{%endif %}
-				</div>
-		</div>
+				</div>		
 	</div>	
 {% endblock %}
 

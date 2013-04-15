@@ -14,23 +14,21 @@
 	</head>
 
 	<body>
-		<nav>
-			
-				<li><a href="/">Inicio</a></li>
-				<li><a href="/vehiculos">Vehículos</a></li>
-				<li><a href="/cotizar">Cotizar</a></li>				
-				{% if request.user.is_staff %}					
-					<li><a href="/estadisticas">Estadísticas</a></li>
-					<li><a href="/alertas">Alertas</a></li>
-					<li><a href="/voucher">Voucher</a></li>
-				{% endif %}
-				{% if request.user.is_authenticated %}
-					<li><a href="/reservas">Reservas</a></li>
-					<li><a href="/logout">Cerrar sesión</a></li>
-				{% else %}
-					<li><a href="/registro">Regístrate</a></li>
-				{% endif %}
-
+		<nav>		
+			<li><a href="/">Inicio</a></li>
+			<li><a href="/vehiculos">Vehículos</a></li>
+			<li><a href="/cotizar">Cotizar</a></li>				
+			{% if request.user.is_staff %}					
+				<li><a href="/estadisticas">Estadísticas</a></li>
+				<li><a href="/alertas">Alertas</a></li>
+				<li><a href="/voucher">Voucher</a></li>
+			{% endif %}
+			{% if request.user.is_authenticated %}
+				<li><a href="/reservas">Reservas</a></li>
+				<li><a href="/logout">Cerrar sesión</a></li>
+			{% else %}
+				<li><a href="/registro">Regístrate</a></li>
+			{% endif %}
 		</nav>
 		{% block contenido %}{% endblock %}
 		{% block footer %}
