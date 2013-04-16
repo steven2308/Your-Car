@@ -4,7 +4,10 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
 from YourCar.alquiler.models import Vehiculo, ClienteAlquiler
+from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
+
+#Verificar que fecha es fecha y que datos son obligatorios (tambien altera templates)
 
 def inicioControl(request):
 	conectado=False
@@ -14,19 +17,19 @@ def inicioControl(request):
 		nombre=request.user.username
 	return render_to_response ('inicio.html',locals(), context_instance = RequestContext(request))
 
-def registroControl(request):
-	if not request.user.is_authenticated():
-		if request.method == 'POST':
-			usuario = User.objects.create_user(username=request.POST["nombreUsuario"], email=request.POST["email"], password=request.POST["contrasena"])
-			usuario.first_name = request.POST['nombre']
-			usuario.last_name = request.POST['apellido']
-			usuario.save()
+def registroControl(request):	
+	if not request.user.is_authenticated():				
+		if request.method == 'POST':			
+			#Tomo el nombre de usuario y el email
+			nombreUsuario=request.POST["nombreUsuario"]
+			email=request.POST["email"]			
+			#Tomo el resto de los datos
 			fechaNacimiento = request.POST['fechaNacimiento']
-			telFijo = request.POST['telFijo']
+			telFijo = request.POST['telFijo']			
 			telCelular = request.POST['telCelular']
-			genero = request.POST['genero']
+			genero = request.POST['genero']			
 			tipoPersona = request.POST['tipoPersona']
-			tipoDocumento  = request.POST['tipoDocumento']
+			tipoDocumento = request.POST['tipoDocumento']		
 			numDocumento = request.POST['numDocumento']
 			paisResidencia = request.POST['paisResidencia']
 			ciudadResidencia = request.POST['ciudadResidencia']
@@ -34,6 +37,28 @@ def registroControl(request):
 			nombrePersonaContacto = request.POST['nombrePersonaContacto']
 			telContacto = request.POST['telContacto']
 			direccionContacto = request.POST['direccionContacto']
+
+			#Valido errores			
+			errorUser=(User.objects.filter(username=nombreUsuario))
+			errorContrasena= (request.POST["contrasena"]!=request.POST["contrasena2"])
+			errorEmail= (User.objects.filter(email=email))			
+			errorTels = (not telFijo.isdigit() or not telCelular.isdigit() or (len(telContacto)>0 and not telContacto.isdigit()))
+			errorGenero= (genero not in (parametros["generos"]))
+			errorTipoPersona= (tipoPersona not in (parametros["tipoPersonas"]))
+			errorTipoDocumento= (tipoDocumento  not in (parametros["tipoDocumentos"]))						
+			errorNumDocumento=  (not numDocumento.isdigit() or (ClienteAlquiler.objects.filter(numDocumento=numDocumento)))
+			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"]))
+
+			if (errorUser or errorContrasena or errorEmail or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorCamposVacios):
+				return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
+
+			#Guardo el usario			
+			usuario = User.objects.create_user(username=nombreUsuario, email=email, password=request.POST["contrasena"])
+			usuario.first_name = request.POST['nombre']
+			usuario.last_name = request.POST['apellido']
+			usuario.save()
+
+			#Guardo el cliente de alquiler
 			cliente = ClienteAlquiler(user = usuario, fechaNacimiento = fechaNacimiento, telFijo = telFijo,
 				telCelular = telCelular, genero = genero, tipoPersona = tipoPersona, tipoDocumento = tipoDocumento,
 				numDocumento = numDocumento, paisResidencia = paisResidencia, ciudadResidencia = ciudadResidencia,
@@ -42,6 +67,9 @@ def registroControl(request):
 			cliente.save()
 			return HttpResponseRedirect('/')
 		else:
+			generos=parametros["generos"]
+			tipoDocumentos=parametros["tipoDocumentos"]
+			tipoPersonas=parametros["tipoPersonas"]
 			return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
 	else:
 		conectado = True

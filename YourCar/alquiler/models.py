@@ -38,12 +38,12 @@ class ClienteAlquiler(models.Model):
 	tipoPersona = models.CharField(max_length=10) #natural, legal
 	tipoDocumento  = models.CharField(max_length=10) #que tipos hay?
 	numDocumento = models.IntegerField(primary_key=True)		
-	paisResidencia = models.CharField(max_length=10)
-	ciudadResidencia = models.CharField(max_length=10)
-	dirResidencia = models.CharField(max_length=30)
-	nombrePersonaContacto = models.CharField(max_length=20)
-	telContacto = models.IntegerField()
-	direccionContacto = models.CharField(max_length=30)	
+	paisResidencia = models.CharField(max_length=10, blank=True)
+	ciudadResidencia = models.CharField(max_length=10, blank=True)
+	dirResidencia = models.CharField(max_length=30, blank=True)
+	nombrePersonaContacto = models.CharField(max_length=20,blank=True)
+	telContacto = models.IntegerField(blank=True)
+	direccionContacto = models.CharField(max_length=30,blank=True)
 	def __unicode__(self):
 		return self.user.first_name+" "+self.user.last_name
 	class Meta:
