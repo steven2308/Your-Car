@@ -6,6 +6,7 @@ from django.contrib.auth import login, authenticate, logout
 from YourCar.alquiler.models import Vehiculo, ClienteAlquiler
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
+import re
 
 #Verificar que fecha es fecha y que datos son obligatorios (tambien altera templates)
 
@@ -39,7 +40,7 @@ def registroControl(request):
 			direccionContacto = request.POST['direccionContacto']
 
 			#Valido errores			
-			errorUser=(User.objects.filter(username=nombreUsuario))
+			errorUser=(User.objects.filter(username=nombreUsuario) or  not re.match("[a-zA-z0-9_]{8,20}",username))
 			errorContrasena= (request.POST["contrasena"]!=request.POST["contrasena2"])
 			errorEmail= (User.objects.filter(email=email))			
 			errorTels = (not telFijo.isdigit() or not telCelular.isdigit() or (len(telContacto)>0 and not telContacto.isdigit()))
@@ -47,7 +48,7 @@ def registroControl(request):
 			errorTipoPersona= (tipoPersona not in (parametros["tipoPersonas"]))
 			errorTipoDocumento= (tipoDocumento  not in (parametros["tipoDocumentos"]))						
 			errorNumDocumento=  (not numDocumento.isdigit() or (ClienteAlquiler.objects.filter(numDocumento=numDocumento)))
-			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"]))
+			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"])==0)
 
 			if (errorUser or errorContrasena or errorEmail or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorCamposVacios):
 				return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
