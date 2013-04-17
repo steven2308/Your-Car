@@ -52,7 +52,7 @@ def registroControl(request):
 			if (errorUser or errorContrasena or errorEmail or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorCamposVacios):
 				return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
 
-			#Guardo el usario			
+			#Guardo el usuario			
 			usuario = User.objects.create_user(username=nombreUsuario, email=email, password=request.POST["contrasena"])
 			usuario.first_name = request.POST['nombre']
 			usuario.last_name = request.POST['apellido']
@@ -98,7 +98,10 @@ def loginControl(request):
 	return render_to_response('inicio.html', locals(), context_instance = RequestContext(request))
 
 def vehiculosControl(request):
-	#Logica de control
+	#si request.user.is_staff
+    #Redirect /opcionesVehiculosAdmin: AgregarVehiculo, Vehiculos 
+    #si no
+    #Redirect /opcionesVehiculosCliente: Vehiculos (opcion de enviar a cotizacion)
 	vehiculos = Vehiculo.objects.all()	
 	return render_to_response('vehiculos.html',locals(), context_instance = RequestContext(request))
 		
@@ -107,8 +110,42 @@ def cotizarControl(request):
 	return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 
 def agregarVehiculoControl(request):
-	#Logica de control
-	return render_to_response('agregarVehiculo.html',locals(), context_instance = RequestContext(request))
+	if request.user.is_authenticated():
+		if request.user.is_staff:
+			if request.method == 'POST':
+				placa = request.POST["placa"]
+				marca = request.POST["marca"] 
+				referencia = request.POST["referencia"]
+				gama = request.POST["gama"]
+				descripcionBasica = request.POST["descripcionBasica"]
+				tipoDeFrenos = request.POST["tipoDeFrenos"] #no
+				numDePasajeros = request.POST["numDePasajeros"]
+				cilindraje = request.POST["cilindraje"]
+				color = request.POST["color"]
+				cajaDeCambios = request.POST["cajaDeCambios"] 
+				airbags = request.POST["airbags"] #no
+				tipoDeDireccion = request.POST["tipoDeDireccion"] #mecanica, hidraulica, electronica
+				traccion = request.POST["traccion"] #no  OPCIONEs delantera trasera 4x4
+				modelo = request.POST["modelo"] #no
+				valorGarantia = request.POST["valorGarantia"] #no
+				estado = request.POST["estado"] #Disponible, reservado, rentado, en mantenimiento
+				kilometraje = request.POST["kilometraje"] #no
+				limiteKilometraje = request.POST["limiteKilometraje"]
+				tarifa = request.POST["tarifa"]
+				fechaVencSOAT = request.POST["fechaVencSOAT"]
+				fechaVencSeguroTodoRiesgo = request.POST["fechaVencSeguroTodoRiesgo"]
+				fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
+				fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
+				HttpResponseRedirect('vehiculos.html')
+			else:
+				cajasDeCambios=parametros["cajasDeCambios"]
+				tipoDeDirecciones=parametros["tipoDeDirecciones"]
+				estadosVehiculo=parametros["estadosVehiculo"]
+				tiposTraccion=parametros["tiposTraccion"]
+				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
+			errorStaff=True
+	noAutorizado=True
+	return render_to_response('inicio.html',locals(), context_instance = RequestContext(request)) #no esta conectado
 
 def estadisticasControl(request):
 	#Logica de control
