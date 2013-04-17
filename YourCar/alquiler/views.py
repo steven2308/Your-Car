@@ -8,7 +8,7 @@ from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 import re
 
-#Verificar que fecha es fecha y que datos son obligatorios (tambien altera templates)
+#Verificar que fecha es fecha, que poner en contrasena y que datos son obligatorios (tambien altera templates)
 
 def inicioControl(request):
 	conectado=False
@@ -32,22 +32,30 @@ def registroControl(request):
 			tipoPersona = request.POST['tipoPersona']
 			tipoDocumento = request.POST['tipoDocumento']		
 			numDocumento = request.POST['numDocumento']
-			paisResidencia = request.POST['paisResidencia']
-			ciudadResidencia = request.POST['ciudadResidencia']
-			dirResidencia = request.POST['dirResidencia']
-			nombrePersonaContacto = request.POST['nombrePersonaContacto']
-			telContacto = request.POST['telContacto']
-			direccionContacto = request.POST['direccionContacto']
+			#Inicializo atos opcionales			
+			paisResidencia=""
+			ciudadResidencia=""
+			dirResidencia=""
+			nombrePersonaContacto=""
+			telContacto="0"
+			direccionContacto=""
+			#Tomo los datos opcionales que el usuario haya ingresado
+			if request.POST['paisResidencia']: paisResidencia=request.POST['paisResidencia']
+			if request.POST['ciudadResidencia']: ciudadResidencia = request.POST['ciudadResidencia']
+			if request.POST['dirResidencia']: dirResidencia = request.POST['dirResidencia']
+			if request.POST['nombrePersonaContacto']: nombrePersonaContacto = request.POST['nombrePersonaContacto']
+			if request.POST['telContacto']: telContacto = request.POST['telContacto']
+			if request.POST['direccionContacto']: direccionContacto = request.POST['direccionContacto']
 
 			#Valido errores			
-			errorUser=(User.objects.filter(username=nombreUsuario) or  not re.match("[a-zA-z0-9_]{8,20}",username))
+			errorUser=(User.objects.filter(username=nombreUsuario) or  not re.match("^([a-zA-z0-9_]{8,20})$",nombreUsuario))
 			errorContrasena= (request.POST["contrasena"]!=request.POST["contrasena2"])
-			errorEmail= (User.objects.filter(email=email))			
-			errorTels = (not telFijo.isdigit() or not telCelular.isdigit() or (len(telContacto)>0 and not telContacto.isdigit()))
+			errorEmail= (User.objects.filter(email=email) or not re.match(r"^[A-Za-z0-9\._-]+@[A-Za-z0-9]+\.[a-zA-Z]+$", email))
+			errorTels = (not re.match("^([0-9]{7,12})$",telFijo) or not re.match("^([0-9]{10,12})$",telCelular) or (len(telContacto)>1 and not re.match("^([0-9]{7,12})$",telContacto)))
 			errorGenero= (genero not in (parametros["generos"]))
 			errorTipoPersona= (tipoPersona not in (parametros["tipoPersonas"]))
 			errorTipoDocumento= (tipoDocumento  not in (parametros["tipoDocumentos"]))						
-			errorNumDocumento=  (not numDocumento.isdigit() or (ClienteAlquiler.objects.filter(numDocumento=numDocumento)))
+			errorNumDocumento=  ((ClienteAlquiler.objects.filter(numDocumento=numDocumento)) or not re.match("^([0-9]{6,12}|[0-9]{6,12}-[0-9]{1,3})$",numDocumento))
 			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"])==0)
 
 			if (errorUser or errorContrasena or errorEmail or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorCamposVacios):
@@ -74,6 +82,7 @@ def registroControl(request):
 			return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
 	else:
 		conectado = True
+		nombreUsuario = request.user.username
 		return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
 
 def loginControl(request):

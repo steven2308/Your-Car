@@ -40,7 +40,7 @@
 		<form action="/logout/" name="logout">
 			{% csrf_token %}
 			<div class="container">
-				<p>Ya estás registrado y logueado como {{request.user.username}}, para crear un nuevo usuario debes cerrar sesión primero</p>
+				<p>Ya estás registrado y logueado como {{nombreUsuario}}, para crear un nuevo usuario debes cerrar sesión primero</p>
 		        <label>Cerrar sesión:</label>        
 		        <input type="submit" value="Log out" name="logout"/>
 		    </div>		    
@@ -86,7 +86,7 @@
 				    </tr>
 				    <tr>
 				        <td><label>Telefono celular:</label></td>
-				        <td><input type="text" name="telCelular" required="true" pattern="[0-9]{12}"/></td>
+				        <td><input type="text" name="telCelular" required="true" pattern="[0-9]{10,12}"/></td>
 				    </tr>
 				    <tr>
 				        <td><label>Género:</label></td>
@@ -120,7 +120,7 @@
 				    </tr>
 				    <tr>
 				        <td><label>Número de documento:</label></td>
-				        <td><input type="text" name="numDocumento" required="true" pattern="[0-9]{7,12}"/></td>
+				        <td><input type="text" name="numDocumento" required="true" pattern="[0-9]{6,12}|[0-9]{6,12}-[0-9]{1,3}"/></td>
 				    </tr>
 				    <tr>
 				        <td><label>Pais de residencia:</label></td>
