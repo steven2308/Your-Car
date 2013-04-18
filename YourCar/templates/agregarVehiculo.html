@@ -1,6 +1,17 @@
 {% extends "base.html" %}
-{% block titulo %}Agregar o Modificar un Vehículo{% endblock %}
+{% block titulo %}Agregar un Vehículo{% endblock %}
 {% block contenido %}
+	{%if errorPlaca %}	
+		<div class="container">
+		<h3>Corrige los siguientes errores para continuar:</h3>
+		<p class="text-error">
+			{% if errorPlaca %}
+				La placa del vehiculo tiene un formato erroneo.<br>
+			{% endif %}
+
+		</p>
+	</div>
+	{% endif %}
 	<form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo">
 			{% csrf_token %}			
 			<div class="container">
@@ -8,23 +19,23 @@
 			<table class="table-bordered table-striped table-hover">
 				<tbody>
 					<tr>
-				        <td><label>Placa:</label></td>
-				        <td><input type="text" name="placa" required="true"/></td>
+				        <td><label><b>Placa:</b>:</label></td>
+				        <td><input type="text" name="placa" required="true" pattern="[A-Z0-9]{6}"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Marca:</label></td>
+				        <td><label><b>Marca:</b></label></td>
 				        <td><input type="text" name="marca" required="true"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Referencia:</label></td>
+				        <td><label><b>Referencia:</b></label></td>
 				        <td><input type="text" name="referencia" required="true"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Gama:</label></td>
+				        <td><label><b>Gama:</b></label></td>
 				        <td><input type="text" name="gama" required="true"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Descripcion Basica:</label></td>
+				        <td><label><b>Descripcion Basica:</b></label></td>
 				        <td><input type="text" name="descripcionBasica" required="true"/></td>
 				    </tr>
 				    <tr>
@@ -32,19 +43,19 @@
 				        <td><input type="text" name="tipoDeFrenos"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Numero de Pasajeros:</label></td>
-				        <td><input type="number" name="numDePasajeros" required="true"/></td>
+				        <td><label><b>Numero de Pasajeros:</b></label></td>
+				        <td><input type="text" name="numDePasajeros" required="true" pattern="[0-9]{1,2}"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Cilindraje:</label></td>
+				        <td><label><b>Cilindraje:</b></label></td>
 				        <td><input type="text" name="cilindraje" required="true"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Color:</label></td>
+				        <td><label><b>Color:</b></label></td>
 				        <td><input type="text" name="color" required="true"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Caja de Cambios:</label></td>
+				        <td><label><b>Caja de Cambios:</b></label></td>
 				        <td>
 				        	<select name="cajaDeCambios" required="true">
 				        		{% for c in  cajasDeCambios%}
@@ -55,7 +66,7 @@
 				    </tr>
 				    <tr>
 				        <td><label>Airbags:</label></td>
-				        <td><input type="text" name="airbags"/></td>
+				        <td><input type="text" name="airbags" "[0-9]{1,2}"/></td>
 				    </tr>
 				    <tr>
 				        <td><label>Tipo de Direccion:</label></td>
@@ -68,9 +79,9 @@
 				    	</td>
 				    </tr>
 				    <tr>
-				        <td><label>Traccion:</label></td>
+				        <td><label>Tipos de Traccion:</label></td>
 				        <td>
-				        	<select name="traccion">
+				        	<select name="tipoDeTraccion">
 				        		{% for tr in  tiposTraccion%}
 				        			<option>{{tr}}</option>
 				        		{% endfor %}					        	
@@ -86,11 +97,11 @@
 				        <td><input type="text" name="valorGarantia"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Estado:</label></td>
+				        <td><label><b>Estado:</b></label></td>
 				        <td>
 				        	<select name="estado" required="true">
 				        		{% for e in  estadosVehiculo%}
-				        			<option>{{t}}</option>
+				        			<option>{{e}}</option>
 				        		{% endfor %}					        	
 				        	</select>
 				    	</td>
@@ -100,33 +111,38 @@
 				        <td><input type="text" name="kilometraje"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Limite de Kilometraje:</label></td>
+				        <td><label><b>Limite de Kilometraje:</b></label></td>
 				        <td><input type="text" name="limiteKilometraje" required="true"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Tarifa:</label></td>
+				        <td><label><b>Tarifa:</b></label></td>
 				        <td><input type="text" name="tarifa" required="true"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Fencha de Vencimiento de SOAT:</label></td>
-				        <td><input type="text" name="fechaVencSOAT" required="true"/></td>
+				        <td><label><b>Fecha de Vencimiento de SOAT:</b></label></td>
+				        <td><input type="date" name="fechaVencSOAT" required="true"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Fecha de Vencimiento del Seguro Todo Riesgo:</label></td>
-				        <td><input type="text" name="fechaVencSeguroTodoRiesgo" required="true"/></td>
+				        <td><label><b>Fecha de Vencimiento del Seguro Todo Riesgo:</b></label></td>
+				        <td><input type="date" name="fechaVencSeguroTodoRiesgo" required="true"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Fecha de Vencimiento de la Revision Tecnico Mecanica:</label></td>
-				        <td><input type="text" name="fechaVecRevisionTecMec" required="true"/></td>
+				        <td><label><b>Fecha de Vencimiento de la Revision Tecnico Mecanica:</b></label></td>
+				        <td><input type="date" name="fechaVecRevisionTecMec" required="true"/></td>
 				    </tr>
 				    <tr>
-				        <td><label>Fecha de Vencimiento de Cambio de Aceite:</label></td>
-				        <td><input type="text" name="fechaVencCambioAceite" required="true"/></td>
+				        <td><label><b>Fecha de Vencimiento de Cambio de Aceite:</b></label></td>
+				        <td><input type="date" name="fechaVencCambioAceite" required="true"/></td>
+				    </tr>
+
+				    <tr>
+				        <td><label>Imagen del Auto:</label></td>
+				        <td><input type="file" name="imagen"/></td>
 				    </tr>
 
 
 				    <tr>
-				        <td><input type="submit" value="Regístrate" name="registrar"/>
+				        <td><input type="submit" value="Agregar Vehiculo" name="agregarVehiculo"/>
 				    </tr>
 				</tbody>			
 			</table>

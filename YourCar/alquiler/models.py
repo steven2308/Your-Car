@@ -14,7 +14,7 @@ class Vehiculo(models.Model):
 	cajaDeCambios = models.CharField(max_length=15) #poner opciones de a,m,t
 	airbags = models.IntegerField(blank=True)
 	tipoDeDireccion = models.CharField(max_length=15) #mecanica, hidraulica, electronica
-	traccion = models.CharField(max_length=15, blank=True)
+	tipoDeTraccion = models.CharField(max_length=15, blank=True)
 	modelo = models.IntegerField(blank=True)
 	valorGarantia = models.IntegerField(blank=True)
 	estado = models.CharField(max_length=15) #Disponible, reservado, rentado, en mantenimiento
@@ -34,13 +34,13 @@ class ClienteAlquiler(models.Model):
 	fechaNacimiento = models.DateField()
 	telFijo = models.CharField(max_length=10)
 	telCelular = models.CharField(max_length=10)
-	genero = models.CharField(max_length=1)
-	tipoPersona = models.CharField(max_length=10) #natural, legal
-	tipoDocumento  = models.CharField(max_length=10) #que tipos hay?
-	numDocumento = models.IntegerField(primary_key=True)		
-	paisResidencia = models.CharField(max_length=10, blank=True)
-	ciudadResidencia = models.CharField(max_length=10, blank=True)
-	dirResidencia = models.CharField(max_length=30, blank=True)
+	genero = models.CharField(max_length=1,blank=True)
+	tipoPersona = models.CharField(max_length=10)
+	tipoDocumento  = models.CharField(max_length=10) 
+	numDocumento = models.CharField(max_length=20,primary_key=True)		
+	paisResidencia = models.CharField(max_length=10)
+	ciudadResidencia = models.CharField(max_length=10)
+	dirResidencia = models.CharField(max_length=30)
 	nombrePersonaContacto = models.CharField(max_length=20,blank=True)
 	telContacto = models.IntegerField(blank=True)
 	direccionContacto = models.CharField(max_length=30,blank=True)
