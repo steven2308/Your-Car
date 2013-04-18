@@ -13,6 +13,9 @@ import re
 def inicioControl(request):
 	conectado=False
 	nombre=""
+	misionInicio= parametros["misionInicio"]
+	visionInicio= parametros["visionInicio"]
+	quienesSomosInicio= parametros["quienesSomosInicio"]
 	if request.user.is_authenticated():
 		conectado=True
 		nombre=request.user.username
@@ -56,7 +59,7 @@ def registroControl(request):
 			errorGenero= (genero not in (parametros["generos"]))
 			errorTipoPersona= (tipoPersona not in (parametros["tipoPersonas"]))
 			errorTipoDocumento= (tipoDocumento  not in (parametros["tipoDocumentos"]))						
-			errorNumDocumento=  ((ClienteAlquiler.objects.filter(numDocumento=numDocumento)) or not re.match("^([a-zA-z0-9_]{6,20})$",numDocumento))
+			errorNumDocumento=  ((ClienteAlquiler.objects.filter(numDocumento=numDocumento)) or not re.match("^([a-zA-z0-9_-]{6,20})$",numDocumento))
 			errorDatosResidencia= (not paisResidencia or not ciudadResidencia or not dirResidencia)
 			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"])==0)
 
@@ -75,7 +78,7 @@ def registroControl(request):
 				numDocumento = numDocumento, paisResidencia = paisResidencia, ciudadResidencia = ciudadResidencia,
 				dirResidencia = dirResidencia, nombrePersonaContacto = nombrePersonaContacto, telContacto= telContacto,
 				direccionContacto=direccionContacto)
-			cliente.save()
+			cliente.save()			
 			return HttpResponseRedirect('/')
 		else:			
 			return render_to_response('registro.html', locals(), context_instance = RequestContext(request))

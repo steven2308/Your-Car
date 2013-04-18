@@ -1,5 +1,5 @@
 # Podemos especificar archivos individuales
-.yourcarDB
+yourcarDB
 
 # O usar comodines
 *.pyc
