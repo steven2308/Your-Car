@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 import re
 
 #Verificar que fecha es fecha, que poner en contrasena 
-
+ 	
 def inicioControl(request):
 	conectado=False
 	nombre=""
@@ -39,7 +39,7 @@ def registroControl(request):
 			tipoPersona = request.POST['tipoPersona']
 			tipoDocumento = request.POST['tipoDocumento']		
 			numDocumento = request.POST['numDocumento']
-			#Inicializo atos opcionales			
+			#Inicializo datos opcionales			
 			paisResidencia= request.POST['paisResidencia']
 			ciudadResidencia= request.POST['ciudadResidencia']
 			dirResidencia= request.POST['dirResidencia']
@@ -66,7 +66,7 @@ def registroControl(request):
 			if (errorUser or errorContrasena or errorEmail or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios):
 				return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
 
-			#Guardo el usario			
+			#Guardo el usuario			
 			usuario = User.objects.create_user(username=nombreUsuario, email=email, password=request.POST["contrasena"])
 			usuario.first_name = request.POST['nombre']
 			usuario.last_name = request.POST['apellido']
@@ -110,17 +110,73 @@ def loginControl(request):
 	return render_to_response('inicio.html', locals(), context_instance = RequestContext(request))
 
 def vehiculosControl(request):
-	#Logica de control
+	#si request.user.is_staff
+    #Redirect /opcionesVehiculosAdmin: AgregarVehiculo, Vehiculos 
+    #si no
+    #Redirect /opcionesVehiculosCliente: Vehiculos (opcion de enviar a cotizacion)
 	vehiculos = Vehiculo.objects.all()	
-	return render_to_response('vehiculos.html',locals(), context_instance = RequestContext(request))
+	return render_to_response('inventarioVehiculos.html',locals(), context_instance = RequestContext(request))
 		
 def cotizarControl(request):
 	#Logica de control
 	return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 
 def agregarVehiculoControl(request):
-	#Logica de control
-	return render_to_response('agregarVehiculo.html',locals(), context_instance = RequestContext(request))
+	if request.user.is_authenticated():
+		if request.user.is_staff:
+			#Cargo datos parametrizables
+			cajasDeCambios=parametros["cajasDeCambios"]
+			tipoDeDirecciones=parametros["tipoDeDirecciones"]
+			estadosVehiculo=parametros["estadosVehiculo"]
+			tiposTraccion=parametros["tiposTraccion"]
+			if request.method == 'POST':
+				#Cargo datos requeridos del auto
+				placa = request.POST["placa"]
+				marca = request.POST["marca"] 
+				referencia = request.POST["referencia"]
+				gama = request.POST["gama"]
+				descripcionBasica = request.POST["descripcionBasica"]
+				numDePasajeros = request.POST["numDePasajeros"]
+				cilindraje = request.POST["cilindraje"]
+				color = request.POST["color"]
+				cajaDeCambios = request.POST["cajaDeCambios"] 
+				limiteKilometraje = request.POST["limiteKilometraje"]
+				tarifa = request.POST["tarifa"]
+				estado = request.POST["estado"]
+				fechaVencSOAT = request.POST["fechaVencSOAT"]
+				fechaVencSeguroTodoRiesgo = request.POST["fechaVencSeguroTodoRiesgo"]
+				fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
+				fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
+				#Datos Opcionales
+				tipoDeFrenos = request.POST["tipoDeFrenos"]
+				airbags = request.POST["airbags"]
+				tipoDeDireccion = request.POST["tipoDeDireccion"]
+				tipoDeTraccion = request.POST["tipoDeTraccion"]
+				modelo = request.POST["modelo"]
+				valorGarantia = request.POST["valorGarantia"]
+				kilometraje = request.POST["kilometraje"]
+
+				#Control de errores
+				errorPlaca = (Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z0-9]{6})$",placa))
+				errorNumDePasajeros = not re.match("^[0-9]{1,2}$",numDePasajeros)
+				errorCajaDeCambios = (cajaDeCambios not in parametros["cajasDeCambios"])
+				errorEstado = (estado not in parametros["estadosVehiculo"])
+				errorTipoDeDireccion = (tipoDeDireccion not in parametros["tipoDeDirecciones"])
+				errorTipoDeTraccion = (tipoDeTraccion not in parametros["tiposTraccion"])
+				errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
+
+				if (errorPlaca or errorNumDePasajeros or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorCamposVacios):
+					return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
+
+				vehiculo = Vehiculo(placa = placa, marca = marca, referencia = referencia, gama = gama, descripcionBasica = descripcionBasica, numDePasajeros = numDePasajeros, cilindraje = cilindraje, color = color, cajaDeCambios = cajaDeCambios, limiteKilometraje = limiteKilometraje, tarifa = tarifa, estado = estado, fechaVencSOAT = fechaVencSOAT, fechaVencSeguroTodoRiesgo = fechaVencSeguroTodoRiesgo, fechaVencRevisionTecMec = fechaVencRevisionTecMec, fechaVencCambioAceite = fechaVencCambioAceite, tipoDeFrenos = tipoDeFrenos, airbags = airbags, tipoDeDireccion = tipoDeDireccion, tipoDeTraccion = tipoDeTraccion, modelo = modelo, valorGarantia = valorGarantia, kilometraje = kilometraje)
+				vehiculo.save()
+
+				HttpResponseRedirect('inventarioVehiculos.html')
+			else:
+				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
+			errorStaff=True
+	noAutorizado=True
+	return render_to_response('inicio.html',locals(), context_instance = RequestContext(request)) #no esta conectado
 
 def estadisticasControl(request):
 	#Logica de control
