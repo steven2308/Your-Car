@@ -93,7 +93,7 @@ def loginControl(request):
 		password = request.POST['password']		
 		if '@' in username:			
 			correo = username
-			username = User.objects.get(email=correo).username				
+			username = User.objects.get(email=correo).username
 		usuario = authenticate(username=username, password=password)
 		if usuario is not None and usuario.is_active:
 			login(request, usuario)
@@ -116,6 +116,17 @@ def verVehiculosControl(request):
 	vehiculos = Vehiculo.objects.all()
 	is_staff = request.user.is_staff
 	return render_to_response('inventarioVehiculos.html',locals(), context_instance = RequestContext(request))
+
+def detallesVehiculo(request):
+	if request.method == 'GET':
+		try:
+			placa=request.GET["placa"].upper()					
+			vehiculo = Vehiculo.objects.get(placa=placa)			
+			is_staff = request.user.is_staff
+			return render_to_response('detallesVehiculo.html',locals(), context_instance = RequestContext(request))
+		except:
+			HttpResponseRedirect('/vehiculos')
+	return HttpResponseRedirect('/vehiculos')
 		
 def cotizarControl(request):
 	#Logica de control
@@ -167,7 +178,7 @@ def agregarVehiculoControl(request):
 			if request.POST['kilometraje']: kilometraje = request.POST['kilometraje']
 
 			#Control de errores
-			errorPlaca = (Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z0-9]{6})$",placa))
+			errorPlaca = (Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa))
 			errorNumDePasajeros = not re.match("^[0-9]{1,2}$",numDePasajeros)
 			errorGama = (gama not in parametros["gamas"])
 			errorAirbags = not re.match("^([0-9]{1,2})$",airbags)

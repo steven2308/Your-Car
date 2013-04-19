@@ -3,28 +3,35 @@
 {% block titulo %}Vehiculos{% endblock %}
 {% block contenido %}
     <div class="container"> 
-	<h2>Estas viendo todos los vehiculos:</h2>
-	{% if vehiculos %}
-    <p>Tenemos en total {{ vehiculos|length }} vehiculo{{vehiculos|pluralize}}.</p>            
+    	<h2>Estas viendo todos los vehiculos:</h2>
+    	{% if vehiculos %}
+        <p>Tenemos en total {{ vehiculos|length }} vehiculo{{vehiculos|pluralize}}.</p>
+        <form method="GET" action="/vehiculos/detalles/" name="verVehiculo">                    
+            {% csrf_token %}
+            <label>Ingrese la placa del vehículo que quiere ver:</label><input name="placa" type="text">
+        </form>
+        {% if is_staff %}
+            <a href="/vehiculos/agregar/">Agregar vehículos</a>
+        {% endif %}        
         <table class="table-bordered table-striped table-hover">
             <thead>
                 <th>Placa</th>
                 <th>Marca</th>
                 <th>Referencia</th>
                 <th>Gama</th>
-                <th>DescripcionBasica</th>
+                <th>Descripcion Basica</th>
                 <th># Pasajeros</th>
                 <th>Caja De Cambios</th>                
                 <th>Tarifa</th>                
                 {% if is_staff %}
                     <th>Estado</th>
                     <th>Fecha SOAT</th>
-                    <th>Fecha SeguroTodoRiesgo</th>
+                    <th>Fecha Seguro TodoRiesgo</th>
                     <th>Fecha Revision TecMec</th>
-                    <th>Fecha Cambio Aceite</th>
-                {% endif %}
+                    <th>Fecha Cambio Aceite</th>                    
+                {% endif %}                
             </thead>
-            <tbody>
+            <tbody>                    
                 {% for v in vehiculos %}
                     <tr>
                         <td>{{v.placa}}</td>
@@ -41,12 +48,13 @@
                             <td>{{v.fechaVencSeguroTodoRiesgo}}</td>
                             <td>{{v.fechaVencRevisionTecMec}}</td>
                             <td>{{v.fechaVencCambioAceite}}</td>
-                        {% endif %}
-                    </tr>
+                        {% endif %}                        
+                    </tr>                        
                 {% endfor %}
             </tbody>            
-        </table>
-	{% else %}
-	    <p>No hay ningun vehiculo.</p>
-	{% endif %}
+        </table>            
+    	{% else %}
+    	    <p>No hay ningun vehiculo.</p>
+    	{% endif %}
+    </div>
 {% endblock %}

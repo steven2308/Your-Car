@@ -14,6 +14,7 @@ urlpatterns = patterns('YourCar.alquiler.views',
     url(r'^cotizar/$', 'cotizarControl', name='vistaCotizar'),
     #Links del administrador:
     url(r'^vehiculos/agregar/$', 'agregarVehiculoControl', name='vistaAgregarVehiculos'),
+    url(r'^vehiculos/detalles/$', 'detallesVehiculo', name='vistadetallesVehiculo'),
     url(r'^estadisticas/$', 'estadisticasControl', name='vistaEstadisticas'),    
     url(r'^alertas/$', 'alertasControl', name='vistaAlertas'),
     url(r'^voucher/$', 'voucherControl', name='vistaVoucher'),
