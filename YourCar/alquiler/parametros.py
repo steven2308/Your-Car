@@ -15,12 +15,15 @@ parametros = {
 		"Automatica","Manual","Triptonica",
 		),
 	"tipoDeDirecciones": (
-		"Mecanica","Hidraulica","Electronica",
+		"","Mecanica","Hidraulica","Electronica",
 		),
 	"estadosVehiculo": (
 		"Disponible","Reservado","Rentado","En Mantenimiento"
 		),
 	"tiposTraccion": (
-		"Delantera", "Trasera", "4x4"
+		"", "Delantera", "Trasera", "4x4"
+		),
+	"gamas": (
+		"Baja", "Media", "Alta"
 		),
 }

@@ -38,11 +38,11 @@ def registroControl(request):
 			genero = request.POST['genero']			
 			tipoPersona = request.POST['tipoPersona']
 			tipoDocumento = request.POST['tipoDocumento']		
-			numDocumento = request.POST['numDocumento']
-			#Inicializo datos opcionales			
+			numDocumento = request.POST['numDocumento']			
 			paisResidencia= request.POST['paisResidencia']
 			ciudadResidencia= request.POST['ciudadResidencia']
 			dirResidencia= request.POST['dirResidencia']
+			#Inicializo datos opcionales
 			nombrePersonaContacto=""
 			telContacto="0"
 			direccionContacto=""
@@ -122,59 +122,76 @@ def cotizarControl(request):
 	return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 
 def agregarVehiculoControl(request):
-	if request.user.is_authenticated():
-		if request.user.is_staff:
-			#Cargo datos parametrizables
-			cajasDeCambios=parametros["cajasDeCambios"]
-			tipoDeDirecciones=parametros["tipoDeDirecciones"]
-			estadosVehiculo=parametros["estadosVehiculo"]
-			tiposTraccion=parametros["tiposTraccion"]
-			if request.method == 'POST':
-				#Cargo datos requeridos del auto
-				placa = request.POST["placa"]
-				marca = request.POST["marca"] 
-				referencia = request.POST["referencia"]
-				gama = request.POST["gama"]
-				descripcionBasica = request.POST["descripcionBasica"]
-				numDePasajeros = request.POST["numDePasajeros"]
-				cilindraje = request.POST["cilindraje"]
-				color = request.POST["color"]
-				cajaDeCambios = request.POST["cajaDeCambios"] 
-				limiteKilometraje = request.POST["limiteKilometraje"]
-				tarifa = request.POST["tarifa"]
-				estado = request.POST["estado"]
-				fechaVencSOAT = request.POST["fechaVencSOAT"]
-				fechaVencSeguroTodoRiesgo = request.POST["fechaVencSeguroTodoRiesgo"]
-				fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
-				fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
-				#Datos Opcionales
-				tipoDeFrenos = request.POST["tipoDeFrenos"]
-				airbags = request.POST["airbags"]
-				tipoDeDireccion = request.POST["tipoDeDireccion"]
-				tipoDeTraccion = request.POST["tipoDeTraccion"]
-				modelo = request.POST["modelo"]
-				valorGarantia = request.POST["valorGarantia"]
-				kilometraje = request.POST["kilometraje"]
+	if request.user.is_authenticated() and request.user.is_staff:
+		#Cargo datos parametrizables
+		cajasDeCambios=parametros["cajasDeCambios"]
+		tipoDeDirecciones=parametros["tipoDeDirecciones"]
+		estadosVehiculo=parametros["estadosVehiculo"]
+		tiposTraccion=parametros["tiposTraccion"]
+		gamas=parametros["gamas"]
+		if request.method == 'POST':
+			#Cargo datos requeridos del auto
+			placa = request.POST["placa"]
+			marca = request.POST["marca"] 
+			referencia = request.POST["referencia"]
+			gama = request.POST["gama"]
+			descripcionBasica = request.POST["descripcionBasica"]
+			numDePasajeros = request.POST["numDePasajeros"]
+			cilindraje = request.POST["cilindraje"]
+			color = request.POST["color"]
+			cajaDeCambios = request.POST["cajaDeCambios"] 
+			limiteKilometraje = request.POST["limiteKilometraje"]
+			tarifa = request.POST["tarifa"]
+			estado = request.POST["estado"]
+			foto = request.POST["foto"]
+			fechaVencSOAT = request.POST["fechaVencSOAT"]
+			fechaVencSeguroTodoRiesgo = request.POST["fechaVencSeguroTodoRiesgo"]
+			fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
+			fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
+			#inicializo datos opcionales
+			tipoDeFrenos = ""
+			airbags = "0"
+			tipoDeDireccion = ""
+			tipoDeTraccion = ""
+			modelo = "0"
+			valorGarantia = "0" 
+			kilometraje = "0"
 
-				#Control de errores
-				errorPlaca = (Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z0-9]{6})$",placa))
-				errorNumDePasajeros = not re.match("^[0-9]{1,2}$",numDePasajeros)
-				errorCajaDeCambios = (cajaDeCambios not in parametros["cajasDeCambios"])
-				errorEstado = (estado not in parametros["estadosVehiculo"])
-				errorTipoDeDireccion = (tipoDeDireccion not in parametros["tipoDeDirecciones"])
-				errorTipoDeTraccion = (tipoDeTraccion not in parametros["tiposTraccion"])
-				errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
+			#tomo datos ingresados por el usuario
+			if request.POST['tipoDeFrenos']: tipoDeFrenos = request.POST['tipoDeFrenos']
+			if request.POST['airbags']: airbags = request.POST['airbags']
+			if request.POST['tipoDeDireccion']: tipoDeDireccion = request.POST['tipoDeDireccion']
+			if request.POST['tipoDeTraccion']: tipoDeTraccion = request.POST['tipoDeTraccion']
+			if request.POST['modelo']: modelo = request.POST['modelo']
+			if request.POST['valorGarantia']: valorGarantia = request.POST['valorGarantia']
+			if request.POST['kilometraje']: kilometraje = request.POST['kilometraje']
 
-				if (errorPlaca or errorNumDePasajeros or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorCamposVacios):
-					return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
+			#Control de errores
+			errorPlaca = (Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z0-9]{6})$",placa))
+			errorNumDePasajeros = not re.match("^[0-9]{1,2}$",numDePasajeros)
+			errorGama = (gama not in parametros["gamas"])
+			errorAirbags = not re.match("^([0-9]{1,2})$",airbags)
+			errorModelo = not re.match("^([0-9]{4})$",modelo)
+			errorValorGarantia = not re.match("^([0-9]{5,7})$",valorGarantia)
+			errorKilometraje = not re.match("^([0-9]{1,6})$",kilometraje)
+			errorCajaDeCambios = (cajaDeCambios not in parametros["cajasDeCambios"])
+			errorEstado = (estado not in parametros["estadosVehiculo"])
+			errorTipoDeDireccion = (tipoDeDireccion not in parametros["tipoDeDirecciones"])
+			errorTipoDeTraccion = (tipoDeTraccion not in parametros["tiposTraccion"])
+			errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
 
-				vehiculo = Vehiculo(placa = placa, marca = marca, referencia = referencia, gama = gama, descripcionBasica = descripcionBasica, numDePasajeros = numDePasajeros, cilindraje = cilindraje, color = color, cajaDeCambios = cajaDeCambios, limiteKilometraje = limiteKilometraje, tarifa = tarifa, estado = estado, fechaVencSOAT = fechaVencSOAT, fechaVencSeguroTodoRiesgo = fechaVencSeguroTodoRiesgo, fechaVencRevisionTecMec = fechaVencRevisionTecMec, fechaVencCambioAceite = fechaVencCambioAceite, tipoDeFrenos = tipoDeFrenos, airbags = airbags, tipoDeDireccion = tipoDeDireccion, tipoDeTraccion = tipoDeTraccion, modelo = modelo, valorGarantia = valorGarantia, kilometraje = kilometraje)
-				vehiculo.save()
-
-				HttpResponseRedirect('inventarioVehiculos.html')
-			else:
+			#manejo de errores
+			if (errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorCamposVaciosVeh):
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
-	return HttpResponseRedirect('/404')
+
+			#guardar vehiculo
+			vehiculo = Vehiculo(placa = placa, marca = marca, referencia = referencia, gama = gama, descripcionBasica = descripcionBasica, numDePasajeros = numDePasajeros, cilindraje = cilindraje, color = color, cajaDeCambios = cajaDeCambios, limiteKilometraje = limiteKilometraje, tarifa = tarifa, estado = estado, fechaVencSOAT = fechaVencSOAT, fechaVencSeguroTodoRiesgo = fechaVencSeguroTodoRiesgo, fechaVencRevisionTecMec = fechaVencRevisionTecMec, fechaVencCambioAceite = fechaVencCambioAceite, tipoDeFrenos = tipoDeFrenos, airbags = airbags, tipoDeDireccion = tipoDeDireccion, tipoDeTraccion = tipoDeTraccion, modelo = modelo, valorGarantia = valorGarantia, kilometraje = kilometraje, foto=foto)
+			vehiculo.save()
+			return HttpResponseRedirect('/vehiculos')
+		else:
+			return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')
 
 def estadisticasControl(request):
 	#Logica de control

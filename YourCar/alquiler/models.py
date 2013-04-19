@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 class Vehiculo(models.Model):
 	def url(self,filename):
 		return "fotos/carros/%s/%s/%s/%s"%(self.marca, self.referencia, self.placa , filename)
+	print url
 	placa = models.CharField(max_length=6,primary_key=True)
 	marca = models.CharField(max_length=15) 
 	referencia = models.CharField(max_length=15) 
