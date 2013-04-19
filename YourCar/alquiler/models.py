@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Vehiculo(models.Model):
+	def url(self,filename):
+		return "fotos/carros/%s/%s/%s/%s"%(self.marca, self.referencia, self.placa , filename)
 	placa = models.CharField(max_length=6,primary_key=True)
 	marca = models.CharField(max_length=15) 
 	referencia = models.CharField(max_length=15) 
@@ -21,6 +23,7 @@ class Vehiculo(models.Model):
 	kilometraje = models.IntegerField(blank=True)
 	limiteKilometraje = models.IntegerField()
 	tarifa = models.IntegerField()
+	foto = models.FileField(upload_to=url)
 	fechaVencSOAT = models.DateField()
 	fechaVencSeguroTodoRiesgo = models.DateField()
 	fechaVencRevisionTecMec = models.DateField()

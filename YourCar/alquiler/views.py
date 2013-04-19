@@ -10,7 +10,7 @@ import re
 
 #Verificar que fecha es fecha, que poner en contrasena 
  	
-def inicioControl(request):
+def inicioControl(request, listaErrores=[]):
 	conectado=False
 	nombre=""
 	misionInicio= parametros["misionInicio"]
@@ -107,14 +107,14 @@ def loginControl(request):
 	except:
 		return HttpResponseRedirect('/')
 	loginFailed = True
+	misionInicio= parametros["misionInicio"]
+	visionInicio= parametros["visionInicio"]
+	quienesSomosInicio= parametros["quienesSomosInicio"]
 	return render_to_response('inicio.html', locals(), context_instance = RequestContext(request))
 
-def vehiculosControl(request):
-	#si request.user.is_staff
-    #Redirect /opcionesVehiculosAdmin: AgregarVehiculo, Vehiculos 
-    #si no
-    #Redirect /opcionesVehiculosCliente: Vehiculos (opcion de enviar a cotizacion)
-	vehiculos = Vehiculo.objects.all()	
+def verVehiculosControl(request):	
+	vehiculos = Vehiculo.objects.all()
+	is_staff = request.user.is_staff
 	return render_to_response('inventarioVehiculos.html',locals(), context_instance = RequestContext(request))
 		
 def cotizarControl(request):
@@ -174,9 +174,7 @@ def agregarVehiculoControl(request):
 				HttpResponseRedirect('inventarioVehiculos.html')
 			else:
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
-			errorStaff=True
-	noAutorizado=True
-	return render_to_response('inicio.html',locals(), context_instance = RequestContext(request)) #no esta conectado
+	return HttpResponseRedirect('/404')
 
 def estadisticasControl(request):
 	#Logica de control
@@ -208,3 +206,6 @@ def agregarReservaControl(request):
 def logoutControl(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+def notFoundControl(request):
+	return render_to_response('404.html',locals(),context_instance = RequestContext(request))
