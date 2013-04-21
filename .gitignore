@@ -1,0 +1,5 @@
+# Podemos especificar archivos individuales
+.yourcarDB
+
+# O usar comodines
+*.pyc

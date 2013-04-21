@@ -1,18 +1,34 @@
+</body>
+</html lang="es">
 <!DOCTYPE HTML>
 <html>
 	<head>
 		<title>Your Car - {% block titulo %}Inicio{% endblock %}</title>
-		<link rel="stylesheet" type="text/css" href="/media/css/estilos.css"/>		
+		{%block css%} 
+		<link rel="stylesheet" type="text/css" href="/media/css/estilos.css"/>
+		{% endblock%}
+		{% block bootstrap %}
+			<link rel="stylesheet" href="/media/bootstrap/css/bootstrap.css">			
+			<script type="text/javascript" src="/media/bootstrap/js/bootstrap.js"></script>
+		{% endblock %}
 	</head>
 
 	<body>
-		<nav>
-			<ul>
-				<li>Inicio</li>
-				<li>Perfil</li>
-				<li>Vehiculos</li>
-				<li>Reservas</li>
-			</ul>
+		<nav>		
+			<li><a href="/">Inicio</a></li>
+			<li><a href="/vehiculos">Vehículos</a></li>
+			<li><a href="/cotizar">Cotizar</a></li>				
+			{% if request.user.is_staff %}					
+				<li><a href="/estadisticas">Estadísticas</a></li>
+				<li><a href="/alertas">Alertas</a></li>
+				<li><a href="/voucher">Voucher</a></li>
+			{% endif %}
+			{% if request.user.is_authenticated %}
+				<li><a href="/reservas">Reservas</a></li>
+				<li><a href="/logout">Cerrar sesión</a></li>
+			{% else %}
+				<li><a href="/registro">Regístrate</a></li>
+			{% endif %}
 		</nav>
 		{% block contenido %}{% endblock %}
 		{% block footer %}
