@@ -23,6 +23,10 @@ urlpatterns = patterns('YourCar.alquiler.views',
     url(r'^reservas/agregar/$', 'agregarReservaControl', name='vistaReservas'),   
     url(r'^logout/$', 'logoutControl', name='vistaLogout'),
     url(r'^404/$', 'notFoundControl', name='vistaNotFound'),
+    url(r'^vehiculos/historialMantenimiento/$', 'historialMantenimientoControl', name='vistaHistorialMantenimiento'),
+    url(r'^vehiculos/historialMantenimiento/agregar/$', 'agregarHistorialMantenimientoControl', name='vistaAgregarHistorialMantenimiento'),
+    url(r'^vehiculos/historialMantenimiento/eliminar/$', 'eliminarHistorialMantenimientoControl', name='vistaEliminarHistorialMantenimiento'),
+
 )
 	
 if settings.DEBUG:
