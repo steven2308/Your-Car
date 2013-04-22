@@ -112,15 +112,53 @@ def loginControl(request):
 	quienesSomosInicio= parametros["quienesSomosInicio"]
 	return render_to_response('inicio.html', locals(), context_instance = RequestContext(request))
 
-def verVehiculosControl(request):	
+def verVehiculosControl(request):
+	is_staff = request.user.is_staff	
+	gamas=parametros["gamas"]
+	if request.method=="POST":				 
+		query = {}
+		if request.POST["ascDesc"]=="True":
+			order = request.POST["orderBy"]
+		else:
+			order = "-"+request.POST["orderBy"]
+		#Tomo los datos
+		gama=request.POST["gama"]
+		marca=request.POST["marca"]
+		modelo=request.POST["modelo"]
+		numDePasajeros=request.POST["numDePasajeros"]
+		cilindraje=request.POST["cilindraje"]
+		cajaDeCambios=request.POST["cajaDeCambios"]
+
+		#Los datos que no son vacios los agrego al query
+		if gama: 
+			query["gama__iexact"]=gama
+		if marca:			
+			query["marca__icontains"]=marca
+		if modelo and re.match("^([0-9]{4})$",modelo): 			
+			query["modelo__icontains"]=modelo
+		if numDePasajeros and re.match("^([0-9]{1,2})$",numDePasajeros):
+			query["numDePasajeros"]=numDePasajeros
+		if cilindraje and re.match("^([0-9]{4})$",cilindraje):
+			query["cilindraje"]=cilindraje
+		if cajaDeCambios: 		
+			query["cajaDeCambios__icontains"]=cajaDeCambios
+
+		#Si la consulta no es vacia la hago
+		if query:
+			vehiculos= Vehiculo.objects.filter(**query).order_by(order)
+			filtrados=True	
+		else:
+			vehiculos = Vehiculo.objects.all().order_by(order)
+		#mensaje=request.POST["orderBy"]
+		#return render_to_response ('pruebas.html',locals(), context_instance = RequestContext(request))			
+		return render_to_response('inventarioVehiculos.html',locals(), context_instance = RequestContext(request))							
 	vehiculos = Vehiculo.objects.all()
-	is_staff = request.user.is_staff
 	return render_to_response('inventarioVehiculos.html',locals(), context_instance = RequestContext(request))
 
-def detallesVehiculo(request):
-	if request.method == 'GET':
+def detallesVehiculoControl(request):
+	if request.method == 'POST':
 		try:
-			placa=request.GET["placa"].upper()					
+			placa=request.POST["placa"].upper()					
 			vehiculo = Vehiculo.objects.get(placa=placa)			
 			is_staff = request.user.is_staff
 			return render_to_response('detallesVehiculo.html',locals(), context_instance = RequestContext(request))
@@ -128,6 +166,17 @@ def detallesVehiculo(request):
 			HttpResponseRedirect('/vehiculos')
 	return HttpResponseRedirect('/vehiculos')
 		
+def modificarVehiculoControl(request):
+	try:
+		placa=request.POST["placa"].upper()					
+		vehiculo = Vehiculo.objects.get(placa=placa)			
+		is_staff = request.user.is_staff
+		return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
+	except:
+		HttpResponseRedirect('/vehiculos')
+	return HttpResponseRedirect('/')
+
+
 def cotizarControl(request):
 	#Logica de control
 	return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
@@ -182,8 +231,8 @@ def agregarVehiculoControl(request):
 			errorNumDePasajeros = not re.match("^[0-9]{1,2}$",numDePasajeros)
 			errorGama = (gama not in parametros["gamas"])
 			errorAirbags = not re.match("^([0-9]{1,2})$",airbags)
-			errorModelo = not re.match("^([0-9]{4})$",modelo)
-			errorValorGarantia = not re.match("^([0-9]{5,7})$",valorGarantia)
+			errorModelo = not re.match("^([0-9]{4})$",modelo) and modelo != "0"
+			errorValorGarantia = not re.match("^([0-9]{5,7})$",valorGarantia) and valorGarantia != "0"
 			errorKilometraje = not re.match("^([0-9]{1,6})$",kilometraje)
 			errorCajaDeCambios = (cajaDeCambios not in parametros["cajasDeCambios"])
 			errorEstado = (estado not in parametros["estadosVehiculo"])

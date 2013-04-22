@@ -3,58 +3,130 @@
 {% block titulo %}Vehiculos{% endblock %}
 {% block contenido %}
     <div class="container"> 
-    	<h2>Estas viendo todos los vehiculos:</h2>
+        {% if filtrados %}
+            <h2>Estás viendo los vehículos filtrados y ordenados:</h2>
+        {% else %}
+    	   <h2>Estás viendo todos los vehículos:</h2>
+        {% endif %}
     	{% if vehiculos %}
-        <p>Tenemos en total {{ vehiculos|length }} vehiculo{{vehiculos|pluralize}}.</p>
-        <form method="GET" action="/vehiculos/detalles/" name="verVehiculo">                    
-            {% csrf_token %}
-            <label>Ingrese la placa del vehículo que quiere ver:</label><input name="placa" type="text">
-        </form>
-        {% if is_staff %}
-            <a href="/vehiculos/agregar/">Agregar vehículos</a>
-        {% endif %}        
-        <table class="table-bordered table-striped table-hover">
-            <thead>
-                <th>Placa</th>
-                <th>Marca</th>
-                <th>Referencia</th>
-                <th>Gama</th>
-                <th>Descripcion Basica</th>
-                <th># Pasajeros</th>
-                <th>Caja De Cambios</th>                
-                <th>Tarifa</th>                
+            <p>Tenemos en total {{ vehiculos|length }} vehículo{{vehiculos|pluralize}}.</p>
+            <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">                    
+                {% csrf_token %}
+                <label>Ingresa la placa del vehículo que quieres ver:</label>
+                <input name="placa" type="text" pattern="[A-Z]{3}[0-9]{3}">
+                <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
+            </form>            
+            <form method="POST" action="/vehiculos/" name="filtrarVehiculos">
+                {% csrf_token %}
+                <h4>Filtrar Por:</h4>
+                <table class="table-bordered table-striped table-hover">
+                    <thead>
+                        <th>Gama</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>                                                                   
+                    </thead>
+                    <tbody>                                        
+                        <td><input type="text" name="gama"></td>
+                        <td><input type="text" name="marca"></td>
+                        <td><input type="text" name="modelo" pattern="[0-9]{4}"></td>
+                    </tbody>           
+                </table>
                 {% if is_staff %}
-                    <th>Estado</th>
-                    <th>Fecha SOAT</th>
-                    <th>Fecha Seguro TodoRiesgo</th>
-                    <th>Fecha Revision TecMec</th>
-                    <th>Fecha Cambio Aceite</th>                    
-                {% endif %}                
-            </thead>
-            <tbody>                    
-                {% for v in vehiculos %}
-                    <tr>
-                        <td>{{v.placa}}</td>
-                        <td>{{v.marca}}</td>
-                        <td>{{v.referencia}}</td>
-                        <td>{{v.gama}}</td>
-                        <td>{{v.descripcionBasica}}</td>
-                        <td>{{v.numDePasajeros}}</td>
-                        <td>{{v.cajaDeCambios}}</td>
-                        <td>{{v.tarifa}}</td>
-                        {% if  is_staff%}
-                            <td>{{v.estado}}</td>
-                            <td>{{v.fechaVencSOAT}}</td>
-                            <td>{{v.fechaVencSeguroTodoRiesgo}}</td>
-                            <td>{{v.fechaVencRevisionTecMec}}</td>
-                            <td>{{v.fechaVencCambioAceite}}</td>
-                        {% endif %}                        
-                    </tr>                        
-                {% endfor %}
-            </tbody>            
-        </table>            
-    	{% else %}
-    	    <p>No hay ningun vehiculo.</p>
+                    <table class="table-bordered table-striped table-hover">
+                        <thead>                        
+                                <th># Pasajeros</th>
+                                <th>Cilindraje</th>
+                                <th>Caja De Cambios</th>                            
+                        </thead>
+                        <tbody>                        
+                                <td><input type="text" name="numDePasajeros" pattern="[0-9]{1,2}"></td>
+                                <td><input type="text" name="cilindraje" pattern="[0-9]{4}"></td>
+                                <td><input type="text" name="cajaDeCambios"></td>                        
+                        </tbody>
+                    </table>            
+                {% endif %}
+                <div class="span12">
+                    <div class="span4">
+                        <h4>Ordenar por:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Estado</label>
+                                <input id="btnEstado" name="orderBy" type="radio" value="estado" checked="checked">
+                            </li>
+                            <li>
+                                <label># Pasajeros</label>
+                                <input id="btnPasajeros" name="orderBy" type="radio" value="numDePasajeros">
+                            </li>
+                            <li>
+                                <label>Modelo</label>
+                                <input id="btnModelo" name="orderBy" type="radio" value="modelo">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4">
+                        <h4>Sentido:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Ascendente</label>
+                                <input id="btnAsc" name="ascDesc" type="radio" value="True" checked="checked">
+                            </li>
+                            <li>
+                                <label>Descendente</label>
+                                <input id="btnDsc" name="ascDesc" type="radio" value="False">
+                            </li>                
+                        </ul>
+                    </div>
+                    <div class="span4"></div>
+                </div>
+                <input type="submit" value="Filtrar" name="filtrar"/>
+            </form>
+            {% if is_staff %}
+                <a href="/vehiculos/agregar/">Agregar vehículos</a>
+            {% endif %}        
+            <table class="table-bordered table-striped table-hover">
+                <thead>
+                    <th>Placa</th>
+                    <th>Marca</th>
+                    <th>Referencia</th>
+                    <th>Gama</th>
+                    <th>Descripcion Basica</th>
+                    <th># Pasajeros</th>
+                    <th>Caja De Cambios</th>                
+                    <th>Tarifa</th>                
+                    {% if is_staff %}
+                        <th>Estado</th>
+                        <th>Fecha SOAT</th>
+                        <th>Fecha Seguro TodoRiesgo</th>
+                        <th>Fecha Revision TecMec</th>
+                        <th>Fecha Cambio Aceite</th>                    
+                    {% endif %}                
+                </thead>
+                <tbody>                    
+                    {% for v in vehiculos %}
+                        <tr>
+                            <td>{{v.placa}}</td>
+                            <td>{{v.marca}}</td>
+                            <td>{{v.referencia}}</td>
+                            <td>{{v.gama}}</td>
+                            <td>{{v.descripcionBasica}}</td>
+                            <td>{{v.numDePasajeros}}</td>
+                            <td>{{v.cajaDeCambios}}</td>
+                            <td>{{v.tarifa}}</td>
+                            {% if  is_staff%}
+                                <td>{{v.estado}}</td>
+                                <td>{{v.fechaVencSOAT}}</td>
+                                <td>{{v.fechaVencSeguroTodoRiesgo}}</td>
+                                <td>{{v.fechaVencRevisionTecMec}}</td>
+                                <td>{{v.fechaVencCambioAceite}}</td>
+                            {% endif %}                        
+                        </tr>                        
+                    {% endfor %}
+                </tbody>            
+            </table>                    
+    	{% elif filtrados%}
+    	    <p>No hay ningun vehículo con las características que buscas, intenta menos parámetros.</p>
+        {% else %}
+            <p>No hay ningun vehículo.</p>
     	{% endif %}
     </div>
 {% endblock %}
