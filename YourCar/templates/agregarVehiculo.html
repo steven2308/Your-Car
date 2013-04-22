@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar un Vehículo{% endblock %}
 {% block contenido %}
-	{%if errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh %}	
+	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh %}	
 		<div class="container">
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
@@ -37,6 +37,9 @@
 			{% endif %}
 			{% if errorTipoDeTraccion %}
 				El tipo de traccion que seleccionaste es incorrecto.<br>
+			{% endif %}
+			{% if errorFoto %}
+				Por favor incluye una foto del automovil.<br>
 			{% endif %}
 			{% if errorCamposVaciosVeh %}
 				Por favor, llena todos los campos obligatorios. <br>
@@ -78,7 +81,13 @@
 					    </tr>
 					    <tr>
 					        <td><label>Tipo de Frenos:</label></td>
-					        <td><input type="text" name="tipoDeFrenos"/></td>
+					        <td>
+					        	<select name="tipoDeFrenos">
+					        		{% for tf in  tiposDeFrenos%}
+					        			<option>{{tf}}</option>
+					        		{% endfor %}					        	
+					        	</select>
+					    	</td>
 					    </tr>
 					    <tr>
 					        <td><label>Numero de Pasajeros:</label></td>
@@ -175,7 +184,7 @@
 				    </tr>
 				    <tr>
 				        <td><label>Imagen del Auto:</label></td>
-				        <td><input type="file" name="foto"/></td>
+				        <td><input type="file" name="foto" required="true"/>*</td>
 				    </tr>
 				 	<tr>
 					      <td><input type="submit" value="Agregar Vehiculo" name="agregarVehiculo"/>

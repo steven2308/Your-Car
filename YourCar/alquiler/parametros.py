@@ -26,4 +26,10 @@ parametros = {
 	"gamas": (
 		"Baja", "Media", "Alta"
 		),
+	"tiposMantenimiento": (
+		"Preventivo", "Correctivo"
+		),
+	"tiposDeFrenos": (
+		"", "Disco", "Tambor", "ABS"
+		),
 }

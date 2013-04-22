@@ -2,18 +2,28 @@
 {%extends "base.html"%}
 {% block titulo %}Detalles vehiculo {{vehiculo.placa}}{% endblock %}
 {% block contenido %}
-    <div class="container">         
+    <div class="container">
         <div>
             <div class="span3">
                 <div id="prueba"></div>
-                <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">                    
+                <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">
                     {% csrf_token %}
                     <label>Quiere ver otro vehículo? Ingrese la placa:</label>
                     <input name="placa" type="text" pattern="[A-Z]{3}[0-9]{3}">
                     <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
-                </form>    
+                </form>
+                <form method="GET" action="/cotizar/" name="cotizar">
+                    {% csrf_token %}
+                    <input name="placaActual" type="text" value="{{vehiculo.placa}}" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Cotizar este vehiculo" name="cotizar"/>
+                </form>
+                <form method="POST" action="/vehiculos/modificar/" name="modificarVehiculo">
+                    {% csrf_token %}
+                    <input name="placa" value="{{vehiculo.placa}}" type="text" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Modificar" name="modificar"/>
+                </form>
                 <table class="table-bordered table-striped table-hover">
-                    <tbody>     
+                    <tbody>
                         <tr>
                             <td>Placa</td>
                             <td>{{vehiculo.placa}}</td>
@@ -108,8 +118,8 @@
                                 <td>Fecha Cambio Aceite</td>
                                 <td>{{vehiculo.fechaVencCambioAceite}}</td>
                             </tr>
-                        {% endif %}          
-                    </tbody>            
+                        {% endif %}
+                    </tbody>
                 </table>
             </div>
             <div class="span6">
@@ -117,7 +127,7 @@
                     <a href="/vehiculos">Regresar a vehículos</a>
                 </div>
                 <div>
-                    <img id="foto" src="{{ MEDIA_URL}}{{vehiculo.foto}}" alt="Imagen no encontrada">                    
+                    <img id="foto" src="{{ MEDIA_URL}}{{vehiculo.foto}}" alt="Imagen no encontrada">
                 </div>
             </div>
         </div>

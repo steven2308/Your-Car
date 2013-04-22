@@ -1,8 +1,7 @@
-
 {%extends "base.html"%}
 {% block titulo %}Vehiculos{% endblock %}
 {% block contenido %}
-    <div class="container"> 
+    <div class="container">
         {% if filtrados %}
             <h2>Estás viendo los vehículos filtrados y ordenados:</h2>
         {% else %}
@@ -10,12 +9,12 @@
         {% endif %}
     	{% if vehiculos %}
             <p>Tenemos en total {{ vehiculos|length }} vehículo{{vehiculos|pluralize}}.</p>
-            <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">                    
+            <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">
                 {% csrf_token %}
                 <label>Ingresa la placa del vehículo que quieres ver:</label>
                 <input name="placa" type="text" pattern="[A-Z]{3}[0-9]{3}">
                 <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
-            </form>            
+            </form>
             <form method="POST" action="/vehiculos/" name="filtrarVehiculos">
                 {% csrf_token %}
                 <h4>Filtrar Por:</h4>
@@ -23,27 +22,27 @@
                     <thead>
                         <th>Gama</th>
                         <th>Marca</th>
-                        <th>Modelo</th>                                                                   
+                        <th>Modelo</th>
                     </thead>
-                    <tbody>                                        
+                    <tbody>
                         <td><input type="text" name="gama"></td>
                         <td><input type="text" name="marca"></td>
                         <td><input type="text" name="modelo" pattern="[0-9]{4}"></td>
-                    </tbody>           
+                    </tbody>
                 </table>
                 {% if is_staff %}
                     <table class="table-bordered table-striped table-hover">
-                        <thead>                        
+                        <thead>
                                 <th># Pasajeros</th>
                                 <th>Cilindraje</th>
-                                <th>Caja De Cambios</th>                            
+                                <th>Caja De Cambios</th>
                         </thead>
-                        <tbody>                        
+                        <tbody>
                                 <td><input type="text" name="numDePasajeros" pattern="[0-9]{1,2}"></td>
                                 <td><input type="text" name="cilindraje" pattern="[0-9]{4}"></td>
-                                <td><input type="text" name="cajaDeCambios"></td>                        
+                                <td><input type="text" name="cajaDeCambios"></td>
                         </tbody>
-                    </table>            
+                    </table>
                 {% endif %}
                 <div class="span12">
                     <div class="span4">
@@ -73,7 +72,7 @@
                             <li>
                                 <label>Descendente</label>
                                 <input id="btnDsc" name="ascDesc" type="radio" value="False">
-                            </li>                
+                            </li>
                         </ul>
                     </div>
                     <div class="span4"></div>
@@ -82,7 +81,7 @@
             </form>
             {% if is_staff %}
                 <a href="/vehiculos/agregar/">Agregar vehículos</a>
-            {% endif %}        
+            {% endif %}
             <table class="table-bordered table-striped table-hover">
                 <thead>
                     <th>Placa</th>
@@ -91,17 +90,17 @@
                     <th>Gama</th>
                     <th>Descripcion Basica</th>
                     <th># Pasajeros</th>
-                    <th>Caja De Cambios</th>                
-                    <th>Tarifa</th>                
+                    <th>Caja De Cambios</th>
+                    <th>Tarifa</th>
                     {% if is_staff %}
                         <th>Estado</th>
                         <th>Fecha SOAT</th>
                         <th>Fecha Seguro TodoRiesgo</th>
                         <th>Fecha Revision TecMec</th>
-                        <th>Fecha Cambio Aceite</th>                    
-                    {% endif %}                
+                        <th>Fecha Cambio Aceite</th>
+                    {% endif %}
                 </thead>
-                <tbody>                    
+                <tbody>
                     {% for v in vehiculos %}
                         <tr>
                             <td>{{v.placa}}</td>
@@ -118,15 +117,18 @@
                                 <td>{{v.fechaVencSeguroTodoRiesgo}}</td>
                                 <td>{{v.fechaVencRevisionTecMec}}</td>
                                 <td>{{v.fechaVencCambioAceite}}</td>
-                            {% endif %}                        
-                        </tr>                        
+                            {% endif %}
+                        </tr>
                     {% endfor %}
-                </tbody>            
-            </table>                    
+                </tbody>
+            </table>
     	{% elif filtrados%}
     	    <p>No hay ningun vehículo con las características que buscas, intenta menos parámetros.</p>
         {% else %}
             <p>No hay ningun vehículo.</p>
+            {% if is_staff %}
+                <a href="/vehiculos/agregar/">Agregar vehículo</a>
+            {% endif %}
     	{% endif %}
     </div>
 {% endblock %}

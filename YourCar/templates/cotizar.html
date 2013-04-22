@@ -1,5 +1,35 @@
 {% extends "base.html" %}
 {% block titulo %}Cotizar{% endblock %}
 {% block contenido %}
-	<h2>Aquí van los datos de una cotización</h2>
+	<div class="container">
+		<form method="POST" action="/cotizar/" name="verMantenimiento">
+            {% csrf_token %}
+			<table>
+				<thead>
+					<th>Placa</th>
+					<th>Fecha Inicio</th>
+					<th>Fecha Fin</th>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<input type="text" value="{{placa}}" pattern="[A-Z]{3}[0-9]{3}">
+						</td>
+						<td>
+							<input type="date" value="{{fechaIni}}">
+						</td>
+						<td>
+							<input type="date" value="{{fechaFin}}">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<input type="submit" value="Cotizar" name="cotizar"/>
+        </form>
+        {% if cotizado %}
+        	<p>
+            	Datos de cotización
+            </p>
+		{% endif %}
+	</div>
 {% endblock %}

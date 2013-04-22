@@ -6,22 +6,22 @@ class Vehiculo(models.Model):
 		return "fotos/carros/%s/%s/%s/%s"%(self.marca, self.referencia, self.placa , filename)
 	print url
 	placa = models.CharField(max_length=6,primary_key=True)
-	marca = models.CharField(max_length=15) 
-	referencia = models.CharField(max_length=15) 
+	marca = models.CharField(max_length=15)
+	referencia = models.CharField(max_length=15)
 	gama = models.CharField(max_length=15)
 	descripcionBasica = models.CharField(max_length=100)
-	tipoDeFrenos = models.CharField(max_length=15, blank=True) 
+	tipoDeFrenos = models.CharField(max_length=15, blank=True)
 	numDePasajeros = models.IntegerField()
 	cilindraje = models.IntegerField()
 	color = models.CharField(max_length=15)
 	cajaDeCambios = models.CharField(max_length=15) #poner opciones de a,m,t
-	airbags = models.IntegerField(blank=True)
+	airbags = models.IntegerField(blank=True, null=True)
 	tipoDeDireccion = models.CharField(max_length=15) #mecanica, hidraulica, electronica
 	tipoDeTraccion = models.CharField(max_length=15, blank=True)
-	modelo = models.IntegerField(blank=True)
-	valorGarantia = models.IntegerField(blank=True)
+	modelo = models.IntegerField(blank=True, null=True)
+	valorGarantia = models.IntegerField(blank=True, null=True)
 	estado = models.CharField(max_length=15) #Disponible, reservado, rentado, en mantenimiento
-	kilometraje = models.IntegerField(blank=True)
+	kilometraje = models.IntegerField(blank=True, null=True)
 	limiteKilometraje = models.IntegerField()
 	tarifa = models.IntegerField()
 	foto = models.FileField(upload_to=url)
@@ -32,16 +32,16 @@ class Vehiculo(models.Model):
 	def __unicode__(self):
 		return self.marca+" "+self.referencia+" Placa: "+self.placa
 
-# Extender de User 
+# Extender de User
 class ClienteAlquiler(models.Model):
-	user = models.ForeignKey(User, unique=True)	
+	user = models.ForeignKey(User, unique=True)
 	fechaNacimiento = models.DateField()
 	telFijo = models.CharField(max_length=10)
 	telCelular = models.CharField(max_length=10)
 	genero = models.CharField(max_length=1,blank=True)
 	tipoPersona = models.CharField(max_length=10)
-	tipoDocumento  = models.CharField(max_length=10) 
-	numDocumento = models.CharField(max_length=20,primary_key=True)		
+	tipoDocumento  = models.CharField(max_length=10)
+	numDocumento = models.CharField(max_length=20,primary_key=True)
 	paisResidencia = models.CharField(max_length=10)
 	ciudadResidencia = models.CharField(max_length=10)
 	dirResidencia = models.CharField(max_length=30)
@@ -66,10 +66,9 @@ class Reserva(models.Model):
 		return "Reserva de %s a %s" %(unicode(self.idCliente),unicode(self.idVehiculo))
 
 class Mantenimiento(models.Model):
-	idMantenimiento = models.AutoField(primary_key=True)
-	idVechiulo = models.ForeignKey(Vehiculo)
+	idVehiculo = models.ForeignKey(Vehiculo)
 	fecha = models.DateField()
-	descripcion = models.CharField(max_length=200)
+	descripcion = models.CharField(max_length=200, blank =True)
 	costo = models.IntegerField()
 	tipo = models.CharField(max_length=15) #correctivo o preventivo
 	def __unicode__(self):
@@ -88,7 +87,7 @@ class Voucher(models.Model):
 
 class Contrato(models.Model):
 	idContrato = models.AutoField(primary_key=True)
-	idVehiculo = models.ForeignKey(Vehiculo)	
+	idVehiculo = models.ForeignKey(Vehiculo)
 	idVoucher = models.ForeignKey(Voucher)
 	fecha = models.DateTimeField()
 	def __unicode__(self):
@@ -105,7 +104,7 @@ class ConductorAutorizado(models.Model):
 	def __unicode__(self):
 		return "Conductor autorizado %s %s" %(self.nombres,self.apellidos)
 	class Meta:
-		verbose_name_plural=u'Conductores Autorizados'	
+		verbose_name_plural=u'Conductores Autorizados'
 
 class InventarioVehiculo(models.Model):
 	idInventarioVehiculo = models.AutoField(primary_key=True)
@@ -139,7 +138,7 @@ class Factura(models.Model):
 	horasAdicionales = models.IntegerField()
 	valorUnitario = models.IntegerField()
 	galonesGasolina = models.IntegerField()
-	costoTotalgasolina = models.IntegerField()	
+	costoTotalgasolina = models.IntegerField()
 	subtotal = models.IntegerField()
 	iva = models.IntegerField()
 	total = models.IntegerField()
@@ -150,24 +149,23 @@ class Danyo(models.Model):
 	costo = models.IntegerField()
 
 class BaseEncuesta(models.Model):
-	idBaseEncuesta = models.AutoField(primary_key=True)	
+	idBaseEncuesta = models.AutoField(primary_key=True)
 	nombreEncuesta = models.CharField(max_length=20)
 
 class BasePregunta(models.Model):
-	idBasePregunta = models.AutoField(primary_key=True)	
+	idBasePregunta = models.AutoField(primary_key=True)
 	idBaseEncuesta = models.ForeignKey(BaseEncuesta)
 	numPregunta = models.IntegerField()
 	tipo = models.CharField(max_length=10) #Si-No o Rango
 
 class EncuestaResuelta(models.Model):
-	idEncuestaResuelta = models.AutoField(primary_key=True)	
+	idEncuestaResuelta = models.AutoField(primary_key=True)
 	idBaseEncuesta = models.ForeignKey(BaseEncuesta)
 	fecha = models.DateField()
 	observaciones = models.TextField(blank=True)
 
 class PreguntaResuelta(models.Model):
-	idPreguntaResuelta = models.AutoField(primary_key=True)	
+	idPreguntaResuelta = models.AutoField(primary_key=True)
 	idEncuestaResuelta = models.ForeignKey(EncuestaResuelta)
 	rptaBool = models.BooleanField()
 	rptaRango = models.IntegerField() #Rango 1 a 5
-	
