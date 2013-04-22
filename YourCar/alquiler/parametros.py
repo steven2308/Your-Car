@@ -26,4 +26,7 @@ parametros = {
 	"gamas": (
 		"Baja", "Media", "Alta"
 		),
+	"tiposDeFrenos": (
+		"", "Disco", "Tambor", "ABS"
+		),
 }

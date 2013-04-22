@@ -157,23 +157,26 @@ def verVehiculosControl(request):
 
 def detallesVehiculoControl(request):
 	if request.method == 'POST':
-		try:
 			placa=request.POST["placa"].upper()					
 			vehiculo = Vehiculo.objects.get(placa=placa)			
 			is_staff = request.user.is_staff
 			return render_to_response('detallesVehiculo.html',locals(), context_instance = RequestContext(request))
-		except:
-			HttpResponseRedirect('/vehiculos')
 	return HttpResponseRedirect('/vehiculos')
 		
 def modificarVehiculoControl(request):
-	try:
-		placa=request.POST["placa"].upper()					
-		vehiculo = Vehiculo.objects.get(placa=placa)			
-		is_staff = request.user.is_staff
-		return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
-	except:
-		HttpResponseRedirect('/vehiculos')
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+		cajasDeCambios=parametros["cajasDeCambios"]
+		tipoDeDirecciones=parametros["tipoDeDirecciones"]
+		estadosVehiculo=parametros["estadosVehiculo"]
+		tiposTraccion=parametros["tiposTraccion"]
+		tiposDeFrenos=parametros["tiposDeFrenos"]
+		gamas=parametros["gamas"]
+		try:
+			placa=request.POST["placa"].upper()					
+			vehiculo = Vehiculo.objects.get(placa=placa)			
+			return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
+		except:
+			HttpResponseRedirect('/vehiculos')
 	return HttpResponseRedirect('/')
 
 
@@ -188,6 +191,7 @@ def agregarVehiculoControl(request):
 		tipoDeDirecciones=parametros["tipoDeDirecciones"]
 		estadosVehiculo=parametros["estadosVehiculo"]
 		tiposTraccion=parametros["tiposTraccion"]
+		tiposDeFrenos=parametros["tiposDeFrenos"]
 		gamas=parametros["gamas"]
 		if request.method == 'POST':
 			#Cargo datos requeridos del auto
@@ -208,6 +212,8 @@ def agregarVehiculoControl(request):
 			fechaVencSeguroTodoRiesgo = request.POST["fechaVencSeguroTodoRiesgo"]
 			fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
 			fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
+			foto = request.POST["foto"]
+			modificar = request.POST["modificar"]
 			#inicializo datos opcionales
 			tipoDeFrenos = ""
 			airbags = "0"
@@ -227,7 +233,11 @@ def agregarVehiculoControl(request):
 			if request.POST['kilometraje']: kilometraje = request.POST['kilometraje']
 
 			#Control de errores
-			errorPlaca = (Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa))
+			if modificar:
+				errorPlaca = not re.match("^([A-Z]{3}[0-9]{3})$",placa)
+			else:
+				errorPlaca = ((Vehiculo.objects.filter(placa=placa)) or not re.match("^([A-Z]{3}[0-9]{3})$",placa))
+			errorTipoDeFrenos = (tipoDeFrenos not in parametros["tiposDeFrenos"])
 			errorNumDePasajeros = not re.match("^[0-9]{1,2}$",numDePasajeros)
 			errorGama = (gama not in parametros["gamas"])
 			errorAirbags = not re.match("^([0-9]{1,2})$",airbags)
@@ -238,10 +248,11 @@ def agregarVehiculoControl(request):
 			errorEstado = (estado not in parametros["estadosVehiculo"])
 			errorTipoDeDireccion = (tipoDeDireccion not in parametros["tipoDeDirecciones"])
 			errorTipoDeTraccion = (tipoDeTraccion not in parametros["tiposTraccion"])
+			errorFoto = foto == null
 			errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
 
 			#manejo de errores
-			if (errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorCamposVaciosVeh):
+			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh):
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 
 			#guardar vehiculo
