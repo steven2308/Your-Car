@@ -2,25 +2,29 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Vehiculo(models.Model):
+	def url(self,filename):
+		return "fotos/carros/%s/%s/%s/%s"%(self.marca, self.referencia, self.placa , filename)
+	print url
 	placa = models.CharField(max_length=6,primary_key=True)
 	marca = models.CharField(max_length=15) 
 	referencia = models.CharField(max_length=15) 
 	gama = models.CharField(max_length=15)
-	descripcionBasica = models.CharField(max_length=100,blank=True)
-	tipoDeFrenos = models.CharField(max_length=15) 
+	descripcionBasica = models.CharField(max_length=100)
+	tipoDeFrenos = models.CharField(max_length=15, blank=True) 
 	numDePasajeros = models.IntegerField()
 	cilindraje = models.IntegerField()
 	color = models.CharField(max_length=15)
 	cajaDeCambios = models.CharField(max_length=15) #poner opciones de a,m,t
-	airbags = models.IntegerField()
+	airbags = models.IntegerField(blank=True)
 	tipoDeDireccion = models.CharField(max_length=15) #mecanica, hidraulica, electronica
-	traccion = models.CharField(max_length=15)
-	modelo = models.IntegerField()
-	valorGarantia = models.IntegerField()
+	tipoDeTraccion = models.CharField(max_length=15, blank=True)
+	modelo = models.IntegerField(blank=True)
+	valorGarantia = models.IntegerField(blank=True)
 	estado = models.CharField(max_length=15) #Disponible, reservado, rentado, en mantenimiento
-	kilometraje = models.IntegerField()
+	kilometraje = models.IntegerField(blank=True)
 	limiteKilometraje = models.IntegerField()
 	tarifa = models.IntegerField()
+	foto = models.FileField(upload_to=url)
 	fechaVencSOAT = models.DateField()
 	fechaVencSeguroTodoRiesgo = models.DateField()
 	fechaVencRevisionTecMec = models.DateField()
@@ -34,16 +38,16 @@ class ClienteAlquiler(models.Model):
 	fechaNacimiento = models.DateField()
 	telFijo = models.CharField(max_length=10)
 	telCelular = models.CharField(max_length=10)
-	genero = models.CharField(max_length=1)
-	tipoPersona = models.CharField(max_length=10) #natural, legal
-	tipoDocumento  = models.CharField(max_length=10) #que tipos hay?
-	numDocumento = models.IntegerField(primary_key=True)		
+	genero = models.CharField(max_length=1,blank=True)
+	tipoPersona = models.CharField(max_length=10)
+	tipoDocumento  = models.CharField(max_length=10) 
+	numDocumento = models.CharField(max_length=20,primary_key=True)		
 	paisResidencia = models.CharField(max_length=10)
 	ciudadResidencia = models.CharField(max_length=10)
 	dirResidencia = models.CharField(max_length=30)
-	nombrePersonaContacto = models.CharField(max_length=20)
-	telContacto = models.IntegerField()
-	direccionContacto = models.CharField(max_length=30)	
+	nombrePersonaContacto = models.CharField(max_length=20,blank=True)
+	telContacto = models.IntegerField(blank=True)
+	direccionContacto = models.CharField(max_length=30,blank=True)
 	def __unicode__(self):
 		return self.user.first_name+" "+self.user.last_name
 	class Meta:

@@ -4,24 +4,23 @@
 	<div class="container-fluid">
 				<div class="span3">
 					<h2>Misión</h2>
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, sit, accusamus nostrum delectus maxime possimus quas nesciunt molestiae unde temporibus amet iusto odit doloribus. Commodi, facilis atque dolores obcaecati natus.</p>
+					<p align="justify">{{misionInicio}}</p>
 				</div>				
 				<div class="span3">
 					<h2>Visión</h2>
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, sit, accusamus nostrum delectus maxime possimus quas nesciunt molestiae unde temporibus amet iusto odit doloribus. Commodi, facilis atque dolores obcaecati natus.</p>
+					<p align="justify">{{visionInicio}}</p>
 				</div>
 				<div class="span3">		
 					<h2>Quienes somos?</h2>			
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, amet, magnam, atque nemo mollitia ipsa rerum dolore neque perferendis odio placeat optio inventore beatae natus iure rem commodi nisi sed</p>
+					<p align="justify">{{quienesSomosInicio}}</p>
 				</div>	
-
 				<div class="span3">
 					{%if conectado%}
 						<form action="/logout/" name="logout">
 							{% csrf_token %}
 								<h3>Inicio de Sesión</h3>
-								<p>Estás logueado como {{nombre}}, quieres iniciar sesión como alguien más?</p>
 								<div>
+									<p>Estás logueado como {{nombre}}, quieres iniciar sesión como alguien más?</p>	
 							        <label>Cerrar sesión:</label>       
 							        <input type="submit" value="Log out" name="logout"/>
 							    </div>
@@ -47,7 +46,7 @@
 							        <input type="submit" value="Log In" name="login"/>
 							    </div>
 							    {%if loginFailed%}
-									<p>El nombre de usuario (o correo) y la contraseña no coinciden</p>
+									<p class="text-error">El nombre de usuario (o correo) y la contraseña no coinciden</p>
 								{%endif%}
 						</form>
 					{%endif %}

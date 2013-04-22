@@ -1,19 +1,34 @@
+Para iniciar:
 Todos clonan a windows
 crear un branch 	"git checkout -b desarrollo"
 con "git branch" veo en cual estoy
 "git checkout nombre" cambio de branch
 "git pull origin nombrebranch" traigo lo del repo
 
--desarrollo
+Para actualizarse:
+1. Abren git bash y se ubican en la carpeta del proyecto.
+2. Verifican que estén en el branch de desarrollo-> git branch
+3. Si no lo están se cambian - > git checkout desarrollo
+4. Verifican si tienen cambios locales -> git status
+*En esta parte si dice nothing to commit pueden saltarse hasta el ultimo paso (6)
+5.Ponen las siguientes dos lineas tal cual se las escribo:
+git add-A
+git commit -m "cambios locales"
+6. git pull origin desarrollo
 
+Para subir:
 verificar que este en desarrollo
 "git status" me dice que ha cambiado
 "git add -A" añado todo
 "git commit -m "Mensaje" " Actualizar cambios locales
 "git push origin desarrollo"  Actualizo repo.
 
-para actualizar master
+Para actualizar master:
 "git checkout master"
 "git pull origin desarrollo"
 si hay conflictos organizar
 "git push origin master"
+
+Para correrlo:
+abren una consola de windows, se ubican en la carpeta y simplemente escriben:
+python manage.py runserver

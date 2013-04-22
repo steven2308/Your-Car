@@ -1,0 +1,125 @@
+
+{%extends "base.html"%}
+{% block titulo %}Detalles vehiculo {{vehiculo.placa}}{% endblock %}
+{% block contenido %}
+    <div class="container">         
+        <div>
+            <div class="span3">
+                <div id="prueba"></div>
+                <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">                    
+                    {% csrf_token %}
+                    <label>Quiere ver otro vehículo? Ingrese la placa:</label>
+                    <input name="placa" type="text" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
+                </form>    
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>     
+                        <tr>
+                            <td>Placa</td>
+                            <td>{{vehiculo.placa}}</td>
+                        </tr>
+                        <tr>
+                            <td>Marca</td>
+                            <td>{{vehiculo.marca}}</td>
+                        </tr>
+                        <tr>
+                            <td>Referencia</td>
+                            <td>{{vehiculo.referencia}}</td>
+                        </tr>
+                        <tr>
+                            <td>Gama</td>
+                            <td>{{vehiculo.gama}}</td>
+                        </tr>
+                        <tr>
+                            <td>DescripcionBasica</td>
+                            <td>{{vehiculo.descripcionBasica}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tipo De Frenos</td>
+                            <td>{{vehiculo.tipoDeFrenos}}</td>
+                        </tr>
+                        <tr>
+                            <td># Pasajeros</td>
+                            <td>{{vehiculo.numDePasajeros}}</td>
+                        </tr>
+                        <tr>
+                            <td>Cilindraje</td>
+                            <td>{{vehiculo.cilindraje}}</td>
+                        </tr>
+                        <tr>
+                            <td>Color</td>
+                            <td>{{vehiculo.color}}</td>
+                        </tr>
+                        <tr>
+                            <td>Caja De Cambios</td>
+                            <td>{{vehiculo.cajaDeCambios}}</td>
+                        </tr>
+                        <tr>
+                            <td>Airbags</td>
+                            <td>{{vehiculo.airbags}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tipo De Direccion</td>
+                            <td>{{vehiculo.tipoDeDireccion}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tipo De Traccion</td>
+                            <td>{{vehiculo.tipoDeTraccion}}</td>
+                        </tr>
+                        <tr>
+                            <td>Modelo</td>
+                            <td>{{vehiculo.modelo}}</td>
+                        </tr>
+                        <tr>
+                            <td>Valor Garantia</td>
+                            <td>{{vehiculo.valorGarantia}}</td>
+                        </tr>
+                        <tr>
+                            <td>Kilometraje</td>
+                            <td>{{vehiculo.kilometraje}}</td>
+                        </tr>
+                        <tr>
+                            <td>Limite Kilometraje</td>
+                            <td>{{vehiculo.limiteKilometraje}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tarifa</td>
+                            <td>{{vehiculo.tarifa}}</td>
+                        </tr>
+
+                        {% if is_staff %}
+                            <tr>
+                                <td>Estado</td>
+                                <td>{{vehiculo.estado}}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha SOAT</td>
+                                <td>{{vehiculo.fechaVencSOAT}}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha SeguroTodoRiesgo</td>
+                                <td>{{vehiculo.fechaVencSeguroTodoRiesgo}}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha Revision TecMec</td>
+                                <td>{{vehiculo.fechaVencRevisionTecMec}}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha Cambio Aceite</td>
+                                <td>{{vehiculo.fechaVencCambioAceite}}</td>
+                            </tr>
+                        {% endif %}          
+                    </tbody>            
+                </table>
+            </div>
+            <div class="span6">
+                <div>
+                    <a href="/vehiculos">Regresar a vehículos</a>
+                </div>
+                <div>
+                    <img id="foto" src="{{ MEDIA_URL}}{{vehiculo.foto}}" alt="Imagen no encontrada">                    
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
