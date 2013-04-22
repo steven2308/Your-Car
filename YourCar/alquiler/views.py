@@ -166,6 +166,17 @@ def detallesVehiculoControl(request):
 			HttpResponseRedirect('/vehiculos')
 	return HttpResponseRedirect('/vehiculos')
 		
+def modificarVehiculoControl(request):
+	try:
+		placa=request.POST["placa"].upper()					
+		vehiculo = Vehiculo.objects.get(placa=placa)			
+		is_staff = request.user.is_staff
+		return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
+	except:
+		HttpResponseRedirect('/vehiculos')
+	return HttpResponseRedirect('/')
+
+
 def cotizarControl(request):
 	#Logica de control
 	return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
@@ -220,8 +231,8 @@ def agregarVehiculoControl(request):
 			errorNumDePasajeros = not re.match("^[0-9]{1,2}$",numDePasajeros)
 			errorGama = (gama not in parametros["gamas"])
 			errorAirbags = not re.match("^([0-9]{1,2})$",airbags)
-			errorModelo = not re.match("^([0-9]{4})$",modelo)
-			errorValorGarantia = not re.match("^([0-9]{5,7})$",valorGarantia)
+			errorModelo = not re.match("^([0-9]{4})$",modelo) and modelo != "0"
+			errorValorGarantia = not re.match("^([0-9]{5,7})$",valorGarantia) and valorGarantia != "0"
 			errorKilometraje = not re.match("^([0-9]{1,6})$",kilometraje)
 			errorCajaDeCambios = (cajaDeCambios not in parametros["cajasDeCambios"])
 			errorEstado = (estado not in parametros["estadosVehiculo"])

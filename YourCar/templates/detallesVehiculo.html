@@ -11,7 +11,12 @@
                     <label>Quiere ver otro vehículo? Ingrese la placa:</label>
                     <input name="placa" type="text" pattern="[A-Z]{3}[0-9]{3}">
                     <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
-                </form>    
+                </form>
+                <form method="POST" action="/vehiculos/modificar/" name="modificarVehiculo">                    
+                    {% csrf_token %}
+                    <input name="placa" value={{vehiculo.placa}} type="text" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Modificar" name="modificar"/>
+                </form>
                 <table class="table-bordered table-striped table-hover">
                     <tbody>     
                         <tr>
