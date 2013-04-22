@@ -15,13 +15,13 @@ class Vehiculo(models.Model):
 	cilindraje = models.IntegerField()
 	color = models.CharField(max_length=15)
 	cajaDeCambios = models.CharField(max_length=15) #poner opciones de a,m,t
-	airbags = models.IntegerField(blank=True)
+	airbags = models.IntegerField(blank=True, null=True)
 	tipoDeDireccion = models.CharField(max_length=15) #mecanica, hidraulica, electronica
 	tipoDeTraccion = models.CharField(max_length=15, blank=True)
-	modelo = models.IntegerField(blank=True)
-	valorGarantia = models.IntegerField(blank=True)
+	modelo = models.IntegerField(blank=True, null=True)
+	valorGarantia = models.IntegerField(blank=True, null=True)
 	estado = models.CharField(max_length=15) #Disponible, reservado, rentado, en mantenimiento
-	kilometraje = models.IntegerField(blank=True)
+	kilometraje = models.IntegerField(blank=True, null=True)
 	limiteKilometraje = models.IntegerField()
 	tarifa = models.IntegerField()
 	foto = models.FileField(upload_to=url)

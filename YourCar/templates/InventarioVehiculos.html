@@ -126,6 +126,9 @@
     	    <p>No hay ningun vehículo con las características que buscas, intenta menos parámetros.</p>
         {% else %}
             <p>No hay ningun vehículo.</p>
+            {% if is_staff %}
+                <a href="/vehiculos/agregar/">Agregar vehículo</a>
+            {% endif %}
     	{% endif %}
     </div>
 {% endblock %}

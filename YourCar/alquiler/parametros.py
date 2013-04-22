@@ -29,4 +29,7 @@ parametros = {
 	"tiposMantenimiento": (
 		"Preventivo", "Correctivo"
 		),
+	"tiposDeFrenos": (
+		"", "Disco", "Tambor", "ABS"
+		),
 }
