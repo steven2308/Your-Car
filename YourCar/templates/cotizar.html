@@ -2,6 +2,14 @@
 {% block titulo %}Cotizar{% endblock %}
 {% block contenido %}
 	<div class="container">
+		{% if errorPlaca or errorFecha %}
+			{% if errorPlaca %}
+				<p class="text-error">Por favor ingrese una placa correcta.</p>
+			{% endif %}
+			{% if errorFecha %}
+				<p class="text-error">La fecha de inicio debe ser menor a la de fin.</p>
+			{% endif %}
+		{% endif %}
 		<form method="POST" action="/cotizar/" name="verMantenimiento">
             {% csrf_token %}
 			<table>
@@ -13,13 +21,13 @@
 				<tbody>
 					<tr>
 						<td>
-							<input type="text" value="{{placa}}" pattern="[A-Z]{3}[0-9]{3}">
+							<input type="text" name="placa" value="{{placa}}" pattern="[A-Z]{3}[0-9]{3}">
 						</td>
 						<td>
-							<input type="date" value="{{fechaIni}}">
+							<input type="date" name="fechaIni" value="{{fechaIni}}">
 						</td>
 						<td>
-							<input type="date" value="{{fechaFin}}">
+							<input type="date" name="fechaFin" value="{{fechaFin}}">
 						</td>
 					</tr>
 				</tbody>
@@ -28,7 +36,10 @@
         </form>
         {% if cotizado %}
         	<p>
-            	Datos de cotización
+            	Datos de cotización:
+            	Tarifa por día: {{tarifaDia}} <br>
+            	Límite de kilometraje: {{limiteKilometraje}} <br>
+            	Diferencia de días: {{diferencia}} <br>
             </p>
 		{% endif %}
 	</div>

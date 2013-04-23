@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar un Vehículo{% endblock %}
 {% block contenido %}
-	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh %}	
+	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh %}
 		<div class="container">
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
@@ -48,7 +48,7 @@
 	</div>
 	{%else %}
 		<form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo">
-				{% csrf_token %}			
+				{% csrf_token %}
 				<div class="container">
 				<h3>Ingrese los datos del vehiculo.</hs3>
 				<table class="table-bordered table-striped table-hover">
@@ -71,7 +71,7 @@
 					        	<select name="gama" required="true">
 					        		{% for ga in  gamas%}
 					        			<option>{{ga}}</option>
-					        		{% endfor %}					        	
+					        		{% endfor %}
 					        	</select>*
 					    	</td>
 					    </tr>
@@ -85,7 +85,7 @@
 					        	<select name="tipoDeFrenos">
 					        		{% for tf in  tiposDeFrenos%}
 					        			<option>{{tf}}</option>
-					        		{% endfor %}					        	
+					        		{% endfor %}
 					        	</select>
 					    	</td>
 					    </tr>
@@ -107,7 +107,7 @@
 					        	<select name="cajaDeCambios" required="true">
 					        		{% for c in  cajasDeCambios%}
 					        			<option>{{c}}</option>
-					        		{% endfor %}					        	
+					        		{% endfor %}
 					        	</select>*
 					    	</td>
 					    </tr>
@@ -121,7 +121,7 @@
 					        	<select name="tipoDeDireccion">
 					        		{% for td in  tipoDeDirecciones%}
 					        			<option>{{td}}</option>
-					        		{% endfor %}					        	
+					        		{% endfor %}
 					        	</select>
 					    	</td>
 					    </tr>
@@ -131,7 +131,7 @@
 					        	<select name="tipoDeTraccion">
 					        		{% for tr in  tiposTraccion%}
 					        			<option>{{tr}}</option>
-					        		{% endfor %}					        	
+					        		{% endfor %}
 					        	</select>
 					    	</td>
 					    </tr>
@@ -149,8 +149,8 @@
 				        	<select name="estado" required="true">
 				        		{% for e in  estadosVehiculo%}
 				        			<option>{{e}}</option>
-				        		{% endfor %}					        	
-				    
+				        		{% endfor %}
+
 				        </select>*
 				    </td>
 				    </tr>
@@ -176,7 +176,7 @@
 				    </tr>
 				    <tr>
 				    	<td><label>Fecha de Vencimiento de la Revision Tecnico Mecanica:</label></td>
-				    	<td><input type="date" name="fechaVencRevisionTecMec" required="true"/>*</td>	
+				    	<td><input type="date" name="fechaVencRevisionTecMec" required="true"/>*</td>
 				    </tr>
 				    <tr>
 				    	<td><label>Fecha de Vencimiento de Cambio de Aceite:</label></td>
@@ -189,10 +189,10 @@
 				 	<tr>
 					      <td><input type="submit" value="Agregar Vehiculo" name="agregarVehiculo"/>
 					</tr>
-				</tbody>			
+				</tbody>
 			</table>
 			<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
-			</div>		
+			</div>
 		</form>
 	{%endif %}
 {% endblock %}

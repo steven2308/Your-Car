@@ -269,15 +269,22 @@ def cotizarControl(request):
 			#Tomo datos
 			placa=request.POST["placa"].upper()
 			vehiculo = Vehiculo.objects.get(placa=placa)
-			fechaIni = request.POST["fechaFin"]
+			fechaIni = request.POST["fechaIni"]
 			fechaFin = request.POST["fechaFin"]
+
 			#Hago validaciones
 			errorPlaca = not Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa)
-			#errorFechas = tipo not in tipos
+			errorFechas = fechaFin<=fechaIni
 			#Si hay errores vuelvo al formulario y los informo
 			if (errorPlaca or errorFechas):
 				return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
+
 			#Calculos
+			tarifaDia = vehiculo.tarifa
+			limiteKilometraje = vehiculo.limiteKilometraje
+			diferencia =  fechaFin-fechaIni
+			cotizado=True
+
 		except:
 			pass
 		return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
@@ -318,7 +325,7 @@ def agregarVehiculoControl(request):
 			fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
 			fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
 			foto = request.POST["foto"]
-			modificar = request.POST["modificar"]
+			modificar = ""
 			#inicializo datos opcionales
 			tipoDeFrenos = ""
 			airbags = "0"
@@ -336,7 +343,11 @@ def agregarVehiculoControl(request):
 			if request.POST['modelo']: modelo = request.POST['modelo']
 			if request.POST['valorGarantia']: valorGarantia = request.POST['valorGarantia']
 			if request.POST['kilometraje']: kilometraje = request.POST['kilometraje']
-
+			#verifico si estoy modificando
+			try:
+				modificar = request.POST["modificar"]
+			except:
+				pass
 			#Control de errores
 			if modificar:
 				errorPlaca = not re.match("^([A-Z]{3}[0-9]{3})$",placa)
@@ -353,7 +364,7 @@ def agregarVehiculoControl(request):
 			errorEstado = (estado not in parametros["estadosVehiculo"])
 			errorTipoDeDireccion = (tipoDeDireccion not in parametros["tipoDeDirecciones"])
 			errorTipoDeTraccion = (tipoDeTraccion not in parametros["tiposTraccion"])
-			errorFoto = foto == null
+			errorFoto = not foto
 			errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
 
 			#manejo de errores
