@@ -6,7 +6,8 @@ from django.contrib.auth import login, authenticate, logout
 from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
-import re
+import re, math
+from datetime import datetime
 
 #Verificar que fecha es fecha, que poner en contrasena
 
@@ -166,9 +167,9 @@ def detallesVehiculoControl(request):
 			placa=request.POST["placa"].upper()
 			vehiculo = Vehiculo.objects.get(placa=placa)
 			is_staff = request.user.is_staff
+			return render_to_response('detallesVehiculo.html',locals(), context_instance = RequestContext(request))
 		except:
-			pass
-		return render_to_response('detallesVehiculo.html',locals(), context_instance = RequestContext(request))
+			return HttpResponseRedirect('/vehiculos')
 	return HttpResponseRedirect('/vehiculos')
 
 def historialMantenimientoControl(request):
@@ -271,18 +272,47 @@ def cotizarControl(request):
 			vehiculo = Vehiculo.objects.get(placa=placa)
 			fechaIni = request.POST["fechaIni"]
 			fechaFin = request.POST["fechaFin"]
+			horaIni = request.POST["horaIni"]
+			horaFin = request.POST["horaFin"]
+
+			#Calculo dias y diferencia
+			dtIni = datetime.strptime(fechaIni+" "+horaIni, '%Y-%m-%d %H:%M')
+			dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
+			diferencia =  dtFin-dtIni
 
 			#Hago validaciones
 			errorPlaca = not Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa)
-			errorFechas = fechaFin<=fechaIni
+			errorFechas = dtIni > dtFin or datetime.now()> dtIni
 			#Si hay errores vuelvo al formulario y los informo
 			if (errorPlaca or errorFechas):
 				return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 
 			#Calculos
+			diasReal = diferencia.days
+			dias = diasReal
+			segs  = diferencia.seconds
+			horasReal = math.floor(segs/3600)
+			horas=horasReal
+			mins = (segs%3600)/60
+			if mins>=30:
+				horas+=1
+			if(horas>6):
+				dias+=1
+				horas=0
+			tarifaDia = vehiculo.tarifa
+			totalPorDias = dias*tarifaDia
+			tarifaHora = math.floor(tarifaDia/24)
+			totalPorHoras = horas*tarifaHora
 			tarifaDia = vehiculo.tarifa
 			limiteKilometraje = vehiculo.limiteKilometraje
-			diferencia =  fechaFin-fechaIni
+			total=totalPorDias+totalPorHoras
+
+			#formateo resultados
+			tarifaDia = intWithCommas(tarifaDia)
+			tarifaHora = intWithCommas(tarifaHora)
+			totalPorDias = intWithCommas(totalPorDias)
+			totalPorHoras = intWithCommas(totalPorHoras)
+			total= intWithCommas(total)
 			cotizado=True
 
 		except:
@@ -295,6 +325,18 @@ def cotizarControl(request):
 		except:
 			pass
 		return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
+
+def intWithCommas(x):
+	try:
+	    if x < 0:
+	        return '-' + intWithCommas(-x)
+	    result = ''
+	    while x >= 1000:
+	        x, r = divmod(x, 1000)
+	        result = ".%03d%s" % (r, result)
+	    return "%d%s" % (x, result)
+	except:
+		return x
 
 def agregarVehiculoControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:

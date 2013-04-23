@@ -2,12 +2,12 @@
 {% block titulo %}Cotizar{% endblock %}
 {% block contenido %}
 	<div class="container">
-		{% if errorPlaca or errorFecha %}
+		{% if errorPlaca or errorFechas %}
 			{% if errorPlaca %}
 				<p class="text-error">Por favor ingrese una placa correcta.</p>
 			{% endif %}
-			{% if errorFecha %}
-				<p class="text-error">La fecha de inicio debe ser menor a la de fin.</p>
+			{% if errorFechas %}
+				<p class="text-error">La fecha de inicio debe ser menor a la de fin y debe ser mayor a la fecha actual.</p>
 			{% endif %}
 		{% endif %}
 		<form method="POST" action="/cotizar/" name="verMantenimiento">
@@ -17,18 +17,27 @@
 					<th>Placa</th>
 					<th>Fecha Inicio</th>
 					<th>Fecha Fin</th>
+					<th>Hora Inicio</th>
+					<th>Hora Fin</th>
 				</thead>
 				<tbody>
 					<tr>
 						<td>
-							<input type="text" name="placa" value="{{placa}}" pattern="[A-Z]{3}[0-9]{3}">
+							<input type="text" name="placa" required="true" value="{{placa}}" pattern="[A-Z]{3}[0-9]{3}">
 						</td>
 						<td>
-							<input type="date" name="fechaIni" value="{{fechaIni}}">
+							<input type="date" name="fechaIni" required="true" value="{{fechaIni}}">
 						</td>
 						<td>
-							<input type="date" name="fechaFin" value="{{fechaFin}}">
+							<input type="date" name="fechaFin" required="true" value="{{fechaFin}}">
 						</td>
+						<td>
+							<input type="time" name="horaIni" required="true" value="{{horaIni}}">
+						</td>
+						<td>
+							<input type="time" name="horaFin" required="true" value="{{horaFin}}">
+						</td>
+
 					</tr>
 				</tbody>
 			</table>
@@ -36,10 +45,48 @@
         </form>
         {% if cotizado %}
         	<p>
-            	Datos de cotización:
-            	Tarifa por día: {{tarifaDia}} <br>
-            	Límite de kilometraje: {{limiteKilometraje}} <br>
-            	Diferencia de días: {{diferencia}} <br>
+        		<table class="table-bordered table-striped table-hover">
+        			<tr>
+        				<td>Total días</td>
+        				<td>{{diasReal}}</td>
+        			</tr>
+        			<tr>
+        				<td>Total Horas</td>
+        				<td>{{horasReal}}</td>
+        			</tr>
+        			<tr>
+        				<td>Total días a cobrar</td>
+        				<td>{{dias}}</td>
+        			</tr>
+        			<tr>
+        				<td>Total horas a cobrar</td>
+        				<td>{{horas}}</td>
+        			</tr>
+        			<tr>
+        				<td>Tarifa día</td>
+        				<td class="number">{{tarifaDia}}</td>
+        			</tr>
+        			<tr>
+        				<td>Limite de kms por día</td>
+        				<td>{{limiteKilometraje}}</td>
+        			</tr>
+        			<tr>
+        				<td>Tarifa hora</td>
+        				<td>{{tarifaHora}}</td>
+        			</tr>
+        			<tr>
+        				<td>Total Por días</td>
+        				<td>{{totalPorDias}}</td>
+        			</tr>
+        			<tr>
+        				<td>Total Por Horas</td>
+        				<td>{{totalPorHoras}}</td>
+        			</tr>
+        			<tr>
+        				<td><strong>Total</strong></td>
+        				<td><strong>{{total}}</strong></td>
+        			</tr>
+        		</table>
             </p>
 		{% endif %}
 	</div>
