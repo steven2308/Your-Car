@@ -263,39 +263,6 @@ def modificarVehiculoControl(request):
 			HttpResponseRedirect('/vehiculos')
 	return HttpResponseRedirect('/')
 
-def cotizarControl(request):
-	if request.method == 'POST':
-		try:
-			#Tomo datos
-			placa=request.POST["placa"].upper()
-			vehiculo = Vehiculo.objects.get(placa=placa)
-			fechaIni = request.POST["fechaIni"]
-			fechaFin = request.POST["fechaFin"]
-
-			#Hago validaciones
-			errorPlaca = not Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa)
-			errorFechas = fechaFin<=fechaIni
-			#Si hay errores vuelvo al formulario y los informo
-			if (errorPlaca or errorFechas):
-				return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
-
-			#Calculos
-			tarifaDia = vehiculo.tarifa
-			limiteKilometraje = vehiculo.limiteKilometraje
-			diferencia =  fechaFin-fechaIni
-			cotizado=True
-
-		except:
-			pass
-		return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
-	#Sino es post cargo el formulario
-	else:
-		try:
-			placa=request.GET["placaActual"]
-		except:
-			pass
-		return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
-
 def agregarVehiculoControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:
 		#Cargo datos parametrizables
@@ -379,6 +346,51 @@ def agregarVehiculoControl(request):
 			return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
+
+def eliminarVehiculoControl(request):
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+		try:
+			placa=request.POST["placa"]
+			vehiculo = Vehiculo.objects.get(placa=placa)
+			vehiculo.delete()
+		except:
+			pass
+		return HttpResponseRedirect('/vehiculos')
+	else:
+		return HttpResponseRedirect('/404')
+
+def cotizarControl(request):
+	if request.method == 'POST':
+		try:
+			#Tomo datos
+			placa=request.POST["placa"].upper()
+			vehiculo = Vehiculo.objects.get(placa=placa)
+			fechaIni = request.POST["fechaIni"]
+			fechaFin = request.POST["fechaFin"]
+
+			#Hago validaciones
+			errorPlaca = not Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa)
+			errorFechas = fechaFin<=fechaIni
+			#Si hay errores vuelvo al formulario y los informo
+			if (errorPlaca or errorFechas):
+				return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
+
+			#Calculos
+			tarifaDia = vehiculo.tarifa
+			limiteKilometraje = vehiculo.limiteKilometraje
+			diferencia =  fechaFin-fechaIni
+			cotizado=True
+
+		except:
+			pass
+		return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
+	#Sino es post cargo el formulario
+	else:
+		try:
+			placa=request.GET["placaActual"]
+		except:
+			pass
+		return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 
 def estadisticasControl(request):
 	#Logica de control

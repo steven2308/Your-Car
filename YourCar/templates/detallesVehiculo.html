@@ -22,6 +22,11 @@
                     <input name="placa" value="{{vehiculo.placa}}" type="text" pattern="[A-Z]{3}[0-9]{3}">
                     <input type="submit" value="Modificar" name="modificar"/>
                 </form>
+                <form method="POST" action="/vehiculos/eliminar/" name="modificarVehiculo">
+                    {% csrf_token %}
+                    <input name="placa" value="{{vehiculo.placa}}" type="text" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Eliminar" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+                </form>
                 <table class="table-bordered table-striped table-hover">
                     <tbody>
                         <tr>
