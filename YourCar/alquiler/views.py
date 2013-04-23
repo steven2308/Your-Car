@@ -248,22 +248,6 @@ def eliminarHistorialMantenimientoControl(request):
 	else:
 		return HttpResponseRedirect('/404')
 
-def modificarVehiculoControl(request):
-	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
-		cajasDeCambios=parametros["cajasDeCambios"]
-		tipoDeDirecciones=parametros["tipoDeDirecciones"]
-		estadosVehiculo=parametros["estadosVehiculo"]
-		tiposTraccion=parametros["tiposTraccion"]
-		tiposDeFrenos=parametros["tiposDeFrenos"]
-		gamas=parametros["gamas"]
-		try:
-			placa=request.POST["placa"].upper()
-			vehiculo = Vehiculo.objects.get(placa=placa)
-			return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
-		except:
-			HttpResponseRedirect('/vehiculos')
-	return HttpResponseRedirect('/')
-
 def cotizarControl(request):
 	if request.method == 'POST':
 		try:
@@ -419,6 +403,34 @@ def agregarVehiculoControl(request):
 			return HttpResponseRedirect('/vehiculos')
 		else:
 			return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')
+
+def modificarVehiculoControl(request):
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+		cajasDeCambios=parametros["cajasDeCambios"]
+		tipoDeDirecciones=parametros["tipoDeDirecciones"]
+		estadosVehiculo=parametros["estadosVehiculo"]
+		tiposTraccion=parametros["tiposTraccion"]
+		tiposDeFrenos=parametros["tiposDeFrenos"]
+		gamas=parametros["gamas"]
+		try:
+			placa=request.POST["placa"].upper()
+			vehiculo = Vehiculo.objects.get(placa=placa)
+			return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
+		except:
+			HttpResponseRedirect('/vehiculos')
+	return HttpResponseRedirect('/')
+
+def eliminarVehiculoControl(request):
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+		try:
+			placa=request.POST["placa"]
+			vehiculo = Vehiculo.objects.get(placa=placa)
+			vehiculo.delete()
+		except:
+			pass
+		return HttpResponseRedirect('/vehiculos')
 	else:
 		return HttpResponseRedirect('/404')
 
