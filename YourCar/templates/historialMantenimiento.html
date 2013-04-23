@@ -5,7 +5,7 @@
 		<form method="POST" action="/vehiculos/historialMantenimiento/" name="verMantenimiento">
             {% csrf_token %}
             <label>Ingresa la placa del vehículo que quieres ver:</label>
-            <input name="placa" type="text" value="{{placa}}" pattern="[A-Z]{3}[0-9]{3}">
+            <input name="placa" type="text" value="{{placa}}" pattern="[A-Z]{3}[0-9]{3}" required="true">
             <input type="submit" value="Buscar Vehiculo" name="buscarVehiculo"/>
         </form>
         {% if  vehiculoCargado%}
@@ -19,6 +19,7 @@
     			<input name="idMantenimiento" type="text" required="true" pattern="[0-9]{1,3}" ><br>
                 <input type="submit" value="Eliminar Mantenimiento" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
             </form>
+        {% endif %}
         	<table class="table-bordered table-striped table-hover">
         		<thead>
         			<th>IdMantenimiento</th>
@@ -26,6 +27,7 @@
     				<th>Descripcion</th>
                     <th>Costo</th>
     				<th>Tipo</th>
+                    <th>Vehículo</th>
         		</thead>
         		<tbody>
         			{% for m in mantenimientos %}
@@ -35,15 +37,12 @@
         					<td>{{m.descripcion}}</td>
                             <td>{{m.costo}}</td>
         					<td>{{m.tipo}}</td>
+                            <td>{{m.idVehiculo}}</td>
         				</tr>
         			{% endfor %}
         		</tbody>
         	</table>
-        {% endif %}
-
 	</div>
 	<div class="container">
-
-
 	</div>
 {% endblock %}

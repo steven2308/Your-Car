@@ -1,7 +1,7 @@
 {%extends "base.html"%}
 {% block titulo %}Registro{% endblock %}
-{% block contenido %}	
-	{%if errorUser or errorContrasena or errorEmail or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios%}	
+{% block contenido %}
+	{%if errorUser or errorContrasena or errorEmail or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios%}
 	<div class="container">
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
@@ -44,20 +44,20 @@
 			{% csrf_token %}
 			<div class="container">
 				<p>Ya estás registrado y logueado como {{nombreUsuario}}, para crear un nuevo usuario debes cerrar sesión primero</p>
-		        <label>Cerrar sesión:</label>        
+		        <label>Cerrar sesión:</label>
 		        <input type="submit" value="Log out" name="logout"/>
-		    </div>		    
+		    </div>
 		</form>
 	{%else %}
 		<form method="POST" action="/registro/" name="registro">
-			{% csrf_token %}			
+			{% csrf_token %}
 			<div class="container">
 			<h3>Ingresa tus datos</hs3>
 			<table class="table-bordered table-striped table-hover">
 				<tbody>
 					<tr>
 				        <td><label>Nombre de usuario:</label></td>
-				        <td><input type="text" name="nombreUsuario" required="true" pattern="[a-zA-z0-9_]{8,20}"/>*</td>
+				        <td><input type="text" name="nombreUsuario" required="true" pattern="[a-zA-z0-9_]{8,20}" value="{{nombreUsuario}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Contraseña:</label></td>
@@ -69,42 +69,42 @@
 				    </tr>
 				    <tr>
 				        <td><label>Email:</label></td>
-				        <td><input type="email" name="email" required="true"/>*</td>
+				        <td><input type="email" name="email" required="true" value="{{email}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Nombres:</label></td>
-				        <td><input type="text" name="nombre" required="true"/>*</td>
+				        <td><input type="text" name="nombres" required="true" value="{{nombres}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Apellidos:</label></td>
-				        <td><input type="text" name="apellido" required="true"/>*</td>
+				        <td><input type="text" name="apellidos" required="true" value="{{apellidos}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Fecha de nacimiento:</label></td>
-				        <td><input type="date" name="fechaNacimiento" required="true"/>*</td>
+				        <td><input type="date" name="fechaNacimiento" required="true" value="{{fechaNacimiento}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Telefono fijo:</label></td>
-				        <td><input type="text" name="telFijo" required="true" pattern="[0-9]{7,12}"/>*</td>
+				        <td><input type="text" name="telFijo" required="true" pattern="[0-9]{7,12}" value="{{telFijo}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Telefono celular:</label></td>
-				        <td><input type="text" name="telCelular" required="true" pattern="[0-9]{10,12}"/>*</td>
+				        <td><input type="text" name="telCelular" required="true" pattern="[0-9]{10,12}" value="{{telCelular}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Género:</label></td>
 				        <td>
-				        	<select name="genero">
+				        	<select name="genero" value="{{genero}}">
 				        		{% for g in  generos%}
 				        			<option>{{g}}</option>
-				        		{% endfor %}					        	
+				        		{% endfor %}
 				        	</select>
 				    	</td>
 				    </tr>
 				    <tr>
 				        <td><label>Tipo de persona:</label></td>
 				        <td>
-				        	<select name="tipoPersona" required="true"/>
+				        	<select name="tipoPersona" required="true" value="{{tipoPersona}}"/>
 				        		{% for p in  tipoPersonas%}
 				        			<option>{{p}}</option>
 				        		{% endfor %}
@@ -114,7 +114,7 @@
 				    <tr>
 				        <td><label>Tipo de Documento:</label></td>
 				        <td>
-				        	<select name="tipoDocumento" required="true">
+				        	<select name="tipoDocumento" required="true" value="{{tipoDocumento}}">
 				        		{% for d in  tipoDocumentos%}
 				        			<option>{{d}}</option>
 				        		{% endfor %}
@@ -123,42 +123,42 @@
 				    </tr>
 				    <tr>
 				        <td><label>Número de documento:</label></td>
-				        <td><input type="text" name="numDocumento" required="true" pattern="[a-zA-z0-9_-]{6,20}"/>*</td>
+				        <td><input type="text" name="numDocumento" required="true" pattern="[a-zA-z0-9_-]{6,20}" value="{{numDocumento}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Pais de residencia:</label></td>
-				        <td><input type="text" name="paisResidencia" required="true"/>*</td>
+				        <td><input type="text" name="paisResidencia" required="true" value="{{paisResidencia}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Ciudad de residencia:</label></td>
-				        <td><input type="text" name="ciudadResidencia" required="true"/>*</td>
+				        <td><input type="text" name="ciudadResidencia" required="true" value="{{ciudadResidencia}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Dirección de residencia:</label></td>
-				        <td><input type="text" name="dirResidencia" required="true"/>*</td>
-				    </tr>				    					
+				        <td><input type="text" name="dirResidencia" required="true" value="{{dirResidencia}}"/>*</td>
+				    </tr>
 					<tr>
 						<th>Datos persona de contacto:</th>
 					</tr>
 					<tr>
 				        <td><label>Nombre:</label></td>
-				        <td><input type="text" name="nombrePersonaContacto"/></td>
+				        <td><input type="text" name="nombrePersonaContacto" value="{{nombrePersonaContacto}}"/></td>
 				    </tr>
 				    <tr>
 				        <td><label>Teléfono:</label></td>
 				        <td><input type="text" name="telContacto" pattern="[0-9]{7,12}"/></td>
-				    </tr>		
+				    </tr>
 				    <tr>
 				        <td><label>Dirección:</label></td>
 				        <td><input type="text" name="direccionContacto"/></td>
-				    </tr>		    
+				    </tr>
 				    <tr>
 				        <td><input type="submit" value="Regístrate" name="registrar"/>
 				    </tr>
-				</tbody>			
+				</tbody>
 			</table>
-			<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>						
-			</div>		
+			<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
+			</div>
 		</form>
 	{%endif %}
 {% endblock %}

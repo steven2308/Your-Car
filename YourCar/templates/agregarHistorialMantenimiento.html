@@ -31,24 +31,24 @@
                 <tbody>
                     <tr>
                         <td><label>Placa:</label></td>
-                        <td><input type="text" name="placa" value="{{placa}}" required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
+                        <td><input type="text" name="placa" required="true" pattern="[A-Z]{3}[0-9]{3}" value="{{placa}}"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Fecha:</label></td>
-                        <td><input type="date" name="fecha" required="true"/>*</td>
+                        <td><input type="date" name="fecha" required="true" value="{{fecja}}"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Descripcion:</label></td>
-                        <td><input type="text" name="descripcion"/></td>
+                        <td><input type="text" name="descripcion" value="{{descripcion}}"/></td>
                     </tr>
                     <tr>
                         <td><label>Costo:</label>*</td>
-                        <td><input type="text" name="costo" required="true" pattern="[0-9]{3,10}"/>*</td>
+                        <td><input type="text" name="costo" required="true" pattern="[0-9]{3,10}" value="{{costo}}"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Tipo:</label>*</td>
                         <td>
-                            <select name="tipo" required="true">
+                            <select name="tipo" required="true" value="{{tipo}}">
                                 {% for t in  tipos%}
                                     <option>{{t}}</option>
                                 {% endfor %}

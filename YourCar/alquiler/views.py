@@ -3,13 +3,18 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
-from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento
+from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 import re, math
 from datetime import datetime
 
-#Verificar que fecha es fecha, que poner en contrasena
+#Correcciones:
+#Verificar que fecha es fecha
+#Visualizar voucher
+#Ver listado de historial de mantenimiento
+#Traer fechas en modificar
+#agregar foto
 
 def inicioControl(request):
 	conectado=False
@@ -29,10 +34,9 @@ def registroControl(request):
 		tipoDocumentos=parametros["tipoDocumentos"]
 		tipoPersonas=parametros["tipoPersonas"]
 		if request.method == 'POST':
-			#Tomo el nombre de usuario y el email
+			#Tomo los datos
 			nombreUsuario=request.POST["nombreUsuario"]
 			email=request.POST["email"]
-			#Tomo el resto de los datos
 			fechaNacimiento = request.POST['fechaNacimiento']
 			telFijo = request.POST['telFijo']
 			telCelular = request.POST['telCelular']
@@ -69,8 +73,8 @@ def registroControl(request):
 
 			#Guardo el usuario
 			usuario = User.objects.create_user(username=nombreUsuario, email=email, password=request.POST["contrasena"])
-			usuario.first_name = request.POST['nombre']
-			usuario.last_name = request.POST['apellido']
+			usuario.first_name = request.POST['nombres']
+			usuario.last_name = request.POST['apellidos']
 			usuario.save()
 
 			#Guardo el cliente de alquiler
@@ -180,11 +184,12 @@ def historialMantenimientoControl(request):
 				vehiculo = Vehiculo.objects.get(placa=placa)
 				mantenimientos = Mantenimiento.objects.filter(idVehiculo=vehiculo)
 				vehiculoCargado = True
-				#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
 				return render_to_response('historialMantenimiento.html',locals(), context_instance = RequestContext(request))
 			except:
-				HttpResponseRedirect('/vehiculos/historialMantenimiento')
-		return render_to_response('historialMantenimiento.html',locals(), context_instance = RequestContext(request))
+				return HttpResponseRedirect('/vehiculos/historialMantenimiento')
+		else:
+			mantenimientos = Mantenimiento.objects.all()
+			return render_to_response('historialMantenimiento.html',locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
 
@@ -448,9 +453,44 @@ def alertasControl(request):
 	onlyLogged=True
 	return render_to_response ('noAutorizado.html',locals(),context_instance=RequestContext(request))
 
+def agregarVoucherControl(request):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			#Tomo los datos
+			codigoAutorizacion=request.POST["codigoAutorizacion"]
+			idCliente=request.POST["idCliente"]
+			montoVoucher = request.POST['montoVoucher']
+			numTarjetaCredito = request.POST['numTarjetaCredito']
+			fechaVencTarjeta = request.POST['fechaVencTarjeta']
+			codigoVerifTarjeta = request.POST['codigoVerifTarjeta']
+			nombreBanco = request.POST['nombreBanco']
+
+			#Valido errores
+			errorcodigoAutorizacion =(Voucher.objects.filter(codigoAutorizacion=codigoAutorizacion)) #Or pattern?
+			erroridCliente=False
+			try:
+				cliente=ClienteAlquiler.objects.get(numDocumento=idCliente)
+			except:
+				erroridCliente = True
+			errormontoVoucher = (not re.match(r"^[0-9]{4,8}$", montoVoucher))
+			errornumTarjetaCredito  = False #or pattern?
+			errorcodigoVerifTarjeta = False #or pattern?
+			errorCamposVacios = (len(codigoAutorizacion)==0 or len(numTarjetaCredito)==0 or len(codigoVerifTarjeta)==0 or len(nombreBanco)==0)
+
+			if (errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorCamposVacios):
+				return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
+
+			#Guardo el voucher
+			voucher = Voucher(codigoAutorizacion= codigoAutorizacion,idCliente = cliente,montoVoucher = montoVoucher,numTarjetaCredito = numTarjetaCredito,fechaVencTarjeta = fechaVencTarjeta,codigoVerifTarjeta = codigoVerifTarjeta,nombreBanco = nombreBanco)
+			voucher.save()
+			exito=True
+			return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
+		else:
+			return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
+
 def voucherControl(request):
-	#Logica de control
-	return render_to_response('voucher.html',locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
 
 def reservasControl(request):
 	#Logica de control
