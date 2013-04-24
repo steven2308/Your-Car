@@ -3,12 +3,16 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
-from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento
+from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
-import re
+import re, math
+from datetime import datetime
 
-#Verificar que fecha es fecha, que poner en contrasena
+#Correcciones:
+#Verificar que fecha es fecha (opcional)
+#Traer fechas en modificar
+#agregar foto
 
 def inicioControl(request):
 	conectado=False
@@ -28,10 +32,9 @@ def registroControl(request):
 		tipoDocumentos=parametros["tipoDocumentos"]
 		tipoPersonas=parametros["tipoPersonas"]
 		if request.method == 'POST':
-			#Tomo el nombre de usuario y el email
+			#Tomo los datos
 			nombreUsuario=request.POST["nombreUsuario"]
 			email=request.POST["email"]
-			#Tomo el resto de los datos
 			fechaNacimiento = request.POST['fechaNacimiento']
 			telFijo = request.POST['telFijo']
 			telCelular = request.POST['telCelular']
@@ -68,8 +71,8 @@ def registroControl(request):
 
 			#Guardo el usuario
 			usuario = User.objects.create_user(username=nombreUsuario, email=email, password=request.POST["contrasena"])
-			usuario.first_name = request.POST['nombre']
-			usuario.last_name = request.POST['apellido']
+			usuario.first_name = request.POST['nombres']
+			usuario.last_name = request.POST['apellidos']
 			usuario.save()
 
 			#Guardo el cliente de alquiler
@@ -166,9 +169,9 @@ def detallesVehiculoControl(request):
 			placa=request.POST["placa"].upper()
 			vehiculo = Vehiculo.objects.get(placa=placa)
 			is_staff = request.user.is_staff
+			return render_to_response('detallesVehiculo.html',locals(), context_instance = RequestContext(request))
 		except:
-			pass
-		return render_to_response('detallesVehiculo.html',locals(), context_instance = RequestContext(request))
+			return HttpResponseRedirect('/vehiculos')
 	return HttpResponseRedirect('/vehiculos')
 
 def historialMantenimientoControl(request):
@@ -179,11 +182,12 @@ def historialMantenimientoControl(request):
 				vehiculo = Vehiculo.objects.get(placa=placa)
 				mantenimientos = Mantenimiento.objects.filter(idVehiculo=vehiculo)
 				vehiculoCargado = True
-				#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
 				return render_to_response('historialMantenimiento.html',locals(), context_instance = RequestContext(request))
 			except:
-				HttpResponseRedirect('/vehiculos/historialMantenimiento')
-		return render_to_response('historialMantenimiento.html',locals(), context_instance = RequestContext(request))
+				return HttpResponseRedirect('/vehiculos/historialMantenimiento')
+		else:
+			mantenimientos = Mantenimiento.objects.all()
+			return render_to_response('historialMantenimiento.html',locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
 
@@ -247,37 +251,57 @@ def eliminarHistorialMantenimientoControl(request):
 	else:
 		return HttpResponseRedirect('/404')
 
-def modificarVehiculoControl(request):
-	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
-		cajasDeCambios=parametros["cajasDeCambios"]
-		tipoDeDirecciones=parametros["tipoDeDirecciones"]
-		estadosVehiculo=parametros["estadosVehiculo"]
-		tiposTraccion=parametros["tiposTraccion"]
-		tiposDeFrenos=parametros["tiposDeFrenos"]
-		gamas=parametros["gamas"]
-		try:
-			placa=request.POST["placa"].upper()
-			vehiculo = Vehiculo.objects.get(placa=placa)
-			return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
-		except:
-			HttpResponseRedirect('/vehiculos')
-	return HttpResponseRedirect('/')
-
 def cotizarControl(request):
 	if request.method == 'POST':
 		try:
 			#Tomo datos
 			placa=request.POST["placa"].upper()
 			vehiculo = Vehiculo.objects.get(placa=placa)
-			fechaIni = request.POST["fechaFin"]
+			fechaIni = request.POST["fechaIni"]
 			fechaFin = request.POST["fechaFin"]
+			horaIni = request.POST["horaIni"]
+			horaFin = request.POST["horaFin"]
+
+			#Calculo dias y diferencia
+			dtIni = datetime.strptime(fechaIni+" "+horaIni, '%Y-%m-%d %H:%M')
+			dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
+			diferencia =  dtFin-dtIni
+
 			#Hago validaciones
 			errorPlaca = not Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa)
-			#errorFechas = tipo not in tipos
+			errorFechas = dtIni > dtFin or datetime.now()> dtIni
 			#Si hay errores vuelvo al formulario y los informo
 			if (errorPlaca or errorFechas):
 				return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
+
 			#Calculos
+			diasReal = diferencia.days
+			dias = diasReal
+			segs  = diferencia.seconds
+			horasReal = math.floor(segs/3600)
+			horas=horasReal
+			mins = (segs%3600)/60
+			if mins>=30:
+				horas+=1
+			if(horas>6):
+				dias+=1
+				horas=0
+			tarifaDia = vehiculo.tarifa
+			totalPorDias = dias*tarifaDia
+			tarifaHora = math.floor(tarifaDia/24)
+			totalPorHoras = horas*tarifaHora
+			tarifaDia = vehiculo.tarifa
+			limiteKilometraje = vehiculo.limiteKilometraje
+			total=totalPorDias+totalPorHoras
+
+			#formateo resultados
+			tarifaDia = intWithCommas(tarifaDia)
+			tarifaHora = intWithCommas(tarifaHora)
+			totalPorDias = intWithCommas(totalPorDias)
+			totalPorHoras = intWithCommas(totalPorHoras)
+			total= intWithCommas(total)
+			cotizado=True
+
 		except:
 			pass
 		return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
@@ -288,6 +312,18 @@ def cotizarControl(request):
 		except:
 			pass
 		return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
+
+def intWithCommas(x):
+	try:
+	    if x < 0:
+	        return '-' + intWithCommas(-x)
+	    result = ''
+	    while x >= 1000:
+	        x, r = divmod(x, 1000)
+	        result = ".%03d%s" % (r, result)
+	    return "%d%s" % (x, result)
+	except:
+		return x
 
 def agregarVehiculoControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:
@@ -318,7 +354,7 @@ def agregarVehiculoControl(request):
 			fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
 			fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
 			foto = request.POST["foto"]
-			modificar = request.POST["modificar"]
+			modificar = ""
 			#inicializo datos opcionales
 			tipoDeFrenos = ""
 			airbags = "0"
@@ -336,7 +372,11 @@ def agregarVehiculoControl(request):
 			if request.POST['modelo']: modelo = request.POST['modelo']
 			if request.POST['valorGarantia']: valorGarantia = request.POST['valorGarantia']
 			if request.POST['kilometraje']: kilometraje = request.POST['kilometraje']
-
+			#verifico si estoy modificando
+			try:
+				modificar = request.POST["modificar"]
+			except:
+				pass
 			#Control de errores
 			if modificar:
 				errorPlaca = not re.match("^([A-Z]{3}[0-9]{3})$",placa)
@@ -353,7 +393,7 @@ def agregarVehiculoControl(request):
 			errorEstado = (estado not in parametros["estadosVehiculo"])
 			errorTipoDeDireccion = (tipoDeDireccion not in parametros["tipoDeDirecciones"])
 			errorTipoDeTraccion = (tipoDeTraccion not in parametros["tiposTraccion"])
-			errorFoto = foto == null
+			errorFoto = not foto
 			errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
 
 			#manejo de errores
@@ -366,6 +406,34 @@ def agregarVehiculoControl(request):
 			return HttpResponseRedirect('/vehiculos')
 		else:
 			return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')
+
+def modificarVehiculoControl(request):
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+		cajasDeCambios=parametros["cajasDeCambios"]
+		tipoDeDirecciones=parametros["tipoDeDirecciones"]
+		estadosVehiculo=parametros["estadosVehiculo"]
+		tiposTraccion=parametros["tiposTraccion"]
+		tiposDeFrenos=parametros["tiposDeFrenos"]
+		gamas=parametros["gamas"]
+		try:
+			placa=request.POST["placa"].upper()
+			vehiculo = Vehiculo.objects.get(placa=placa)
+			return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
+		except:
+			HttpResponseRedirect('/vehiculos')
+	return HttpResponseRedirect('/')
+
+def eliminarVehiculoControl(request):
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+		try:
+			placa=request.POST["placa"]
+			vehiculo = Vehiculo.objects.get(placa=placa)
+			vehiculo.delete()
+		except:
+			pass
+		return HttpResponseRedirect('/vehiculos')
 	else:
 		return HttpResponseRedirect('/404')
 
@@ -383,9 +451,85 @@ def alertasControl(request):
 	onlyLogged=True
 	return render_to_response ('noAutorizado.html',locals(),context_instance=RequestContext(request))
 
+def agregarVoucherControl(request):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			#Tomo los datos
+			codigoAutorizacion=request.POST["codigoAutorizacion"]
+			idCliente=request.POST["idCliente"]
+			montoVoucher = request.POST['montoVoucher']
+			numTarjetaCredito = request.POST['numTarjetaCredito']
+			fechaVencTarjeta = request.POST['fechaVencTarjeta']
+			codigoVerifTarjeta = request.POST['codigoVerifTarjeta']
+			nombreBanco = request.POST['nombreBanco']
+
+			#Valido errores
+			errorcodigoAutorizacion =(Voucher.objects.filter(codigoAutorizacion=codigoAutorizacion)) #Or pattern?
+			erroridCliente=False
+			try:
+				cliente=ClienteAlquiler.objects.get(numDocumento=idCliente)
+			except:
+				erroridCliente = True
+			errormontoVoucher = (not re.match(r"^[0-9]{4,8}$", montoVoucher))
+			errornumTarjetaCredito  = False #or pattern?
+			errorcodigoVerifTarjeta = False #or pattern?
+			errorCamposVacios = (len(codigoAutorizacion)==0 or len(numTarjetaCredito)==0 or len(codigoVerifTarjeta)==0 or len(nombreBanco)==0)
+
+			if (errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorCamposVacios):
+				return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
+
+			#Guardo el voucher
+			voucher = Voucher(codigoAutorizacion= codigoAutorizacion,idCliente = cliente,montoVoucher = montoVoucher,numTarjetaCredito = numTarjetaCredito,fechaVencTarjeta = fechaVencTarjeta,codigoVerifTarjeta = codigoVerifTarjeta,nombreBanco = nombreBanco)
+			voucher.save()
+			exito=True
+			return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
+		else:
+			return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
+
 def voucherControl(request):
-	#Logica de control
-	return render_to_response('voucher.html',locals(), context_instance = RequestContext(request))
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			try:
+				busqueda = request.POST["busqueda"]
+				buscarPor= request.POST["buscarPor"]
+				query={}
+				#Identifico por que parametro voy a buscar el voucher y lo agrego al diccionario de queries
+				if buscarPor == "codigoAutorizacion":
+					query["codigoAutorizacion__iexact"] = busqueda
+				elif buscarPor == "idCliente":
+					#cliente = ClienteAlquiler.objects.get(numDocumento=busqueda)
+					query["idCliente__iexact"] = busqueda
+				elif buscarPor == "numTarjetaCredito":
+					query["numTarjetaCredito__iexact"] = busqueda
+				if query:
+					vouchers = Voucher.objects.filter(**query)
+					voucherCargado = True
+				else:
+					vouchers = Voucher.objects.all()
+				return render_to_response('voucher.html',locals(), context_instance = RequestContext(request))
+			except:
+				enExcept=True
+				return render_to_response('verVoucher.html',locals(), context_instance = RequestContext(request))
+				#return HttpResponseRedirect('/voucher/')
+		else:
+			noEsPost=True
+			vouchers = Voucher.objects.all()
+			return render_to_response('verVoucher.html',locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')
+
+def eliminarVoucherControl(request):
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+		try:
+			codigoAutorizacion=request.POST["codigoAutorizacion"]
+			voucher = Voucher.objects.get(codigoAutorizacion=codigoAutorizacion)
+			voucher.delete()
+		except:
+			pass
+		return HttpResponseRedirect('/voucher')
+	else:
+		return HttpResponseRedirect('/404')
 
 def reservasControl(request):
 	#Logica de control

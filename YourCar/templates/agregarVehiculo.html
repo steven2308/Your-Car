@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar un Vehículo{% endblock %}
 {% block contenido %}
-	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh %}	
+	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh %}
 		<div class="container">
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
@@ -48,151 +48,151 @@
 	</div>
 	{%else %}
 		<form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo">
-				{% csrf_token %}			
+				{% csrf_token %}
 				<div class="container">
 				<h3>Ingrese los datos del vehiculo.</hs3>
 				<table class="table-bordered table-striped table-hover">
 					<tbody>
 						<tr>
 					        <td><label>Placa:</label></td>
-					        <td><input type="text" name="placa" required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
+					        <td><input type="text" name="placa" required="true" pattern="[A-Z]{3}[0-9]{3}" value="{{placa}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Marca:</label></td>
-					        <td><input type="text" name="marca" required="true"/>*</td>
+					        <td><input type="text" name="marca" required="true" value="{{marca}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Referencia:</label></td>
-					        <td><input type="text" name="referencia" required="true"/>*</td>
+					        <td><input type="text" name="referencia" required="true" value="{{referencia}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Gama:</label></td>
 					        <td>
-					        	<select name="gama" required="true">
+					        	<select name="gama" required="true" value="{{gama}}">
 					        		{% for ga in  gamas%}
 					        			<option>{{ga}}</option>
-					        		{% endfor %}					        	
+					        		{% endfor %}
 					        	</select>*
 					    	</td>
 					    </tr>
 					    <tr>
 					        <td><label>Descripcion Basica:</label></td>
-					        <td><input type="text" name="descripcionBasica" required="true"/>*</td>
+					        <td><input type="text" name="descripcionBasica" required="true" value="{{descripcionBasica}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Tipo de Frenos:</label></td>
 					        <td>
-					        	<select name="tipoDeFrenos">
+					        	<select name="tipoDeFrenos" value="{{tipoDeFrenos}}">
 					        		{% for tf in  tiposDeFrenos%}
 					        			<option>{{tf}}</option>
-					        		{% endfor %}					        	
+					        		{% endfor %}
 					        	</select>
 					    	</td>
 					    </tr>
 					    <tr>
-					        <td><label>Numero de Pasajeros:</label></td>
-					        <td><input type="text" name="numDePasajeros" required="true" pattern="[0-9]{1,2}"/>*</td>
+					        <td><label>Número de Pasajeros:</label></td>
+					        <td><input type="text" name="numDePasajeros" required="true" pattern="[0-9]{1,2}" value="{{numDePasajeros}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Cilindraje:</label></td>
-					        <td><input type="text" name="cilindraje" required="true"/>*</td>
+					        <td><input type="text" name="cilindraje" required="true" value="{{cilindraje}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Color:</label></td>
-					        <td><input type="text" name="color" required="true"/>*</td>
+					        <td><input type="text" name="color" required="true" value="{{color}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Caja de Cambios:</label></td>
 					        <td>
-					        	<select name="cajaDeCambios" required="true">
+					        	<select name="cajaDeCambios" required="true" value="{{cajaDeCambios}}">
 					        		{% for c in  cajasDeCambios%}
 					        			<option>{{c}}</option>
-					        		{% endfor %}					        	
+					        		{% endfor %}
 					        	</select>*
 					    	</td>
 					    </tr>
 					    <tr>
 					        <td><label>Airbags:</label></td>
-					        <td><input type="text" name="airbags" pat esttern="[0-9]{1,2}"/></td>
+					        <td><input type="text" name="airbags" pat esttern="[0-9]{1,2}" value="{{airbags}}"/></td>
 					    </tr>
 					    <tr>
 					        <td><label>Tipo de Direccion:</label></td>
 					        <td>
-					        	<select name="tipoDeDireccion">
+					        	<select name="tipoDeDireccion" value="{{tipoDeDireccion}}">
 					        		{% for td in  tipoDeDirecciones%}
 					        			<option>{{td}}</option>
-					        		{% endfor %}					        	
+					        		{% endfor %}
 					        	</select>
 					    	</td>
 					    </tr>
 					    <tr>
 					        <td><label>Tipo de Traccion:</label></td>
 					        <td>
-					        	<select name="tipoDeTraccion">
+					        	<select name="tipoDeTraccion" value="{{tipoDeTraccion}}">
 					        		{% for tr in  tiposTraccion%}
 					        			<option>{{tr}}</option>
-					        		{% endfor %}					        	
+					        		{% endfor %}
 					        	</select>
 					    	</td>
 					    </tr>
 				    <tr>
 				        <td><label>Modelo:</label></td>
-				        <td><input type="text" name="modelo" pattern="[0-9]{4}"/></td>
+				        <td><input type="text" name="modelo" pattern="[0-9]{4}" value="{{modelo}}"/></td>
 				    </tr>
 				    <tr>
 				        <td><label>Valor de la Garantia:</label></td>
-				        <td><input type="text" name="valorGarantia" pattern="[0-9]{5,7}"/></td>
+				        <td><input type="text" name="valorGarantia" pattern="[0-9]{5,7}" value="{{valorGarantia}}"/></td>
 				    </tr>
 				    <tr>
 				        <td><label>Estado:</label></td>
 				        <td>
-				        	<select name="estado" required="true">
+				        	<select name="estado" required="true" value="{{estado}}">
 				        		{% for e in  estadosVehiculo%}
 				        			<option>{{e}}</option>
-				        		{% endfor %}					        	
-				    
+				        		{% endfor %}
+
 				        </select>*
 				    </td>
 				    </tr>
 				    <tr>
 				        <td><label>Kilometraje:</label></td>
-				        <td><input type="text" name="kilometraje" pattern="[0-9]{1,6}"/></td>
+				        <td><input type="text" name="kilometraje" pattern="[0-9]{1,6}" value="{{kilometraje}}"/></td>
 				    </tr>
 				    <tr>
 				        <td><label>Limite de Kilometraje:</label></td>
-				        <td><input type="text" name="limiteKilometraje" required="true"/>*</td>
+				        <td><input type="text" name="limiteKilometraje" required="true" value="{{limiteKilometraje}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Tarifa:</label></td>
-				        <td><input type="text" name="tarifa" required="true"/>*</td>
+				        <td><input type="text" name="tarifa" required="true" value="{{tarifa}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Fecha de Vencimiento de SOAT:</label></td>
-				        <td><input type="date" name="fechaVencSOAT" required="true"/>*</td>
+				        <td><input type="date" name="fechaVencSOAT" required="true" value="{{fechaVencSOAT}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Fecha de Vencimiento del Seguro Todo Riesgo:</label></td>
-				        <td><input type="date" name="fechaVencSeguroTodoRiesgo" required="true"/>*</td>
+				        <td><input type="date" name="fechaVencSeguroTodoRiesgo" required="true" value="{{fechaVencSeguroTodoRiesgo}}"/>*</td>
 				    </tr>
 				    <tr>
 				    	<td><label>Fecha de Vencimiento de la Revision Tecnico Mecanica:</label></td>
-				    	<td><input type="date" name="fechaVencRevisionTecMec" required="true"/>*</td>	
+				    	<td><input type="date" name="fechaVencRevisionTecMec" required="true" value="{{fechaVencRevisionTecMec}}"/>*</td>
 				    </tr>
 				    <tr>
 				    	<td><label>Fecha de Vencimiento de Cambio de Aceite:</label></td>
-				        <td><input type="date" name="fechaVencCambioAceite" required="true"/>*</td>
+				        <td><input type="date" name="fechaVencCambioAceite" required="true" value="{{fechaVencCambioAceite}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Imagen del Auto:</label></td>
-				        <td><input type="file" name="foto" required="true"/>*</td>
+				        <td><input type="file" name="foto" required="true" value="{{foto}}"/>*</td>
 				    </tr>
 				 	<tr>
 					      <td><input type="submit" value="Agregar Vehiculo" name="agregarVehiculo"/>
 					</tr>
-				</tbody>			
+				</tbody>
 			</table>
 			<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
-			</div>		
+			</div>
 		</form>
 	{%endif %}
 {% endblock %}

@@ -4,37 +4,37 @@
 <html>
 	<head>
 		<title>Your Car - {% block titulo %}Inicio{% endblock %}</title>
-		{%block css%} 
+		{%block css%}
 		<link rel="stylesheet" type="text/css" href="/media/css/estilos.css"/>
 		{% endblock%}
 		{% block bootstrap %}
-			<link rel="stylesheet" href="/media/bootstrap/css/bootstrap.css">			
+			<link rel="stylesheet" href="/media/bootstrap/css/bootstrap.css">
 			<script type="text/javascript" src="/media/bootstrap/js/bootstrap.js"></script>
 		{% endblock %}
 		{% block jquery %}
 			<script type="text/javascript" src="/media/js/jquery-1.8.3.min.js"></script>
 		{% endblock %}
-		{% block scripts %}			
+		{% block scripts %}
 		{% endblock%}
 	</head>
 
 	<body>
 		<div class="container">
-			<nav class="navbar">		
-				<li><a href="/">Inicio</a></li>
-				<li><a href="/vehiculos">Vehículos</a></li>
-				<li><a href="/cotizar">Cotizar</a></li>				
-				{% if request.user.is_staff %}					
-					<li><a href="/vehiculos/historialMantenimiento">Mantenimientos</a></li>
-					<li><a href="/estadisticas">Estadísticas</a></li>
-					<li><a href="/alertas">Alertas</a></li>
-					<li><a href="/voucher">Voucher</a></li>
+			<nav class="navbar">
+				<li><a class="btn btn-primary" href="/">Inicio</a></li>
+				<li><a class="btn btn-primary" href="/vehiculos">Vehículos</a></li>
+				<li><a class="btn btn-primary" href="/cotizar">Cotizar</a></li>
+				{% if request.user.is_staff %}
+					<li><a class="btn btn-info" href="/vehiculos/historialMantenimiento">Mantenimientos</a></li>
+					{# <li><a class="btn btn-info" href="/estadisticas">Estadísticas</a></li> #}
+					{# <li><a class="btn btn-info" href="/alertas">Alertas</a></li> #}
+					<li><a class="btn btn-info" href="/voucher">Voucher</a></li>
 				{% endif %}
 				{% if request.user.is_authenticated %}
-					<li><a href="/reservas">Reservas</a></li>
-					<li><a href="/logout">Cerrar sesión</a></li>
+					<li><a class="btn btn-primary" href="/reservas">Reservas</a></li>
+					<li><a class="btn btn-inverse" href="/logout">Cerrar sesión</a></li>
 				{% else %}
-					<li><a href="/registro">Regístrate</a></li>
+					<li><a class="btn btn-success"href="/registro">Regístrate</a></li>
 				{% endif %}
 			</nav>
 		</div>

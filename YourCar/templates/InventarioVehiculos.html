@@ -9,10 +9,13 @@
         {% endif %}
     	{% if vehiculos %}
             <p>Tenemos en total {{ vehiculos|length }} vehículo{{vehiculos|pluralize}}.</p>
+            {% if is_staff %}
+                <a class="btn" href="/vehiculos/agregar/">Agregar vehículos</a>
+            {% endif %}
             <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">
                 {% csrf_token %}
                 <label>Ingresa la placa del vehículo que quieres ver:</label>
-                <input name="placa" type="text" pattern="[A-Z]{3}[0-9]{3}">
+                <input name="placa" type="text" required="true" pattern="[A-Z]{3}[0-9]{3}">
                 <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
             </form>
             <form method="POST" action="/vehiculos/" name="filtrarVehiculos">
@@ -79,9 +82,6 @@
                 </div>
                 <input type="submit" value="Filtrar" name="filtrar"/>
             </form>
-            {% if is_staff %}
-                <a href="/vehiculos/agregar/">Agregar vehículos</a>
-            {% endif %}
             <table class="table-bordered table-striped table-hover">
                 <thead>
                     <th>Placa</th>
@@ -126,9 +126,6 @@
     	    <p>No hay ningun vehículo con las características que buscas, intenta menos parámetros.</p>
         {% else %}
             <p>No hay ningun vehículo.</p>
-            {% if is_staff %}
-                <a href="/vehiculos/agregar/">Agregar vehículo</a>
-            {% endif %}
     	{% endif %}
     </div>
 {% endblock %}

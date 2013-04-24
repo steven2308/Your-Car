@@ -3,25 +3,8 @@
 {% block titulo %}Detalles vehiculo {{vehiculo.placa}}{% endblock %}
 {% block contenido %}
     <div class="container">
-        <div>
+        <div class="span12">
             <div class="span3">
-                <div id="prueba"></div>
-                <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">
-                    {% csrf_token %}
-                    <label>Quiere ver otro vehículo? Ingrese la placa:</label>
-                    <input name="placa" type="text" pattern="[A-Z]{3}[0-9]{3}">
-                    <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
-                </form>
-                <form method="GET" action="/cotizar/" name="cotizar">
-                    {% csrf_token %}
-                    <input name="placaActual" type="text" value="{{vehiculo.placa}}" pattern="[A-Z]{3}[0-9]{3}">
-                    <input type="submit" value="Cotizar este vehiculo" name="cotizar"/>
-                </form>
-                <form method="POST" action="/vehiculos/modificar/" name="modificarVehiculo">
-                    {% csrf_token %}
-                    <input name="placa" value="{{vehiculo.placa}}" type="text" pattern="[A-Z]{3}[0-9]{3}">
-                    <input type="submit" value="Modificar" name="modificar"/>
-                </form>
                 <table class="table-bordered table-striped table-hover">
                     <tbody>
                         <tr>
@@ -129,6 +112,31 @@
                 <div>
                     <img id="foto" src="{{ MEDIA_URL}}{{vehiculo.foto}}" alt="Imagen no encontrada">
                 </div>
+            </div>
+            <div class="span2">
+                <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">
+                    {% csrf_token %}
+                    <label>Quiere ver otro vehículo? Ingrese la placa:</label>
+                    <input name="placa" type="text" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
+                </form>
+                <form method="GET" action="/cotizar/" name="cotizar">
+                    {% csrf_token %}
+                    <input name="placaActual" type="text" value="{{vehiculo.placa}}" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Cotizar este vehiculo" name="cotizar"/>
+                </form>
+                {% if is_staff %}
+                <form method="POST" action="/vehiculos/modificar/" name="modificarVehiculo">
+                    {% csrf_token %}
+                    <input name="placa" value="{{vehiculo.placa}}" type="text" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Modificar" name="modificar"/>
+                </form>
+                <form method="POST" action="/vehiculos/eliminar/" name="modificarVehiculo">
+                    {% csrf_token %}
+                    <input name="placa" value="{{vehiculo.placa}}" type="text" pattern="[A-Z]{3}[0-9]{3}">
+                    <input class="btn btn-danger" type="submit" value="Eliminar" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+                </form>
+                {% endif %}
             </div>
         </div>
     </div>

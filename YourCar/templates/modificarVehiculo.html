@@ -2,8 +2,8 @@
 {% block titulo %}modificar{% endblock %}
 {% block contenido %}
     <h2>Modificar Vehiculo.</h2>
-<form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo">
-            {% csrf_token %}            
+    <form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo">
+            {% csrf_token %}
             <div class="container">
             <h3>Modifique los datos del vehiculo.</hs3>
             <table class="table-bordered table-striped table-hover">
@@ -29,8 +29,8 @@
                                     {% if ga != vehiculo.gama%}
                                         <option>{{ga}}</option>
                                     {% endif %}
-                                {% endfor %}                                
-                            </select>*  
+                                {% endfor %}
+                            </select>*
                         </td>
                     </tr>
                     <tr>
@@ -46,7 +46,7 @@
                                     {% if tf != vehiculo.tipoDeFrenos%}
                                         <option>{{tf}}</option>
                                     {% endif %}
-                                {% endfor %}                                
+                                {% endfor %}
                             </select>
                         </td>
                     </tr>
@@ -71,7 +71,7 @@
                                     {%if c != vehiculo.cajaDeCambios%}
                                         <option>{{c}}</option>
                                     {% endif %}
-                                {% endfor %}                                
+                                {% endfor %}
                             </select>*
                         </td>
                     </tr>
@@ -92,7 +92,7 @@
                                     {% if td != vehiculo.tipoDeDireccion%}
                                         <option>{{td}}</option>
                                     {% endif %}
-                                {% endfor %}                                
+                                {% endfor %}
                             </select>
                         </td>
                     </tr>
@@ -105,7 +105,7 @@
                                     {% if tr != vehiculo.tipoDeTraccion%}
                                         <option>{{tr}}</option>
                                     {% endif %}
-                                {% endfor %}                                
+                                {% endfor %}
                             </select>
                         </td>
                     </tr>
@@ -134,8 +134,8 @@
                                     {% if e != vehiculo.estado %}
                                     <option>{{e}}</option>
                                     {% endif %}
-                                {% endfor %}                                
-                    
+                                {% endfor %}
+
                             </select>*
                         </td>
                     </tr>
@@ -165,23 +165,23 @@
                     </tr>
                     <tr>
                         <td><label>Fecha de Vencimiento de la Revision Tecnico Mecanica:</label></td>
-                        <td><input type="date" value={{vehiculo.fechaVencRevisionTecMec}} name="fechaVencRevisionTecMec" required="true"/>*</td>   
+                        <td><input type="date" value={{vehiculo.fechaVencRevisionTecMec}} name="fechaVencRevisionTecMec" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Fecha de Vencimiento de Cambio de Aceite:</label></td>
                         <td><input type="date" value={{vehiculo.fechaVencCambioAceite}} name="fechaVencCambioAceite" required="true"/>*</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td><label>Imagen del Auto:</label></td>
                         <td><input type="file" name="foto" required="true"/></td>
                     </tr>
                     <tr>
                           <td><input type="submit" value="Modificar" name="modificar"/>
-                    </tr>       
+                    </tr>
             </table>
         </div>
         <div>
             <img id="foto" src="{{ MEDIA_URL}}{{vehiculo.foto}}" alt="Imagen no encontrada">
-        </div> 
+        </div>
     </form>
 {% endblock %}

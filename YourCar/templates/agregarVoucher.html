@@ -1,0 +1,75 @@
+{%extends "base.html"%}
+{% block titulo %}Agregar Voucher{% endblock %}
+{% block contenido %}
+	<div class="container">
+	{%if errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorCamposVacios %}
+		<h3>Corrige los siguientes errores para continuar:</h3>
+		<p class="text-error">
+			{% if errorcodigoAutorizacion %}
+				El código de autorización no es válido.<br>
+			{% endif %}
+			{% if erroridCliente %}
+				El cliente no existe.<br>
+			{% endif %}
+			{% if errormontoVoucher %}
+				El monto no es válido<br>
+			{% endif %}
+			{% if errornumTarjetaCredito %}
+				El número de tarjeta de crédito no es válido<br>
+			{% endif %}
+			{% if errorcodigoVerifTarjeta %}
+				El código de verificación de la tarjeta de crédito no es válido<br>
+			{% endif %}
+			{% if errorCamposVacios %}
+				Por favor complete todos los campos obligatorios.<br>
+			{% endif %}
+		</p>
+	{% endif %}
+    {% if exito %}
+        <p class="text-info">
+            El voucher se agregó exitosamente.
+        </p>
+    {% endif %}
+    </div>
+	<div class="container"> <form method="POST" action="/voucher/agregar/" name="registro">
+			{% csrf_token %}
+			<h3>Ingresa los datos del voucher:</hs3>
+			<table class="table-bordered table-striped table-hover">
+				<tbody>
+					<tr>
+				        <td><label>Código de autorización:</label></td>
+				        <td><input type="text" name="codigoAutorizacion" required="true" value="{{codigoAutorizacion}}"/>*</td>
+				    </tr>
+				    <tr>
+				        <td><label>Id Cliente:</label></td>
+				        <td><input type="text" name="idCliente" required="true" value="{{idCliente}}"/>*</td>
+				    </tr>
+				    <tr>
+				        <td><label>Monto:</label></td>
+				        <td><input type="text" name="montoVoucher" required="true" pattern="[0-9]{4,8}" value="{{montoVoucher}}"/>*</td>
+				    </tr>
+				    <tr>
+				        <td><label># Tarjeta de Crédito:</label></td>
+				        <td><input type="text" name="numTarjetaCredito" required="true" value="{{numTarjetaCredito}}"/>*</td>
+				    </tr>
+				    <tr>
+				        <td><label>Fecha de Vencimiento (Tarjeta):</label></td>
+				        <td><input type="date" name="fechaVencTarjeta" required="true" value="{{fechaVencTarjeta}}"/>*</td>
+				    </tr>
+				    <tr>
+				        <td><label>Código Verificación (Tarjeta):</label></td>
+				        <td><input type="text" name="codigoVerifTarjeta" required="true" value="{{codigoVerifTarjeta}}"/>*</td>
+				    </tr>
+				    <tr>
+				        <td><label>Nombre de banco:</label></td>
+				        <td><input type="text" name="nombreBanco" required="true" value="{{nombreBanco}}"/>*</td>
+				    </tr>
+				    <tr>
+				        <td><input type="submit" value="Guardar información" name="guardarVoucher"/>
+				    </tr>
+				</tbody>
+			</table>
+			<p class="text-info">Todos los campos son requeridos (*)</p>
+		</form>
+	</div>
+{% endblock %}
