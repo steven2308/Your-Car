@@ -17,7 +17,7 @@
                 {% csrf_token %}
                 <label>Identificador del mantenimiento:</label>
     			<input name="idMantenimiento" type="text" required="true" pattern="[0-9]{1,3}" ><br>
-                <input type="submit" value="Eliminar Mantenimiento" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+                <input  class="btn btn-danger"  type="submit" value="Eliminar Mantenimiento" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
             </form>
         {% endif %}
         	<table class="table-bordered table-striped table-hover">
@@ -42,7 +42,5 @@
         			{% endfor %}
         		</tbody>
         	</table>
-	</div>
-	<div class="container">
 	</div>
 {% endblock %}

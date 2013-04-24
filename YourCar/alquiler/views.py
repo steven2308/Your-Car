@@ -10,9 +10,7 @@ import re, math
 from datetime import datetime
 
 #Correcciones:
-#Verificar que fecha es fecha
-#Visualizar voucher
-#Ver listado de historial de mantenimiento
+#Verificar que fecha es fecha (opcional)
 #Traer fechas en modificar
 #agregar foto
 
@@ -490,7 +488,48 @@ def agregarVoucherControl(request):
 	return HttpResponseRedirect('/404')
 
 def voucherControl(request):
-	return HttpResponseRedirect('/404')
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			try:
+				busqueda = request.POST["busqueda"]
+				buscarPor= request.POST["buscarPor"]
+				query={}
+				#Identifico por que parametro voy a buscar el voucher y lo agrego al diccionario de queries
+				if buscarPor == "codigoAutorizacion":
+					query["codigoAutorizacion__iexact"] = busqueda
+				elif buscarPor == "idCliente":
+					#cliente = ClienteAlquiler.objects.get(numDocumento=busqueda)
+					query["idCliente__iexact"] = busqueda
+				elif buscarPor == "numTarjetaCredito":
+					query["numTarjetaCredito__iexact"] = busqueda
+				if query:
+					vouchers = Voucher.objects.filter(**query)
+					voucherCargado = True
+				else:
+					vouchers = Voucher.objects.all()
+				return render_to_response('voucher.html',locals(), context_instance = RequestContext(request))
+			except:
+				enExcept=True
+				return render_to_response('verVoucher.html',locals(), context_instance = RequestContext(request))
+				#return HttpResponseRedirect('/voucher/')
+		else:
+			noEsPost=True
+			vouchers = Voucher.objects.all()
+			return render_to_response('verVoucher.html',locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')
+
+def eliminarVoucherControl(request):
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+		try:
+			codigoAutorizacion=request.POST["codigoAutorizacion"]
+			voucher = Voucher.objects.get(codigoAutorizacion=codigoAutorizacion)
+			voucher.delete()
+		except:
+			pass
+		return HttpResponseRedirect('/voucher')
+	else:
+		return HttpResponseRedirect('/404')
 
 def reservasControl(request):
 	#Logica de control

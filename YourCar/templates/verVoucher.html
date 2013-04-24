@@ -2,5 +2,61 @@
 {% block titulo %}Ver Voucher{% endblock %}
 {% block contenido %}
     <div class="container">
+        <a class="btn" href="/voucher/agregar/">Agregar Voucher</a>
+    	<form method="POST" action="/voucher/" name="verVoucher">
+            {% csrf_token %}
+            <h4>Ordenar por:</h4>
+            <ul class="inline">
+                <li>
+                    <label>Codigo Autorizacion</label>
+                    <input id="btnEstado" name="buscarPor" type="radio" value="codigoAutorizacion" checked="checked">
+                </li>
+                <li>
+                    <label>ID Cliente</label>
+                    <input id="btnPasajeros" name="buscarPor" type="radio" value="idCliente">
+                </li>
+                <li>
+                    <label># Tarjeta de crédito</label>
+                    <input id="btnModelo" name="buscarPor" type="radio" value="numTarjetaCredito">
+                </li>
+            </ul>
+            <input name="busqueda" type="text" value="{{busqueda}}" required="true">
+            <input type="submit" value="Buscar Voucher" name="buscarVoucher"/>
+        </form>
+        <form method="POST" action="/voucher/eliminar/" name="eliminarMantenimiento">
+            {% csrf_token %}
+            <label>Código de autorización:</label>
+			<input name="codigoAutorizacion" type="text" required="true"><br>
+            <input class="btn btn-danger" type="submit" value="Eliminar Voucher" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+        </form>
+        {% if voucherCargado %}
+        	<p class="text-info">Se encontraron los siguientes vouchers:</p>
+		{% else %}
+			<p class="text-info">Se están mostrando todos los vouchers:</p>
+        {% endif %}
+    	<table class="table-bordered table-striped table-hover">
+    		<thead>
+    			<th>Código Autorizacion</th>
+				<th>Cliente</th>
+				<th>Monto Voucher</th>
+                <th># Tarjeta de Credito</th>
+				<th>Fecha Vencimiento Tarjeta</th>
+                <th>Código Verificación Tarjeta</th>
+                <th>Nombre Banco</th>
+    		</thead>
+    		<tbody>
+    			{% for v in vouchers%}
+    				<tr>
+    					<td>{{v.codigoAutorizacion}}</td>
+    					<td>{{v.idCliente}}</td>
+    					<td>{{v.montoVoucher}}</td>
+                        <td>{{v.numTarjetaCredito}}</td>
+    					<td>{{v.fechaVencTarjeta}}</td>
+                        <td>{{v.codigoVerifTarjeta}}</td>
+                        <td>{{v.nombreBanco}}</td>
+    				</tr>
+    			{% endfor %}
+    		</tbody>
+    	</table>
 	</div>
 {% endblock %}

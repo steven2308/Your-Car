@@ -134,7 +134,7 @@
                 <form method="POST" action="/vehiculos/eliminar/" name="modificarVehiculo">
                     {% csrf_token %}
                     <input name="placa" value="{{vehiculo.placa}}" type="text" pattern="[A-Z]{3}[0-9]{3}">
-                    <input type="submit" value="Eliminar" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+                    <input class="btn btn-danger" type="submit" value="Eliminar" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
                 </form>
                 {% endif %}
             </div>
