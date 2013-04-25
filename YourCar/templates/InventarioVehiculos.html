@@ -7,11 +7,11 @@
         {% else %}
     	   <h2>Estás viendo todos los vehículos:</h2>
         {% endif %}
+        {% if is_staff %}
+            <a class="btn" href="/vehiculos/agregar/">Agregar vehículos</a>
+        {% endif %}
     	{% if vehiculos %}
             <p>Tenemos en total {{ vehiculos|length }} vehículo{{vehiculos|pluralize}}.</p>
-            {% if is_staff %}
-                <a class="btn" href="/vehiculos/agregar/">Agregar vehículos</a>
-            {% endif %}
             <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">
                 {% csrf_token %}
                 <label>Ingresa la placa del vehículo que quieres ver:</label>

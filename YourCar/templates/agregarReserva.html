@@ -1,5 +1,70 @@
-{% extends "base.html" %}
-{% block titulo %}Agregar Reserva{% endblock %}
+	{% extends "base.html" %}
+{% block titulo %}Agregar una Reserva{% endblock %}
 {% block contenido %}
-	<h2>Aquí va el formulario para agregar reserva, igual para el cliente y el administrador</h2>
+	{%if errorPagada %}
+		<div class="container">
+		<h3>Corrige los siguientes errores para continuar:</h3>
+		<p class="text-error">
+			{% if errorPagada %}
+				El estado de pago es incorrecto.<br>
+			{% endif %}
+		</p>
+	</div>
+	{%else %}
+		<form method="POST" action="/reservas/agregar/" name="agregarReservas">
+				{% csrf_token %}
+				<div class="container">
+				<h3>Ingrese los datos de la reserva.</hs3>
+				<table class="table-bordered table-striped table-hover">
+					<tbody>
+					    <tr>
+					        <td><label>Placa del Vehiculo:</label></td>
+					        <td><input type="text" name="idVehiculo" value="{{placa}}" required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
+					    </tr>
+					    {%if is_staff %}
+					    	<tr>
+					        	<td><label>Nombre de usuario:</label></td>
+					        	<td><input type="text" name="idCliente" required="true"/>*</td>
+					    	</tr>
+					    {% else %}
+					    	<tr>
+					        	<td><label>Nombre de usuario:</label></td>
+					        	<td><input type="text" name="idCliente" value={{nombre}} disabled="True" required="true"/>*</td>
+					    	</tr>
+					    {% endif %}
+					    <tr>
+					        <td><label>Fecha de Inicio:</label></td>
+					        <td><input type="date" name="fechaInicio" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Fecha Fin:</label></td>
+					        <td><input type="date" name="fechaFin" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Lugar de Recogida:</label></td>
+					        <td><input type="text" name="lugar" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Pagada?:</label></td>
+					        <td>
+					        	<select name="pagada" required="true">
+					        		{% for p in  estadosPago %}
+					        			<option>{{p}}</option>
+					        		{% endfor %}
+					        	</select>*
+					    	</td>
+					    </tr>
+					    <tr>
+					        <td><label>Datos de Pago:</label></td>
+					        <td><input type="text" name="datosDePago"/></td>
+					    </tr>
+					    <tr>
+					      <td><input type="submit" value="Reservar" name="agregarReserva"/>
+					</tr>					    
+				</tbody>
+			</table>
+			<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
+			</div>
+		</form>
+	{%endif %}
 {% endblock %}
