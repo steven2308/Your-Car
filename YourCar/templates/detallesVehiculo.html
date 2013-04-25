@@ -122,19 +122,24 @@
                 </form>
                 <form method="GET" action="/cotizar/" name="cotizar">
                     {% csrf_token %}
-                    <input name="placaActual" type="text" value="{{vehiculo.placa}}" pattern="[A-Z]{3}[0-9]{3}">
-                    <input type="submit" value="Cotizar este vehiculo" name="cotizar"/>
+                    <input name="placaActual" type="hidden" value="{{vehiculo.placa}}" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Cotizar este vehiculo" name="cotizarVehiculo"/>
+                </form>
+                <form method="GET" action="/reservas/agregar/" name="modificarVehiculo">
+                    {% csrf_token %}
+                    <input name="placa" value="{{vehiculo.placa}}" type="hidden" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Reservar este vehiculo" name="agregarReserva"/>
                 </form>
                 {% if is_staff %}
-                <form method="POST" action="/vehiculos/modificar/" name="modificarVehiculo">
+                <form method="GET" action="/vehiculos/modificar/" name="modificarVehiculo">
                     {% csrf_token %}
-                    <input name="placa" value="{{vehiculo.placa}}" type="text" pattern="[A-Z]{3}[0-9]{3}">
-                    <input type="submit" value="Modificar" name="modificar"/>
+                    <input name="placa" value="{{vehiculo.placa}}" type="hidden" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Modificar este vehiculo" name="modificarVehiculo"/>
                 </form>
-                <form method="POST" action="/vehiculos/eliminar/" name="modificarVehiculo">
+                <form method="GET" action="/vehiculos/eliminar/" name="modificarVehiculo">
                     {% csrf_token %}
-                    <input name="placa" value="{{vehiculo.placa}}" type="text" pattern="[A-Z]{3}[0-9]{3}">
-                    <input class="btn btn-danger" type="submit" value="Eliminar" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+                    <input name="placa" value="{{vehiculo.placa}}" type="hidden" pattern="[A-Z]{3}[0-9]{3}">
+                    <input class="btn btn-danger" type="submit" value="Eliminar este Vehículo" name="eliminarVehiculo" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
                 </form>
                 {% endif %}
             </div>
