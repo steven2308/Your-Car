@@ -1,7 +1,7 @@
 {%extends "base.html"%}
 {% block titulo %}Registro{% endblock %}
 {% block contenido %}
-	{%if errorUser or errorContrasena or errorEmail or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios%}
+	{%if errorUser or errorContrasena or errorEmail or errorFecha or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios%}
 	<div class="container">
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
@@ -13,6 +13,9 @@
 			{% endif %}
 			{% if errorEmail %}
 				El correo ya está en uso, intenta otro.<br>
+			{% endif %}
+			{% if errorFecha %}
+				La fecha no es correcta, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
 			{% endif %}
 			{% if errorGenero %}
 				No seleccionaste un género correcto.<br>

@@ -2,10 +2,13 @@
 {% block titulo %}Agregar Historial Mantenimiento{% endblock %}
 {% block contenido %}
     <div class="container">
-        {% if errorPlaca or errorTipo or errorCosto%}
+        {% if errorPlaca or errorFecha or errorTipo or errorCosto%}
             <p class="text-error">
                 {% if errorPlaca%}
                     La placa no es correcta o no se encuentra en el sistema.<br>
+                {% endif %}
+                {% if errorFecha %}
+                    La fecha no es correcta, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
                 {% endif %}
                 {% if  errorTipo%}
                     El tipo debe ser alguno de los valores:

@@ -2,7 +2,7 @@
 {% block titulo %}Agregar Voucher{% endblock %}
 {% block contenido %}
 	<div class="container">
-	{%if errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorCamposVacios %}
+	{%if errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorFecha or errorCamposVacios %}
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
 			{% if errorcodigoAutorizacion %}
@@ -19,6 +19,9 @@
 			{% endif %}
 			{% if errorcodigoVerifTarjeta %}
 				El código de verificación de la tarjeta de crédito no es válido<br>
+			{% endif %}
+			{% if errorFecha %}
+				La fecha no es correcta, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
 			{% endif %}
 			{% if errorCamposVacios %}
 				Por favor complete todos los campos obligatorios.<br>

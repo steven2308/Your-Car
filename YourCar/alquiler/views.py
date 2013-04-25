@@ -11,10 +11,8 @@ import re, math
 from datetime import datetime
 
 #Correcciones:
-#Verificar que fecha es fecha (opcional)
 #Traer fechas en modificar
 #agregar foto
-#poner links a ver vehiculos desde cotizar
 
 def inicioControl(request, registerSuccess=False):
 	conectado=False
@@ -37,6 +35,8 @@ def registroControl(request):
 			#Tomo los datos
 			nombreUsuario=request.POST["nombreUsuario"]
 			email=request.POST["email"]
+			nombres = request.POST['nombres']
+			apellidos = request.POST['apellidos']
 			fechaNacimiento = request.POST['fechaNacimiento']
 			telFijo = request.POST['telFijo']
 			telCelular = request.POST['telCelular']
@@ -60,21 +60,22 @@ def registroControl(request):
 			errorUser=(User.objects.filter(username=nombreUsuario) or  not re.match("^([a-zA-z0-9_]{8,20})$",nombreUsuario))
 			errorContrasena= (request.POST["contrasena"]!=request.POST["contrasena2"])
 			errorEmail= (User.objects.filter(email=email) or not re.match(r"^[A-Za-z0-9\._-]+@[A-Za-z0-9]+\.[a-zA-Z]+$", email))
+			errorFecha= not fechaCorrecta(fechaNacimiento)
 			errorTels = (not re.match("^([0-9]{7,12})$",telFijo) or not re.match("^([0-9]{10,12})$",telCelular) or (len(telContacto)>1 and not re.match("^([0-9]{7,12})$",telContacto)))
 			errorGenero= (genero not in (parametros["generos"]))
 			errorTipoPersona= (tipoPersona not in (parametros["tipoPersonas"]))
 			errorTipoDocumento= (tipoDocumento  not in (parametros["tipoDocumentos"]))
 			errorNumDocumento=  ((ClienteAlquiler.objects.filter(numDocumento=numDocumento)) or not re.match("^([a-zA-z0-9_-]{6,20})$",numDocumento))
 			errorDatosResidencia= (not paisResidencia or not ciudadResidencia or not dirResidencia)
-			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"])==0)
+			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"])==0 or len(nombres)==0 or len(apellidos)==0)
 
-			if (errorUser or errorContrasena or errorEmail or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios):
+			if (errorUser or errorContrasena or errorEmail or errorFecha or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios):
 				return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
 
 			#Guardo el usuario
 			usuario = User.objects.create_user(username=nombreUsuario, email=email, password=request.POST["contrasena"])
-			usuario.first_name = request.POST['nombres']
-			usuario.last_name = request.POST['apellidos']
+			usuario.first_name = nombres
+			usuario.last_name = apellidos
 			usuario.save()
 
 			#Guardo el cliente de alquiler
@@ -216,11 +217,12 @@ def agregarHistorialMantenimientoControl(request):
 
 				#Hago validaciones
 				errorPlaca = not Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa)
+				errorFecha= not fechaCorrecta(fecha)
 				errorTipo = tipo not in tipos
 				errorCosto = not re.match("^([0-9]{3,10})$",costo)
 
 				#Si hay errores vuelvo al formulario y los informo
-				if (errorPlaca or errorTipo or errorCosto):
+				if (errorPlaca or errorFecha or errorTipo or errorCosto):
 					return render_to_response('agregarHistorialMantenimiento.html',locals(), context_instance = RequestContext(request))
 
 				#Si no hay errores guardo el mantenimiento y vuelvo al historial
@@ -267,16 +269,21 @@ def cotizarControl(request):
 			horaIni = request.POST["horaIni"]
 			horaFin = request.POST["horaFin"]
 
-			#Calculo dias y diferencia
-			dtIni = datetime.strptime(fechaIni+" "+horaIni, '%Y-%m-%d %H:%M')
-			dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
-			diferencia =  dtFin-dtIni
-
 			#Hago validaciones
 			errorPlaca = not Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa)
-			errorFechas = dtIni > dtFin or datetime.now()> dtIni
+			errorFechas1 =  not fechaCorrecta(fechaIni) or not fechaCorrecta(fechaFin)
+			errorHoras = not re.match('[0-9]{2}:[0-9]{2}',horaIni) or  not re.match('[0-9]{2}:[0-9]{2}',horaFin)
+			errorFechas2 = False
+			#Si las fechas y las horas tienen un formato correcto verifico la logica
+			if not errorFechas1 and not errorHoras:
+				#Calculo dias y diferencia
+				dtIni = datetime.strptime(fechaIni+" "+horaIni, '%Y-%m-%d %H:%M')
+				dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
+				diferencia =  dtFin-dtIni
+				#La fecha inicial debe ser menor a la final y mayor a la actual
+				errorFechas2 = dtIni > dtFin or datetime.now()> dtIni
 			#Si hay errores vuelvo al formulario y los informo
-			if (errorPlaca or errorFechas):
+			if (errorPlaca or errorFechas1 or errorFechas2 or errorHoras):
 				return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 
 			#Calculos
@@ -402,9 +409,9 @@ def agregarVehiculoControl(request):
 			errorTipoDeTraccion = (tipoDeTraccion not in parametros["tiposTraccion"])
 			errorFoto = not foto
 			errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
-
+			errorFechas= not fechaCorrecta(fechaVencSOAT) or not fechaCorrecta(fechaVencSeguroTodoRiesgo) or not fechaCorrecta(fechaVencRevisionTecMec) or not fechaCorrecta(fechaVencCambioAceite)
 			#manejo de errores
-			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh):
+			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh) or errorFechas:
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 
 			#guardar vehiculo
@@ -481,9 +488,10 @@ def agregarVoucherControl(request):
 			errormontoVoucher = (not re.match(r"^[0-9]{4,8}$", montoVoucher))
 			errornumTarjetaCredito  = False #or pattern?
 			errorcodigoVerifTarjeta = False #or pattern?
+			errorFecha = not fechaCorrecta(fechaVencTarjeta)
 			errorCamposVacios = (len(codigoAutorizacion)==0 or len(numTarjetaCredito)==0 or len(codigoVerifTarjeta)==0 or len(nombreBanco)==0)
 
-			if (errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorCamposVacios):
+			if (errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorFecha or errorCamposVacios):
 				return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
 
 			#Guardo el voucher
@@ -608,7 +616,6 @@ def fechaCorrecta(fecha):
 		return True
 	except:
 		return False
-
 
 def paginar(lista,pagina):
 	elementosPorPagina = parametros["numElementosPorPagina"]
