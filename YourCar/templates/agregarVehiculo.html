@@ -46,10 +46,10 @@
 			{% endif %}
 		</p>
 	</div>
-	{%else %}
+	{%endif %}
+	<div class="container">
 		<form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo">
 				{% csrf_token %}
-				<div class="container">
 				<h3>Ingrese los datos del vehiculo.</hs3>
 				<table class="table-bordered table-striped table-hover">
 					<tbody>
@@ -192,7 +192,6 @@
 				</tbody>
 			</table>
 			<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
-			</div>
 		</form>
-	{%endif %}
+	</div>
 {% endblock %}

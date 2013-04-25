@@ -6,6 +6,7 @@ from django.contrib.auth import login, authenticate, logout
 from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator,EmptyPage,InvalidPage
 import re, math
 from datetime import datetime
 
@@ -13,8 +14,9 @@ from datetime import datetime
 #Verificar que fecha es fecha (opcional)
 #Traer fechas en modificar
 #agregar foto
+#poner links a ver vehiculos desde cotizar
 
-def inicioControl(request):
+def inicioControl(request, registerSuccess=False):
 	conectado=False
 	nombre=""
 	misionInicio= parametros["misionInicio"]
@@ -82,7 +84,7 @@ def registroControl(request):
 				dirResidencia = dirResidencia, nombrePersonaContacto = nombrePersonaContacto, telContacto= telContacto,
 				direccionContacto=direccionContacto)
 			cliente.save()
-			return HttpResponseRedirect('/')
+			return inicioControl(request,registerSuccess=True)
 		else:
 			return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
 	else:
@@ -115,7 +117,7 @@ def loginControl(request):
 	quienesSomosInicio= parametros["quienesSomosInicio"]
 	return render_to_response('inicio.html', locals(), context_instance = RequestContext(request))
 
-def verVehiculosControl(request):
+def verVehiculosControl(request,addSuccess=False):
 	is_staff = request.user.is_staff
 	gamas=parametros["gamas"]
 	if request.method=="POST":
@@ -403,7 +405,8 @@ def agregarVehiculoControl(request):
 			#guardar vehiculo
 			vehiculo = Vehiculo(placa = placa, marca = marca, referencia = referencia, gama = gama, descripcionBasica = descripcionBasica, numDePasajeros = numDePasajeros, cilindraje = cilindraje, color = color, cajaDeCambios = cajaDeCambios, limiteKilometraje = limiteKilometraje, tarifa = tarifa, estado = estado, fechaVencSOAT = fechaVencSOAT, fechaVencSeguroTodoRiesgo = fechaVencSeguroTodoRiesgo, fechaVencRevisionTecMec = fechaVencRevisionTecMec, fechaVencCambioAceite = fechaVencCambioAceite, tipoDeFrenos = tipoDeFrenos, airbags = airbags, tipoDeDireccion = tipoDeDireccion, tipoDeTraccion = tipoDeTraccion, modelo = modelo, valorGarantia = valorGarantia, kilometraje = kilometraje, foto=foto)
 			vehiculo.save()
-			return HttpResponseRedirect('/vehiculos')
+			request.method="GET"
+			return verVehiculosControl(request,addSuccess=True)
 		else:
 			return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 	else:
@@ -546,3 +549,11 @@ def logoutControl(request):
 
 def notFoundControl(request):
 	return render_to_response('404.html',locals(),context_instance = RequestContext(request))
+
+def fechaCorrecta(fecha):
+	try:
+		#2013-04-19
+		datetime.strptime(fecha, '%Y-%m-%d')
+		return True
+	except:
+		return False

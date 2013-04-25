@@ -1,0 +1,20 @@
+{%extends "base.html"%}
+{% block titulo %}Vista de prueba{% endblock %}
+{% block contenido %}
+    <div class="container">
+        {% for e in query %}
+        	{{e}}<br>
+        	{{cliente.numDocumento}}
+        {% endfor %}
+        {% for v in vouchers %}
+        	{{v.codigoAutorizacion}}<br>
+			{{v.idCliente}}<br>
+			{{v.montoVoucher}}<br>
+            {{v.numTarjetaCredito}}<br>
+			{{v.fechaVencTarjeta}}<br>
+            {{v.codigoVerifTarjeta}}<br>
+            {{v.nombreBanco}}<br>
+        {% endfor %}
+
+	</div>
+{% endblock %}

@@ -2,22 +2,34 @@
 {% block titulo %}Vehiculos{% endblock %}
 {% block contenido %}
     <div class="container">
+        {% if addSuccess %}
+            <p class="text-info">El vehículo se agregó exitosamente!</p>
+        {% endif %}
         {% if filtrados %}
             <h2>Estás viendo los vehículos filtrados y ordenados:</h2>
         {% else %}
+            {% if  noResults %}
+                <h2>No se encontró ningún vehículo con esa placa.</h2>
+            {% endif %}
     	   <h2>Estás viendo todos los vehículos:</h2>
         {% endif %}
     	{% if vehiculos %}
-            <p>Tenemos en total {{ vehiculos|length }} vehículo{{vehiculos|pluralize}}.</p>
-            {% if is_staff %}
-                <a class="btn" href="/vehiculos/agregar/">Agregar vehículos</a>
-            {% endif %}
-            <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">
-                {% csrf_token %}
-                <label>Ingresa la placa del vehículo que quieres ver:</label>
-                <input name="placa" type="text" required="true" pattern="[A-Z]{3}[0-9]{3}">
-                <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
-            </form>
+            <div class="span12">
+                <div class="span4">
+                    <p>Tenemos en total {{ vehiculos|length }} vehículo{{vehiculos|pluralize}}.</p>
+                    <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">
+                        {% csrf_token %}
+                        <label>Ingresa la placa del vehículo que quieres ver:</label>
+                        <input name="placa" type="text" required="true" pattern="[A-Z]{3}[0-9]{3}">
+                        <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
+                    </form>
+                </div>
+                <div class="span2">
+                    {% if is_staff %}
+                        <a class="btn" href="/vehiculos/agregar/">Agregar vehículos</a>
+                    {% endif %}
+                </div>
+            </div>
             <form method="POST" action="/vehiculos/" name="filtrarVehiculos">
                 {% csrf_token %}
                 <h4>Filtrar Por:</h4>
