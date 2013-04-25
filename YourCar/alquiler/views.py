@@ -294,6 +294,8 @@ def cotizarControl(request):
 			totalPorHoras = horas*tarifaHora
 			tarifaDia = vehiculo.tarifa
 			limiteKilometraje = vehiculo.limiteKilometraje
+			kmPorHora = math.floor(limiteKilometraje/24)
+			maxKms = limiteKilometraje*dias+kmPorHora*horas
 			total=totalPorDias+totalPorHoras
 
 			#formateo resultados
@@ -585,7 +587,6 @@ def agregarReservaControl(request):
 			pass
 		is_staff = request.user.is_staff
 		return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
-
 
 
 # Controlador del Cierre de Sesion
