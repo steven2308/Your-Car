@@ -33,5 +33,6 @@ parametros = {
 		"", "Disco", "Tambor", "ABS"
 		),
 	"estadosPago": (
-		"No", "Si")
+		"No", "Si"),
+	"numElementosPorPagina":5,
 }

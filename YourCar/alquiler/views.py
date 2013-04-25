@@ -117,7 +117,7 @@ def loginControl(request):
 	quienesSomosInicio= parametros["quienesSomosInicio"]
 	return render_to_response('inicio.html', locals(), context_instance = RequestContext(request))
 
-def verVehiculosControl(request,addSuccess=False):
+def verVehiculosControl(request,  pagina=1, addSuccess=False):
 	is_staff = request.user.is_staff
 	gamas=parametros["gamas"]
 	if request.method=="POST":
@@ -155,14 +155,15 @@ def verVehiculosControl(request,addSuccess=False):
 
 		#Si la consulta no es vacia la hago
 		if query:
-			vehiculos= Vehiculo.objects.filter(**query).order_by(order)
+			listaVehiculos= Vehiculo.objects.filter(**query).order_by(order)
 			filtrados=True
 		else:
-			vehiculos = Vehiculo.objects.all().order_by(order)
-		#mensaje=request.POST["orderBy"]
-		#return render_to_response ('pruebas.html',locals(), context_instance = RequestContext(request))
+			listaVehiculos = Vehiculo.objects.all().order_by(order)
+		vehiculos=paginar(listaVehiculos,pagina)
 		return render_to_response('inventarioVehiculos.html',locals(), context_instance = RequestContext(request))
-	vehiculos = Vehiculo.objects.all()
+	#sino es un post cargo todos
+	listaVehiculos = Vehiculo.objects.all()
+	vehiculos=paginar(listaVehiculos,pagina)
 	return render_to_response('inventarioVehiculos.html',locals(), context_instance = RequestContext(request))
 
 def detallesVehiculoControl(request):
@@ -176,19 +177,21 @@ def detallesVehiculoControl(request):
 			return HttpResponseRedirect('/vehiculos')
 	return HttpResponseRedirect('/vehiculos')
 
-def historialMantenimientoControl(request):
+def historialMantenimientoControl(request, pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
 			try:
 				placa=request.POST["placa"].upper()
 				vehiculo = Vehiculo.objects.get(placa=placa)
-				mantenimientos = Mantenimiento.objects.filter(idVehiculo=vehiculo)
+				lista_mantenimientos = Mantenimiento.objects.filter(idVehiculo=vehiculo)
+				mantenimientos=paginar(lista_mantenimientos,pagina)
 				vehiculoCargado = True
 				return render_to_response('historialMantenimiento.html',locals(), context_instance = RequestContext(request))
 			except:
 				return HttpResponseRedirect('/vehiculos/historialMantenimiento')
 		else:
-			mantenimientos = Mantenimiento.objects.all()
+			lista_mantenimientos = Mantenimiento.objects.all()
+			mantenimientos=paginar(lista_mantenimientos,pagina)
 			return render_to_response('historialMantenimiento.html',locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
@@ -492,7 +495,7 @@ def agregarVoucherControl(request):
 			return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
 
-def voucherControl(request):
+def voucherControl(request, pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
 			try:
@@ -508,10 +511,11 @@ def voucherControl(request):
 				elif buscarPor == "numTarjetaCredito":
 					query["numTarjetaCredito__iexact"] = busqueda
 				if query:
-					vouchers = Voucher.objects.filter(**query)
+					lista_vouchers = Voucher.objects.filter(**query)
 					voucherCargado = True
 				else:
-					vouchers = Voucher.objects.all()
+					lista_vouchers = Voucher.objects.all()
+				vouchers=paginar(lista_vouchers,pagina)
 				return render_to_response('voucher.html',locals(), context_instance = RequestContext(request))
 			except:
 				enExcept=True
@@ -519,7 +523,8 @@ def voucherControl(request):
 				#return HttpResponseRedirect('/voucher/')
 		else:
 			noEsPost=True
-			vouchers = Voucher.objects.all()
+			lista_vouchers = Voucher.objects.all()
+			vouchers=paginar(lista_vouchers,pagina)
 			return render_to_response('verVoucher.html',locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
@@ -588,7 +593,6 @@ def agregarReservaControl(request):
 		is_staff = request.user.is_staff
 		return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
 
-
 # Controlador del Cierre de Sesion
 def logoutControl(request):
     logout(request)
@@ -604,3 +608,19 @@ def fechaCorrecta(fecha):
 		return True
 	except:
 		return False
+
+
+def paginar(lista,pagina):
+	elementosPorPagina = parametros["numElementosPorPagina"]
+	paginator= Paginator(lista,elementosPorPagina)
+	#Si no me envian un numero lo envio a la primera
+	try:
+		pagina = int(pagina)
+	except:
+		pagina = 1
+	#Intento traer la pagina solicitada, si no exite envio la ultima
+	try:
+		listaPaginada=paginator.page(pagina)
+	except(EmptyPage,InvalidPage):
+		listaPaginada=paginator.page(paginator.num_pages)
+	return listaPaginada

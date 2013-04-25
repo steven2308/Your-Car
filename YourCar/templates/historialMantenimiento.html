@@ -42,5 +42,17 @@
         			{% endfor %}
         		</tbody>
         	</table>
+            <div class="paginas">
+                <a href="/vehiculos/historialMantenimiento/pag/1/"> Primera </a>
+                {% if mantenimientos.has_previous %}
+                    <a href="/vehiculos/historialMantenimiento/pag/{{mantenimientos.previous_page_number}}/"> Anterior </a>
+                {% endif %}
+                {% if mantenimientos.has_next %}
+                    <a href="/vehiculos/historialMantenimiento/pag/{{mantenimientos.next_page_number}}/"> Siguiente </a>
+                {% endif %}
+                <a href="/vehiculos/historialMantenimiento/pag/{{mantenimientos.paginator.num_pages}}"> Última </a>
+                <br>
+                <strong>Página {{mantenimientos.number}} de {{mantenimientos.paginator.num_pages}}</strong>
+            </div>
 	</div>
 {% endblock %}

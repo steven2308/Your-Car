@@ -13,9 +13,6 @@
             {% endif %}
     	   <h2>Estás viendo todos los vehículos:</h2>
         {% endif %}
-        {% if is_staff %}
-            <a class="btn" href="/vehiculos/agregar/">Agregar vehículos</a>
-        {% endif %}
     	{% if vehiculos %}
             <div class="span12">
                 <div class="span4">
@@ -137,6 +134,18 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="paginas">
+                <a href="/vehiculos/pag/1/"> Primera </a>
+                {% if vehiculos.has_previous %}
+                    <a href="/vehiculos/pag/{{vehiculos.previous_page_number}}/"> Anterior </a>
+                {% endif %}
+                {% if vehiculos.has_next %}
+                    <a href="/vehiculos/pag/{{vehiculos.next_page_number}}/"> Siguiente </a>
+                {% endif %}
+                <a href="/vehiculos/pag/{{vehiculos.paginator.num_pages}}"> Última </a>
+                <br>
+                <strong>Página {{vehiculos.number}} de {{vehiculos.paginator.num_pages}}</strong>
+            </div>
     	{% elif filtrados%}
     	    <p>No hay ningun vehículo con las características que buscas, intenta menos parámetros.</p>
         {% else %}
