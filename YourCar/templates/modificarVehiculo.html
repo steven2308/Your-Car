@@ -10,15 +10,15 @@
                 <tbody>
                     <tr>
                         <td><label>Placa:</label></td>
-                        <td><input type="text" name="placa" value={{vehiculo.placa}} required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
+                        <td><input type="text" name="placa" value="{{vehiculo.placa}}" required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
                     </tr>
                     <tr>
                        <td><label>Marca:</label></td>
-                       <td><input type="text" name="marca" value={{vehiculo.marca}} required="true"/>*</td>
+                       <td><input type="text" name="marca" value="{{vehiculo.marca}}" required="true"/>*</td>
                         </tr>
                     <tr>
                        <td><label>Referencia:</label></td>
-                       <td><input type="text" name="referencia" value={{vehiculo.referencia}} required="true"/>*</td>
+                       <td><input type="text" name="referencia" value="{{vehiculo.referencia}}" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Gama:</label></td>
@@ -35,7 +35,7 @@
                     </tr>
                     <tr>
                         <td><label>Descripcion Basica:</label></td>
-                        <td><input type="text" value={{vehiculo.descripcionBasica}} name="descripcionBasica" required="true"/>*</td>
+                        <td><input type="text" value="{{vehiculo.descripcionBasica}}" name="descripcionBasica" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Tipo de Frenos:</label></td>
@@ -52,15 +52,15 @@
                     </tr>
                     <tr>
                         <td><label>Numero de Pasajeros:</label></td>
-                        <td><input type="text" value={{vehiculo.numDePasajeros}} name="numDePasajeros" required="true" pattern="[0-9]{1,2}"/>*</td>
+                        <td><input type="text" value="{{vehiculo.numDePasajeros}}" name="numDePasajeros" required="true" pattern="[0-9]{1,2}"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Cilindraje:</label></td>
-                        <td><input type="text" value={{vehiculo.cilindraje}} name="cilindraje" required="true"/>*</td>
+                        <td><input type="text" value="{{vehiculo.cilindraje}}" name="cilindraje" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Color:</label></td>
-                        <td><input type="text" value={{vehiculo.color}} name="color" required="true"/>*</td>
+                        <td><input type="text" value="{{vehiculo.color}}" name="color" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Caja de Cambios:</label></td>
@@ -80,7 +80,7 @@
                             {% if vehiculo.airbags == 0%}
                                  <td><input type="text" name="airbags" patttern="[0-9]{1,2}"/></td>
                             {% else %}
-                                 <td><input type="text" value={{vehiculo.airbags}} name="airbags" patttern="[0-9]{1,2}"/></td>
+                                 <td><input type="text" value="{{vehiculo.airbags}}" name="airbags" patttern="[0-9]{1,2}"/></td>
                             {% endif %}
                     </tr>
                     <tr>
@@ -114,7 +114,7 @@
                             {% if vehiculo.modelo == 0%}
                                  <td><input type="text" name="modelo" patttern="[0-9]{4}"/></td>
                             {% else %}
-                                 <td><input type="text" value={{vehiculo.modelo}} name="modelo" pattern="[0-9]{4}"/></td>
+                                 <td><input type="text" value="{{vehiculo.modelo}}" name="modelo" pattern="[0-9]{4}"/></td>
                             {% endif %}
                     </tr>
                     <tr>
@@ -122,7 +122,7 @@
                             {% if vehiculo.valorGarantia == 0%}
                                  <td><input type="text" name="valorGarantia" patttern="[0-9]{5,7}"/></td>
                             {% else %}
-                                 <td><input type="text" value={{vehiculo.valorGarantia}} name="valorGarantia" pattern="[0-9]{5,7}"/></td>
+                                 <td><input type="text" value="{{vehiculo.valorGarantia}}" name="valorGarantia" pattern="[0-9]{5,7}"/></td>
                             {% endif %}
                     </tr>
                     <tr>
@@ -144,32 +144,32 @@
                             {% if vehiculo.kilometraje == 0%}
                                  <td><input type="text" name="kilometraje" patttern="[0-9]{1,6}"/></td>
                             {% else %}
-                                 <td><input type="text" value={{vehiculo.kilometraje}} name="kilometraje" pattern="[0-9]{1,6}"/></td>
+                                 <td><input type="text" value="{{vehiculo.kilometraje}}" name="kilometraje" pattern="[0-9]{1,6}"/></td>
                             {% endif %}
                     </tr>
                     <tr>
                         <td><label>Limite de Kilometraje:</label></td>
-                        <td><input type="text" value={{vehiculo.limiteKilometraje}} name="limiteKilometraje" required="true"/>*</td>
+                        <td><input type="text" value="{{vehiculo.limiteKilometraje}}" name="limiteKilometraje" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Tarifa:</label></td>
-                        <td><input type="text" value={{vehiculo.tarifa}} name="tarifa" required="true"/>*</td>
+                        <td><input type="text" value="{{vehiculo.tarifa}}" name="tarifa" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Fecha de Vencimiento de SOAT:</label></td>
-                        <td><input type="date" value={{vehiculo.fechaVencSOAT}} name="fechaVencSOAT" required="true"/>*</td>
+                        <td><input type="date" value="{{vehiculo.fechaVencSOAT}}" name="fechaVencSOAT" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Fecha de Vencimiento del Seguro Todo Riesgo:</label></td>
-                        <td><input type="date" value={{vehiculo.fechaVencSeguroTodoRiesgo}} name="fechaVencSeguroTodoRiesgo" required="true"/>*</td>
+                        <td><input type="date" value="{{vehiculo.fechaVencSeguroTodoRiesgo}}" name="fechaVencSeguroTodoRiesgo" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Fecha de Vencimiento de la Revision Tecnico Mecanica:</label></td>
-                        <td><input type="date" value={{vehiculo.fechaVencRevisionTecMec}} name="fechaVencRevisionTecMec" required="true"/>*</td>
+                        <td><input type="date" value="{{vehiculo.fechaVencRevisionTecMec}}" name="fechaVencRevisionTecMec" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Fecha de Vencimiento de Cambio de Aceite:</label></td>
-                        <td><input type="date" value={{vehiculo.fechaVencCambioAceite}} name="fechaVencCambioAceite" required="true"/>*</td>
+                        <td><input type="date" value="{{vehiculo.fechaVencCambioAceite}}" name="fechaVencCambioAceite" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Imagen del Auto:</label></td>

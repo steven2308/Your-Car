@@ -2,7 +2,7 @@
 {% block titulo %}Agregar Voucher{% endblock %}
 {% block contenido %}
 	<div class="container">
-	{%if errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorCamposVacios %}
+	{%if errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorFecha or errorCamposVacios %}
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
 			{% if errorcodigoAutorizacion %}
@@ -20,6 +20,9 @@
 			{% if errorcodigoVerifTarjeta %}
 				El código de verificación de la tarjeta de crédito no es válido<br>
 			{% endif %}
+			{% if errorFecha %}
+				La fecha no es correcta, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
+			{% endif %}
 			{% if errorCamposVacios %}
 				Por favor complete todos los campos obligatorios.<br>
 			{% endif %}
@@ -31,7 +34,8 @@
         </p>
     {% endif %}
     </div>
-	<div class="container"> <form method="POST" action="/voucher/agregar/" name="registro">
+	<div class="container">
+		<form method="POST" action="/voucher/agregar/" name="registro">
 			{% csrf_token %}
 			<h3>Ingresa los datos del voucher:</hs3>
 			<table class="table-bordered table-striped table-hover">

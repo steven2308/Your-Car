@@ -32,4 +32,7 @@ parametros = {
 	"tiposDeFrenos": (
 		"", "Disco", "Tambor", "ABS"
 		),
+	"estadosPago": (
+		"No", "Si"),
+	"numElementosPorPagina":5,
 }

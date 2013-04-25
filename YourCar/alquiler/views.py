@@ -6,15 +6,15 @@ from django.contrib.auth import login, authenticate, logout
 from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator,EmptyPage,InvalidPage
 import re, math
 from datetime import datetime
 
 #Correcciones:
-#Verificar que fecha es fecha (opcional)
 #Traer fechas en modificar
 #agregar foto
 
-def inicioControl(request):
+def inicioControl(request, registerSuccess=False):
 	conectado=False
 	nombre=""
 	misionInicio= parametros["misionInicio"]
@@ -35,6 +35,8 @@ def registroControl(request):
 			#Tomo los datos
 			nombreUsuario=request.POST["nombreUsuario"]
 			email=request.POST["email"]
+			nombres = request.POST['nombres']
+			apellidos = request.POST['apellidos']
 			fechaNacimiento = request.POST['fechaNacimiento']
 			telFijo = request.POST['telFijo']
 			telCelular = request.POST['telCelular']
@@ -58,21 +60,22 @@ def registroControl(request):
 			errorUser=(User.objects.filter(username=nombreUsuario) or  not re.match("^([a-zA-z0-9_]{8,20})$",nombreUsuario))
 			errorContrasena= (request.POST["contrasena"]!=request.POST["contrasena2"])
 			errorEmail= (User.objects.filter(email=email) or not re.match(r"^[A-Za-z0-9\._-]+@[A-Za-z0-9]+\.[a-zA-Z]+$", email))
+			errorFecha= not fechaCorrecta(fechaNacimiento)
 			errorTels = (not re.match("^([0-9]{7,12})$",telFijo) or not re.match("^([0-9]{10,12})$",telCelular) or (len(telContacto)>1 and not re.match("^([0-9]{7,12})$",telContacto)))
 			errorGenero= (genero not in (parametros["generos"]))
 			errorTipoPersona= (tipoPersona not in (parametros["tipoPersonas"]))
 			errorTipoDocumento= (tipoDocumento  not in (parametros["tipoDocumentos"]))
 			errorNumDocumento=  ((ClienteAlquiler.objects.filter(numDocumento=numDocumento)) or not re.match("^([a-zA-z0-9_-]{6,20})$",numDocumento))
 			errorDatosResidencia= (not paisResidencia or not ciudadResidencia or not dirResidencia)
-			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"])==0)
+			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"])==0 or len(nombres)==0 or len(apellidos)==0)
 
-			if (errorUser or errorContrasena or errorEmail or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios):
+			if (errorUser or errorContrasena or errorEmail or errorFecha or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios):
 				return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
 
 			#Guardo el usuario
 			usuario = User.objects.create_user(username=nombreUsuario, email=email, password=request.POST["contrasena"])
-			usuario.first_name = request.POST['nombres']
-			usuario.last_name = request.POST['apellidos']
+			usuario.first_name = nombres
+			usuario.last_name = apellidos
 			usuario.save()
 
 			#Guardo el cliente de alquiler
@@ -82,7 +85,7 @@ def registroControl(request):
 				dirResidencia = dirResidencia, nombrePersonaContacto = nombrePersonaContacto, telContacto= telContacto,
 				direccionContacto=direccionContacto)
 			cliente.save()
-			return HttpResponseRedirect('/')
+			return inicioControl(request,registerSuccess=True)
 		else:
 			return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
 	else:
@@ -115,7 +118,7 @@ def loginControl(request):
 	quienesSomosInicio= parametros["quienesSomosInicio"]
 	return render_to_response('inicio.html', locals(), context_instance = RequestContext(request))
 
-def verVehiculosControl(request):
+def verVehiculosControl(request,  pagina=1, addSuccess=False):
 	is_staff = request.user.is_staff
 	gamas=parametros["gamas"]
 	if request.method=="POST":
@@ -153,14 +156,15 @@ def verVehiculosControl(request):
 
 		#Si la consulta no es vacia la hago
 		if query:
-			vehiculos= Vehiculo.objects.filter(**query).order_by(order)
+			listaVehiculos= Vehiculo.objects.filter(**query).order_by(order)
 			filtrados=True
 		else:
-			vehiculos = Vehiculo.objects.all().order_by(order)
-		#mensaje=request.POST["orderBy"]
-		#return render_to_response ('pruebas.html',locals(), context_instance = RequestContext(request))
+			listaVehiculos = Vehiculo.objects.all().order_by(order)
+		vehiculos=paginar(listaVehiculos,pagina)
 		return render_to_response('inventarioVehiculos.html',locals(), context_instance = RequestContext(request))
-	vehiculos = Vehiculo.objects.all()
+	#sino es un post cargo todos
+	listaVehiculos = Vehiculo.objects.all()
+	vehiculos=paginar(listaVehiculos,pagina)
 	return render_to_response('inventarioVehiculos.html',locals(), context_instance = RequestContext(request))
 
 def detallesVehiculoControl(request):
@@ -174,19 +178,21 @@ def detallesVehiculoControl(request):
 			return HttpResponseRedirect('/vehiculos')
 	return HttpResponseRedirect('/vehiculos')
 
-def historialMantenimientoControl(request):
+def historialMantenimientoControl(request, pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
 			try:
 				placa=request.POST["placa"].upper()
 				vehiculo = Vehiculo.objects.get(placa=placa)
-				mantenimientos = Mantenimiento.objects.filter(idVehiculo=vehiculo)
+				lista_mantenimientos = Mantenimiento.objects.filter(idVehiculo=vehiculo)
+				mantenimientos=paginar(lista_mantenimientos,pagina)
 				vehiculoCargado = True
 				return render_to_response('historialMantenimiento.html',locals(), context_instance = RequestContext(request))
 			except:
 				return HttpResponseRedirect('/vehiculos/historialMantenimiento')
 		else:
-			mantenimientos = Mantenimiento.objects.all()
+			lista_mantenimientos = Mantenimiento.objects.all()
+			mantenimientos=paginar(lista_mantenimientos,pagina)
 			return render_to_response('historialMantenimiento.html',locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
@@ -211,11 +217,12 @@ def agregarHistorialMantenimientoControl(request):
 
 				#Hago validaciones
 				errorPlaca = not Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa)
+				errorFecha= not fechaCorrecta(fecha)
 				errorTipo = tipo not in tipos
 				errorCosto = not re.match("^([0-9]{3,10})$",costo)
 
 				#Si hay errores vuelvo al formulario y los informo
-				if (errorPlaca or errorTipo or errorCosto):
+				if (errorPlaca or errorFecha or errorTipo or errorCosto):
 					return render_to_response('agregarHistorialMantenimiento.html',locals(), context_instance = RequestContext(request))
 
 				#Si no hay errores guardo el mantenimiento y vuelvo al historial
@@ -262,16 +269,21 @@ def cotizarControl(request):
 			horaIni = request.POST["horaIni"]
 			horaFin = request.POST["horaFin"]
 
-			#Calculo dias y diferencia
-			dtIni = datetime.strptime(fechaIni+" "+horaIni, '%Y-%m-%d %H:%M')
-			dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
-			diferencia =  dtFin-dtIni
-
 			#Hago validaciones
 			errorPlaca = not Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa)
-			errorFechas = dtIni > dtFin or datetime.now()> dtIni
+			errorFechas1 =  not fechaCorrecta(fechaIni) or not fechaCorrecta(fechaFin)
+			errorHoras = not re.match('[0-9]{2}:[0-9]{2}',horaIni) or  not re.match('[0-9]{2}:[0-9]{2}',horaFin)
+			errorFechas2 = False
+			#Si las fechas y las horas tienen un formato correcto verifico la logica
+			if not errorFechas1 and not errorHoras:
+				#Calculo dias y diferencia
+				dtIni = datetime.strptime(fechaIni+" "+horaIni, '%Y-%m-%d %H:%M')
+				dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
+				diferencia =  dtFin-dtIni
+				#La fecha inicial debe ser menor a la final y mayor a la actual
+				errorFechas2 = dtIni > dtFin or datetime.now()> dtIni
 			#Si hay errores vuelvo al formulario y los informo
-			if (errorPlaca or errorFechas):
+			if (errorPlaca or errorFechas1 or errorFechas2 or errorHoras):
 				return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 
 			#Calculos
@@ -292,6 +304,8 @@ def cotizarControl(request):
 			totalPorHoras = horas*tarifaHora
 			tarifaDia = vehiculo.tarifa
 			limiteKilometraje = vehiculo.limiteKilometraje
+			kmPorHora = math.floor(limiteKilometraje/24)
+			maxKms = limiteKilometraje*dias+kmPorHora*horas
 			total=totalPorDias+totalPorHoras
 
 			#formateo resultados
@@ -395,22 +409,23 @@ def agregarVehiculoControl(request):
 			errorTipoDeTraccion = (tipoDeTraccion not in parametros["tiposTraccion"])
 			errorFoto = not foto
 			errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
-
+			errorFechas= not fechaCorrecta(fechaVencSOAT) or not fechaCorrecta(fechaVencSeguroTodoRiesgo) or not fechaCorrecta(fechaVencRevisionTecMec) or not fechaCorrecta(fechaVencCambioAceite)
 			#manejo de errores
-			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh):
+			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh) or errorFechas:
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 
 			#guardar vehiculo
 			vehiculo = Vehiculo(placa = placa, marca = marca, referencia = referencia, gama = gama, descripcionBasica = descripcionBasica, numDePasajeros = numDePasajeros, cilindraje = cilindraje, color = color, cajaDeCambios = cajaDeCambios, limiteKilometraje = limiteKilometraje, tarifa = tarifa, estado = estado, fechaVencSOAT = fechaVencSOAT, fechaVencSeguroTodoRiesgo = fechaVencSeguroTodoRiesgo, fechaVencRevisionTecMec = fechaVencRevisionTecMec, fechaVencCambioAceite = fechaVencCambioAceite, tipoDeFrenos = tipoDeFrenos, airbags = airbags, tipoDeDireccion = tipoDeDireccion, tipoDeTraccion = tipoDeTraccion, modelo = modelo, valorGarantia = valorGarantia, kilometraje = kilometraje, foto=foto)
 			vehiculo.save()
-			return HttpResponseRedirect('/vehiculos')
+			request.method="GET"
+			return verVehiculosControl(request,addSuccess=True)
 		else:
 			return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
 
 def modificarVehiculoControl(request):
-	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'GET':
 		cajasDeCambios=parametros["cajasDeCambios"]
 		tipoDeDirecciones=parametros["tipoDeDirecciones"]
 		estadosVehiculo=parametros["estadosVehiculo"]
@@ -418,7 +433,7 @@ def modificarVehiculoControl(request):
 		tiposDeFrenos=parametros["tiposDeFrenos"]
 		gamas=parametros["gamas"]
 		try:
-			placa=request.POST["placa"].upper()
+			placa=request.GET["placa"]
 			vehiculo = Vehiculo.objects.get(placa=placa)
 			return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
 		except:
@@ -426,9 +441,9 @@ def modificarVehiculoControl(request):
 	return HttpResponseRedirect('/')
 
 def eliminarVehiculoControl(request):
-	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'GET':
 		try:
-			placa=request.POST["placa"]
+			placa=request.GET["placa"]
 			vehiculo = Vehiculo.objects.get(placa=placa)
 			vehiculo.delete()
 		except:
@@ -473,9 +488,10 @@ def agregarVoucherControl(request):
 			errormontoVoucher = (not re.match(r"^[0-9]{4,8}$", montoVoucher))
 			errornumTarjetaCredito  = False #or pattern?
 			errorcodigoVerifTarjeta = False #or pattern?
+			errorFecha = not fechaCorrecta(fechaVencTarjeta)
 			errorCamposVacios = (len(codigoAutorizacion)==0 or len(numTarjetaCredito)==0 or len(codigoVerifTarjeta)==0 or len(nombreBanco)==0)
 
-			if (errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorCamposVacios):
+			if (errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorFecha or errorCamposVacios):
 				return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
 
 			#Guardo el voucher
@@ -487,7 +503,7 @@ def agregarVoucherControl(request):
 			return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
 
-def voucherControl(request):
+def voucherControl(request, pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
 			try:
@@ -503,10 +519,11 @@ def voucherControl(request):
 				elif buscarPor == "numTarjetaCredito":
 					query["numTarjetaCredito__iexact"] = busqueda
 				if query:
-					vouchers = Voucher.objects.filter(**query)
+					lista_vouchers = Voucher.objects.filter(**query)
 					voucherCargado = True
 				else:
-					vouchers = Voucher.objects.all()
+					lista_vouchers = Voucher.objects.all()
+				vouchers=paginar(lista_vouchers,pagina)
 				return render_to_response('voucher.html',locals(), context_instance = RequestContext(request))
 			except:
 				enExcept=True
@@ -514,7 +531,8 @@ def voucherControl(request):
 				#return HttpResponseRedirect('/voucher/')
 		else:
 			noEsPost=True
-			vouchers = Voucher.objects.all()
+			lista_vouchers = Voucher.objects.all()
+			vouchers=paginar(lista_vouchers,pagina)
 			return render_to_response('verVoucher.html',locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
@@ -536,8 +554,52 @@ def reservasControl(request):
 	return render_to_response('reservas.html',locals(), context_instance = RequestContext(request))
 
 def agregarReservaControl(request):
-	#Logica de control
-	return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
+	estadosPago=parametros["estadosPago"]
+	if request.method == 'POST':
+		idVehiculo = request.POST["idVehiculo"]
+		idCliente = request.POST["idCliente"]
+
+		#nom=request.POST["idCliente"]
+		#user = User.objects.get(username=nom)
+		#idCliente = ClienteAlquiler.objects.get(user=user)
+
+		fechaInicio = request.POST["fechaInicio"]
+		fechaFin = request.POST["fechaFin"]
+		lugar = request.POST["lugar"]
+		if request.POST["pagada"] == "Si":
+			pagada=True
+		if request.POST["pagada"] == "No":
+			pagada=False
+
+
+		try:
+			user=user.objects.get(username=idCliente)
+			cliente=ClienteAlquiler.objects.get(user=user)
+		except:
+			erroridCliente = True
+
+
+		datosDePago = ""
+
+		#errorFechas
+
+		if request.POST["datosDePago"]: datosDePago = request.POST["datosDePago"]
+
+		errorPagada = (pagada not in parametros["estadosPago"])
+		if errorPagada:
+			return render_to_response('agregarReserva.html', locals(), contet_instance = RequestContext(request))
+
+		reserva = Reserva(idReserva = idReserva, idVehiculo = idVehiculo, idCliente = cliente, fechaInicio = fechaInicio, fechaFin = fechaFin, lugar = lugar, pagada = pagada, datosDePago = datosDePago)
+		reserva.save()
+		return HttpResponseRedirect('/reservas')
+	else:
+		if not request.user.is_staff: nombre = request.user.username
+		try:
+			placa = request.GET["placa"]
+		except:
+			pass
+		is_staff = request.user.is_staff
+		return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
 
 # Controlador del Cierre de Sesion
 def logoutControl(request):
@@ -546,3 +608,26 @@ def logoutControl(request):
 
 def notFoundControl(request):
 	return render_to_response('404.html',locals(),context_instance = RequestContext(request))
+
+def fechaCorrecta(fecha):
+	try:
+		#2013-04-19
+		datetime.strptime(fecha, '%Y-%m-%d')
+		return True
+	except:
+		return False
+
+def paginar(lista,pagina):
+	elementosPorPagina = parametros["numElementosPorPagina"]
+	paginator= Paginator(lista,elementosPorPagina)
+	#Si no me envian un numero lo envio a la primera
+	try:
+		pagina = int(pagina)
+	except:
+		pagina = 1
+	#Intento traer la pagina solicitada, si no exite envio la ultima
+	try:
+		listaPaginada=paginator.page(pagina)
+	except(EmptyPage,InvalidPage):
+		listaPaginada=paginator.page(paginator.num_pages)
+	return listaPaginada

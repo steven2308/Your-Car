@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar un Vehículo{% endblock %}
 {% block contenido %}
-	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh %}
+	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh or errorFechas %}
 		<div class="container">
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
@@ -44,12 +44,15 @@
 			{% if errorCamposVaciosVeh %}
 				Por favor, llena todos los campos obligatorios. <br>
 			{% endif %}
+			{% if errorFechas %}
+				Una o mas fechas no son correctas, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
+			{% endif %}
 		</p>
 	</div>
-	{%else %}
+	{%endif %}
+	<div class="container">
 		<form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo">
 				{% csrf_token %}
-				<div class="container">
 				<h3>Ingrese los datos del vehiculo.</hs3>
 				<table class="table-bordered table-striped table-hover">
 					<tbody>
@@ -192,7 +195,6 @@
 				</tbody>
 			</table>
 			<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
-			</div>
 		</form>
-	{%endif %}
+	</div>
 {% endblock %}

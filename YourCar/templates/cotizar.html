@@ -2,13 +2,19 @@
 {% block titulo %}Cotizar{% endblock %}
 {% block contenido %}
 	<div class="container">
-		{% if errorPlaca or errorFechas %}
+		{% if errorPlaca or errorFechas1 or errorFechas2 or errorHoras%}
 			{% if errorPlaca %}
 				<p class="text-error">Por favor ingrese una placa correcta.</p>
 			{% endif %}
-			{% if errorFechas %}
-				<p class="text-error">La fecha de inicio debe ser menor a la de fin y debe ser mayor a la fecha actual.</p>
+			{% if errorFechas1 %}
+				<p class="text-error">La fecha no es correcta, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.</p>
 			{% endif %}
+            {% if errorFechas2 %}
+                <p class="text-error">La fecha de inicio debe ser menor a la de fin y debe ser mayor a la fecha actual.</p>
+            {% endif %}
+            {% if errorHoras %}
+                <p class="text-error">La hora no es correcta, si tu navegador no muestra el formato de hora por favor ingresalo de esta forma: hh:mm:x.m.</p>
+            {% endif %}
 		{% endif %}
 		<form method="POST" action="/cotizar/" name="verMantenimiento">
             {% csrf_token %}
@@ -37,12 +43,15 @@
 						<td>
 							<input type="time" name="horaFin" required="true" value="{{horaFin}}">
 						</td>
-
 					</tr>
 				</tbody>
 			</table>
 			<input type="submit" value="Cotizar" name="cotizar"/>
         </form>
+        <a class="btn" href="/vehiculos/">Ver vehículos</a>
+        <p class="text-info">
+            Las 12 p.m. son las del medio día, las 12 a.m. son la media noche.
+        </p>
         {% if cotizado %}
         	<p>
         		<table class="table-bordered table-striped table-hover">
@@ -70,6 +79,10 @@
         				<td>Limite de kms por día</td>
         				<td>{{limiteKilometraje}}</td>
         			</tr>
+                    <tr>
+                        <td>Máximo de kms totales</td>
+                        <td>{{maxKms}}</td>
+                    </tr>
         			<tr>
         				<td>Tarifa hora</td>
         				<td>{{tarifaHora}}</td>

@@ -58,5 +58,17 @@
     			{% endfor %}
     		</tbody>
     	</table>
+        <div class="paginas">
+                <a href="/voucher/pag/1/"> Primera </a>
+                {% if vouchers.has_previous %}
+                    <a href="/voucher/pag/{{vouchers.previous_page_number}}/"> Anterior </a>
+                {% endif %}
+                {% if vouchers.has_next %}
+                    <a href="/voucher/pag/{{vouchers.next_page_number}}/"> Siguiente </a>
+                {% endif %}
+                <a href="/voucher/pag/{{vouchers.paginator.num_pages}}"> Última </a>
+                <br>
+                <strong>Página {{vouchers.number}} de {{vouchers.paginator.num_pages}}</strong>
+            </div>
 	</div>
 {% endblock %}
