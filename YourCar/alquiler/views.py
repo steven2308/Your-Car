@@ -7,7 +7,7 @@ from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Vo
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator,EmptyPage,InvalidPage
-import re, math
+import re, math, os
 from datetime import datetime
 
 #Correcciones:
@@ -636,7 +636,6 @@ def paginar(lista,pagina):
 		listaPaginada=paginator.page(paginator.num_pages)
 	return listaPaginada
 
-
 def parametrizarControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
@@ -657,6 +656,12 @@ def parametrizarControl(request):
 			parametros["numElementosPorPagina"] = request.POST["numElementosPorPagina"]
 			exito=True
 			param=parametros
+			newInfo = "parametros = "+str(parametros).replace(': u"',': "').replace('"(','(').replace(')",','),\n').replace(')"}',')}')
+			paramFile=open('YourCar\\alquiler\parametros2.py','a')
+			paramFile.write(newInfo)
+			paramFile.close()
+			os.remove("YourCar\\alquiler\parametros.py")
+			os.rename("YourCar\\alquiler\parametros2.py","YourCar\\alquiler\parametros.py")
 			return render_to_response('parametrizar.html', locals(), context_instance = RequestContext(request))
 		else:
 			param=parametros
