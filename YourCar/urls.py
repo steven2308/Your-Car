@@ -30,6 +30,7 @@ urlpatterns = patterns('YourCar.alquiler.views',
     url(r'^vehiculos/historialMantenimiento/(pag/(?P<pagina>\d{1,2})/)?$', 'historialMantenimientoControl', name='vistaHistorialMantenimiento'),
     url(r'^vehiculos/historialMantenimiento/agregar/$', 'agregarHistorialMantenimientoControl', name='vistaAgregarHistorialMantenimiento'),
     url(r'^vehiculos/historialMantenimiento/eliminar/$', 'eliminarHistorialMantenimientoControl', name='vistaEliminarHistorialMantenimiento'),
+    url(r'^parametrizar/$', 'parametrizarControl', name='vistaParametrizar'),
 
 )
 
