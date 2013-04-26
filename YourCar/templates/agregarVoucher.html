@@ -42,7 +42,7 @@
 				<tbody>
 					<tr>
 				        <td><label>Código de autorización:</label></td>
-				        <td><input type="text" name="codigoAutorizacion" required="true" value="{{codigoAutorizacion}}"/>*</td>
+				        <td><input type="text" name="codigoAutorizacion" required="true" value="{{codigoAutorizacion}}" pattern="[0-9]{4,6}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Id Cliente:</label></td>
@@ -54,7 +54,7 @@
 				    </tr>
 				    <tr>
 				        <td><label># Tarjeta de Crédito:</label></td>
-				        <td><input type="text" name="numTarjetaCredito" required="true" value="{{numTarjetaCredito}}"/>*</td>
+				        <td><input type="text" name="numTarjetaCredito" required="true" value="{{numTarjetaCredito}}" pattern="[0-9]{15,16}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Fecha de Vencimiento (Tarjeta):</label></td>
@@ -62,7 +62,7 @@
 				    </tr>
 				    <tr>
 				        <td><label>Código Verificación (Tarjeta):</label></td>
-				        <td><input type="text" name="codigoVerifTarjeta" required="true" value="{{codigoVerifTarjeta}}"/>*</td>
+				        <td><input type="text" name="codigoVerifTarjeta" required="true" value="{{codigoVerifTarjeta}}" pattern="[0-9]{3,4}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><label>Nombre de banco:</label></td>
