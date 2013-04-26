@@ -14,6 +14,12 @@ from datetime import datetime
 #Traer fechas en modificar
 #agregar foto
 
+#foto de consignacion es obligatoria
+#la reserva no verifica el estado de un vehiculo
+#error en los errores del agregar vehiculo, no carga los campos
+#revisar si no existe placa en reserva, error
+
+
 def inicioControl(request, registerSuccess=False):
 	conectado=False
 	nombre=""
@@ -549,57 +555,51 @@ def eliminarVoucherControl(request):
 	else:
 		return HttpResponseRedirect('/404')
 
-def reservasControl(request):
-	#Logica de control
+def verReservasControl(request):
+	##if request.user.is_staff:
+
 	return render_to_response('reservas.html',locals(), context_instance = RequestContext(request))
 
 def agregarReservaControl(request):
 	estadosPago=parametros["estadosPago"]
-	if request.method == 'POST':
-		idVehiculo = request.POST["idVehiculo"]
-		idCliente = request.POST["idCliente"]
+	if request.user.is_authenticated:
+		if request.method == 'POST':
+			idVehiculo = request.POST["idVehiculo"]
+			idCliente = request.POST["idCliente"]
+			#nom=request.POST["idCliente"]
+			#user = User.objects.get(username=nom)
+			#idCliente = ClienteAlquiler.objects.get(user=user)
+			fechaInicio = request.POST["fechaInicio"]
+			fechaFin = request.POST["fechaFin"]
+			lugar = request.POST["lugar"]
+			foto = request.POST["fotoPago"]
+			if request.POST["pagada"] == "Si": pagada=True
+			if request.POST["pagada"] == "No": pagada=False
+			
+			datosDePago = ""
+			if request.POST["datosDePago"]: datosDePago = request.POST["datosDePago"]
 
-		#nom=request.POST["idCliente"]
-		#user = User.objects.get(username=nom)
-		#idCliente = ClienteAlquiler.objects.get(user=user)
-
-		fechaInicio = request.POST["fechaInicio"]
-		fechaFin = request.POST["fechaFin"]
-		lugar = request.POST["lugar"]
-		if request.POST["pagada"] == "Si":
-			pagada=True
-		if request.POST["pagada"] == "No":
-			pagada=False
-
-
-		try:
-			user=user.objects.get(username=idCliente)
-			cliente=ClienteAlquiler.objects.get(user=user)
-		except:
-			erroridCliente = True
-
-
-		datosDePago = ""
-
-		#errorFechas
-
-		if request.POST["datosDePago"]: datosDePago = request.POST["datosDePago"]
-
-		errorPagada = (pagada not in parametros["estadosPago"])
-		if errorPagada:
-			return render_to_response('agregarReserva.html', locals(), contet_instance = RequestContext(request))
-
-		reserva = Reserva(idReserva = idReserva, idVehiculo = idVehiculo, idCliente = cliente, fechaInicio = fechaInicio, fechaFin = fechaFin, lugar = lugar, pagada = pagada, datosDePago = datosDePago)
-		reserva.save()
-		return HttpResponseRedirect('/reservas')
+			try:
+				user=user.objects.get(username=idCliente)
+				cliente=ClienteAlquiler.objects.get(user=user)
+			except:
+				erroridCliente = True
+			errorPagada = (pagada not in parametros["estadosPago"])
+			if errorPagada:
+				return render_to_response('agregarReserva.html', locals(), contet_instance = RequestContext(request))
+			reserva = Reserva(idVehiculo = idVehiculo, idCliente = cliente, fechaInicio = fechaInicio, fechaFin = fechaFin, lugar = lugar, pagada = pagada, datosDePago = datosDePago)
+			reserva.save()
+			return HttpResponseRedirect('/reservas')
+		else:
+			if not request.user.is_staff: nombre = request.user.username
+			try:
+				placa = request.GET["placa"]
+			except:
+				pass
+			is_staff = request.user.is_staff
+			return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
 	else:
-		if not request.user.is_staff: nombre = request.user.username
-		try:
-			placa = request.GET["placa"]
-		except:
-			pass
-		is_staff = request.user.is_staff
-		return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
+		return HttpResponseRedirect('/404')
 
 # Controlador del Cierre de Sesion
 def logoutControl(request):

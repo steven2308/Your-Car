@@ -23,7 +23,7 @@ urlpatterns = patterns('YourCar.alquiler.views',
     url(r'^voucher/agregar/$', 'agregarVoucherControl', name='vistaAgregarVoucher'),
     url(r'^voucher/eliminar/$', 'eliminarVoucherControl', name='vistaEliminarVoucher'),
     #Links para usuarios conectados:
-    url(r'^reservas/$', 'reservasControl', name='vistaReservas'),
+    url(r'^reservas/$', 'verReservasControl', name='vistaReservas'),
     url(r'^reservas/agregar/$', 'agregarReservaControl', name='vistaReservas'),
     url(r'^logout/$', 'logoutControl', name='vistaLogout'),
     url(r'^404/$', 'notFoundControl', name='vistaNotFound'),
