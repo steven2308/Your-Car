@@ -11,11 +11,8 @@ import re, math, os
 from datetime import datetime
 
 #Correcciones:
-#Traer fechas en modificar
+#Traer fechas en modificar vehiculo y voucher
 #agregar foto
-#VERIFICACION {3,4}
-#AUTORIZACION {4,6}
-# num tarjeta {15,16}
 
 #foto de consignacion es obligatoria
 #error en los errores del agregar vehiculo, no carga los campos
@@ -503,7 +500,7 @@ def agregarVoucherControl(request):
 			nombreBanco = request.POST['nombreBanco']
 
 			#Valido errores
-			errorcodigoAutorizacion =(Voucher.objects.filter(codigoAutorizacion=codigoAutorizacion)) or not re.match("^([0-9]{4,6})$",numTarjetaCredito)
+			errorcodigoAutorizacion =(Voucher.objects.filter(codigoAutorizacion=codigoAutorizacion)) or not re.match("^([0-9]{4,6})$",codigoAutorizacion)
 			erroridCliente=False
 			try:
 				cliente=ClienteAlquiler.objects.get(numDocumento=idCliente)
@@ -511,7 +508,7 @@ def agregarVoucherControl(request):
 				erroridCliente = True
 			errormontoVoucher = (not re.match("^[0-9]{4,8}$", montoVoucher))
 			errornumTarjetaCredito  = not re.match("^([0-9]{15,16})$",numTarjetaCredito)
-			errorcodigoVerifTarjeta = not re.match("^([0-9]{3,4})$",numTarjetaCredito)
+			errorcodigoVerifTarjeta = not re.match("^([0-9]{3,4})$",codigoVerifTarjeta)
 			errorFecha = not fechaCorrecta(fechaVencTarjeta)
 			errorCamposVacios = (len(codigoAutorizacion)==0 or len(numTarjetaCredito)==0 or len(codigoVerifTarjeta)==0 or len(nombreBanco)==0)
 
@@ -539,7 +536,7 @@ def voucherControl(request, pagina=1):
 					query["codigoAutorizacion__iexact"] = busqueda
 				elif buscarPor == "idCliente":
 					#cliente = ClienteAlquiler.objects.get(numDocumento=busqueda)
-					query["idCliente__iexact"] = busqueda
+					query["idCliente"] = busqueda
 				elif buscarPor == "numTarjetaCredito":
 					query["numTarjetaCredito__iexact"] = busqueda
 				if query:
