@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block titulo %}Modificar{% endblock %}
+{% block contenido %}
+    <h2>Modificar Reserva.</h2>
+    {%if errorPagada or errorIdCliente or errorIdVehiculo%}
+        <div class="container">
+        <h3>Corrige los siguientes errores para continuar:</h3>
+        <p class="text-error">
+            {% if errorPagada %}
+                No puede registrarse como pagada si no existen datos de pago.<br>
+            {% endif %}
+            {% if errorIdCliente %}
+                El numero de identificacion del cliente es incorrecto o no existe.<br>
+            {% endif %}
+            {% if errorIdVehiculo %}
+                el numero de identificacion del vehiculo es incorrecto o no existe.<br>
+            {% endif %}
+        </p>
+    </div>
+    {% else %}
+    <form method="POST" action="/reservas/modificar/" name="agregarReserva">
+            {% csrf_token %}
+            <div class="container">
+            <h3>Modifique o añada los datos de la reserva.</hs3>
+            <table class="table-bordered table-striped table-hover">
+                <tbody>
+                    <tr>
+                        <td><label>ID Vehiculo:</label></td>
+                        <td><input type="text" name="idVehiculo" value="{{reserva.idVehiculo.placa}}" required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
+                    </tr>
+                    <tr>
+                        <td><label>ID Cliente:</label></td>
+                        <td><input type="text" name="idCliente" value="{{reserva.idCliente.numDocumento}}" required="true" pattern="[a-zA-z0-9_-]{6,20}"/>*</td>
+                    </tr>
+                    <tr>
+                       <td><label>fecha de Inicio:</label></td>
+                       <td><input type="date" name="fechaInicio" value="{{reserva.fechaInicio}}" required="true"/>*</td>
+                    </tr>
+                    <tr>
+                       <td><label>fecha de Fin:</label></td>
+                       <td><input type="date" name="fechaFin" value="{{reserva.fechaFin}}" required="true"/>*</td>
+                    </tr>
+                    <tr>
+                       <td><label>Lugar:</label></td>
+                       <td><input type="text" name="lugar" value="{{reserva.lugar}}" required="true"/>*</td>
+                    </tr>
+                    <tr>
+                        <td><label>Pagada?:</label></td>
+                        <td>
+                            <select name="pagada" required="true">
+                                {% for ep in estadosPago%}
+                                    <option>{{ep}}</option>
+                                {% endfor %}
+                            </select>*
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>Datos de Pago:</label></td>
+                        <td><input type="text" name="datosDePago" value="{{reserva.datosDePago}}"/>*</td>
+                    </tr>
+                    <tr>
+                        <td><label>Foto de Pago:</label></td>
+                        <td><input type="file" name="fotoPago"/></td>
+                    </tr>
+                    <tr>
+                          <input name="idReserva" type="hidden" value="{{reserva.idReserva}}" pattern="[1-9]{1,10}">
+                          <td><input type="submit" value="Modificar Reserva" name="modificarReserva"/>
+                    </tr>
+            </table>
+            </div>
+    </form>
+    {% endif %}
+{% endblock %}

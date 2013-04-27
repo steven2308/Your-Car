@@ -63,7 +63,7 @@ class Reserva(models.Model):
 	fechaFin = models.DateTimeField()
 	lugar = models.CharField(max_length=15)
 	pagada = models.BooleanField(default=False)
-	datosDePago = models.CharField(max_length=200,blank=True)
+	datosDePago = models.CharField(max_length=200)
 	fotoPago = models.FileField(upload_to=url)
 	def __unicode__(self):
 		return "Reserva de %s a %s" %(unicode(self.idCliente),unicode(self.idVehiculo))
