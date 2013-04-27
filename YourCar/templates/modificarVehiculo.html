@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block titulo %}Modificar{% endblock %}
 {% block contenido %}
-    <h2>Modificar Vehiculo.</h2>
-    <form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo">
+    <div class="container">
+        <h2>Modificar Vehiculo.</h2>
+        <form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo">
             {% csrf_token %}
-            <div class="container">
             <h3>Modifique los datos del vehiculo.</hs3>
             <table class="table-bordered table-striped table-hover">
                 <tbody>
@@ -157,19 +157,19 @@
                     </tr>
                     <tr>
                         <td><label>Fecha de Vencimiento de SOAT:</label></td>
-                        <td><input type="date" value="{{vehiculo.fechaVencSOAT}}" name="fechaVencSOAT" required="true"/>*</td>
+                        <td><input type="date" value="{{fechaVencSOAT}}" name="fechaVencSOAT" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Fecha de Vencimiento del Seguro Todo Riesgo:</label></td>
-                        <td><input type="date" value="{{vehiculo.fechaVencSeguroTodoRiesgo}}" name="fechaVencSeguroTodoRiesgo" required="true"/>*</td>
+                        <td><input type="date" value="{{fechaVencSeguroTodoRiesgo}}" name="fechaVencSeguroTodoRiesgo" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Fecha de Vencimiento de la Revision Tecnico Mecanica:</label></td>
-                        <td><input type="date" value="{{vehiculo.fechaVencRevisionTecMec}}" name="fechaVencRevisionTecMec" required="true"/>*</td>
+                        <td><input type="date" value="{{fechaVencRevisionTecMec}}" name="fechaVencRevisionTecMec" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Fecha de Vencimiento de Cambio de Aceite:</label></td>
-                        <td><input type="date" value="{{vehiculo.fechaVencCambioAceite}}" name="fechaVencCambioAceite" required="true"/>*</td>
+                        <td><input type="date" value="{{fechaVencCambioAceite}}" name="fechaVencCambioAceite" required="true"/>*</td>
                     </tr>
                     <tr>
                         <td><label>Imagen del Auto:</label></td>
@@ -182,6 +182,6 @@
         </div>
         <div>
             <img id="foto" src="{{ MEDIA_URL}}{{vehiculo.foto}}" alt="Imagen no encontrada">
-        </div>
-    </form>
+        </form>
+    </div>
 {% endblock %}

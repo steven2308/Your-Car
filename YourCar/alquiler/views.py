@@ -11,7 +11,6 @@ import re, math, os
 from datetime import datetime
 
 #Correcciones:
-#Traer fechas en modificar vehiculo y voucher
 #agregar foto
 
 #foto de consignacion es obligatoria
@@ -444,6 +443,11 @@ def modificarVehiculoControl(request):
 		try:
 			placa=request.GET["placa"]
 			vehiculo = Vehiculo.objects.get(placa=placa)
+			fechaVencSOAT = formatearFecha(vehiculo.fechaVencSOAT)
+			fechaVencSeguroTodoRiesgo = formatearFecha(vehiculo.fechaVencSeguroTodoRiesgo)
+			fechaVencRevisionTecMec = formatearFecha(vehiculo.fechaVencRevisionTecMec)
+			fechaVencCambioAceite = formatearFecha(vehiculo.fechaVencCambioAceite)
+			#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
 			return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
 		except:
 			HttpResponseRedirect('/vehiculos')
@@ -717,10 +721,11 @@ def modificarReservaControl(request):
 			estadosPago=parametros["estadosPago"]
 			idReserva=request.GET["idReserva"]
 			reserva=Reserva.objects.get(idReserva=idReserva)
+			fechaInicio = formatearFecha(reserva.fechaInicio)
+			fechaFin = formatearFecha(reserva.fechaFin)
 			if request.user.is_staff: is_staff = True
 			return render_to_response('modificarReserva.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/reservas')
-	##return HttpResponseRedirect('/')
 
 # Controlador del Cierre de Sesion
 def logoutControl(request):
@@ -732,7 +737,6 @@ def notFoundControl(request):
 
 def fechaCorrecta(fecha):
 	try:
-		#2013-04-19
 		datetime.strptime(fecha, '%Y-%m-%d')
 		return True
 	except:
@@ -785,3 +789,22 @@ def parametrizarControl(request):
 			return render_to_response('parametrizar.html', locals(), context_instance = RequestContext(request))
 	else:
 	 return HttpResponseRedirect('/404')
+
+
+def formatearFecha(fecha):
+	try:
+		try:
+			date = datetime.strptime(str(fecha)[:-15], '%Y-%m-%d')
+		except:
+			date = datetime.strptime(str(fecha), '%Y-%m-%d')
+		tt = date.timetuple()
+		anyo=tt[0]
+		mes = str(tt[1])
+		if len(mes)==1:
+			mes="0"+mes
+		dia = str(tt[2])
+		if len(dia)==1:
+			dia="0"+dia
+		return "%s-%s-%s"%(anyo,mes,dia)
+	except:
+		return fecha
