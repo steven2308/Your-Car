@@ -7,12 +7,21 @@ from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Vo
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator,EmptyPage,InvalidPage
-import re, math
+import re, math, os
 from datetime import datetime
 
 #Correcciones:
 #Traer fechas en modificar
 #agregar foto
+#VERIFICACION {3,4}
+#AUTORIZACION {4,6}
+# num tarjeta {15,16}
+
+#foto de consignacion es obligatoria
+#la reserva no verifica el estado de un vehiculo
+#error en los errores del agregar vehiculo, no carga los campos
+#revisar si no existe placa en reserva, error
+
 
 def inicioControl(request, registerSuccess=False):
 	conectado=False
@@ -367,7 +376,8 @@ def agregarVehiculoControl(request):
 			fechaVencSeguroTodoRiesgo = request.POST["fechaVencSeguroTodoRiesgo"]
 			fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
 			fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
-			foto = request.POST["foto"]
+			foto = "fotos/carros/%s/%s/%s/%s"%(marca, referencia, placa , request.POST["foto"])
+			#foto = request.POST["foto"]
 			modificar = ""
 			#inicializo datos opcionales
 			tipoDeFrenos = ""
@@ -414,6 +424,7 @@ def agregarVehiculoControl(request):
 			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh) or errorFechas:
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 
+			#return render_to_response('pruebas.html', locals(), context_instance = RequestContext(request))
 			#guardar vehiculo
 			vehiculo = Vehiculo(placa = placa, marca = marca, referencia = referencia, gama = gama, descripcionBasica = descripcionBasica, numDePasajeros = numDePasajeros, cilindraje = cilindraje, color = color, cajaDeCambios = cajaDeCambios, limiteKilometraje = limiteKilometraje, tarifa = tarifa, estado = estado, fechaVencSOAT = fechaVencSOAT, fechaVencSeguroTodoRiesgo = fechaVencSeguroTodoRiesgo, fechaVencRevisionTecMec = fechaVencRevisionTecMec, fechaVencCambioAceite = fechaVencCambioAceite, tipoDeFrenos = tipoDeFrenos, airbags = airbags, tipoDeDireccion = tipoDeDireccion, tipoDeTraccion = tipoDeTraccion, modelo = modelo, valorGarantia = valorGarantia, kilometraje = kilometraje, foto=foto)
 			vehiculo.save()
@@ -479,15 +490,15 @@ def agregarVoucherControl(request):
 			nombreBanco = request.POST['nombreBanco']
 
 			#Valido errores
-			errorcodigoAutorizacion =(Voucher.objects.filter(codigoAutorizacion=codigoAutorizacion)) #Or pattern?
+			errorcodigoAutorizacion =(Voucher.objects.filter(codigoAutorizacion=codigoAutorizacion)) or not re.match("^([0-9]{4,6})$",numTarjetaCredito)
 			erroridCliente=False
 			try:
 				cliente=ClienteAlquiler.objects.get(numDocumento=idCliente)
 			except:
 				erroridCliente = True
-			errormontoVoucher = (not re.match(r"^[0-9]{4,8}$", montoVoucher))
-			errornumTarjetaCredito  = False #or pattern?
-			errorcodigoVerifTarjeta = False #or pattern?
+			errormontoVoucher = (not re.match("^[0-9]{4,8}$", montoVoucher))
+			errornumTarjetaCredito  = not re.match("^([0-9]{15,16})$",numTarjetaCredito)
+			errorcodigoVerifTarjeta = not re.match("^([0-9]{3,4})$",numTarjetaCredito)
 			errorFecha = not fechaCorrecta(fechaVencTarjeta)
 			errorCamposVacios = (len(codigoAutorizacion)==0 or len(numTarjetaCredito)==0 or len(codigoVerifTarjeta)==0 or len(nombreBanco)==0)
 
@@ -549,57 +560,50 @@ def eliminarVoucherControl(request):
 	else:
 		return HttpResponseRedirect('/404')
 
-def reservasControl(request):
-	#Logica de control
+def verReservasControl(request):
+	##if request.user.is_staff:
+
 	return render_to_response('reservas.html',locals(), context_instance = RequestContext(request))
 
 def agregarReservaControl(request):
 	estadosPago=parametros["estadosPago"]
-	if request.method == 'POST':
-		idVehiculo = request.POST["idVehiculo"]
-		idCliente = request.POST["idCliente"]
-
-		#nom=request.POST["idCliente"]
-		#user = User.objects.get(username=nom)
-		#idCliente = ClienteAlquiler.objects.get(user=user)
-
-		fechaInicio = request.POST["fechaInicio"]
-		fechaFin = request.POST["fechaFin"]
-		lugar = request.POST["lugar"]
-		if request.POST["pagada"] == "Si":
-			pagada=True
-		if request.POST["pagada"] == "No":
-			pagada=False
-
-
-		try:
-			user=user.objects.get(username=idCliente)
-			cliente=ClienteAlquiler.objects.get(user=user)
-		except:
-			erroridCliente = True
-
-
-		datosDePago = ""
-
-		#errorFechas
-
-		if request.POST["datosDePago"]: datosDePago = request.POST["datosDePago"]
-
-		errorPagada = (pagada not in parametros["estadosPago"])
-		if errorPagada:
-			return render_to_response('agregarReserva.html', locals(), contet_instance = RequestContext(request))
-
-		reserva = Reserva(idReserva = idReserva, idVehiculo = idVehiculo, idCliente = cliente, fechaInicio = fechaInicio, fechaFin = fechaFin, lugar = lugar, pagada = pagada, datosDePago = datosDePago)
-		reserva.save()
-		return HttpResponseRedirect('/reservas')
+	if request.user.is_authenticated:
+		if request.method == 'POST':
+			idVehiculo = request.POST["idVehiculo"]
+			idCliente = request.POST["idCliente"]
+			#nom=request.POST["idCliente"]
+			#user = User.objects.get(username=nom)
+			#idCliente = ClienteAlquiler.objects.get(user=user)
+			fechaInicio = request.POST["fechaInicio"]
+			fechaFin = request.POST["fechaFin"]
+			lugar = request.POST["lugar"]
+			foto = request.POST["fotoPago"]
+			if request.POST["pagada"] == "Si": pagada=True
+			if request.POST["pagada"] == "No": pagada=False
+			
+			datosDePago = ""
+			if request.POST["datosDePago"]: datosDePago = request.POST["datosDePago"]
+			try:
+				user=user.objects.get(username=idCliente)
+				cliente=ClienteAlquiler.objects.get(user=user)
+			except:
+				erroridCliente = True
+			errorPagada = (pagada not in parametros["estadosPago"])
+			if errorPagada:
+				return render_to_response('agregarReserva.html', locals(), contet_instance = RequestContext(request))
+			reserva = Reserva(idVehiculo = idVehiculo, idCliente = cliente, fechaInicio = fechaInicio, fechaFin = fechaFin, lugar = lugar, pagada = pagada, datosDePago = datosDePago)
+			reserva.save()
+			return HttpResponseRedirect('/reservas')
+		else:
+			if not request.user.is_staff: nombre = request.user.username
+			try:
+				placa = request.GET["placa"]
+			except:
+				pass
+			is_staff = request.user.is_staff
+			return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
 	else:
-		if not request.user.is_staff: nombre = request.user.username
-		try:
-			placa = request.GET["placa"]
-		except:
-			pass
-		is_staff = request.user.is_staff
-		return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
+		return HttpResponseRedirect('/404')
 
 # Controlador del Cierre de Sesion
 def logoutControl(request):
@@ -631,3 +635,36 @@ def paginar(lista,pagina):
 	except(EmptyPage,InvalidPage):
 		listaPaginada=paginator.page(paginator.num_pages)
 	return listaPaginada
+
+def parametrizarControl(request):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			parametros["misionInicio"] = request.POST["misionInicio"]
+			parametros["visionInicio"] = request.POST["visionInicio"]
+			parametros["quienesSomosInicio"] = request.POST["quienesSomosInicio"]
+			parametros["generos"] = request.POST["generos"]
+			parametros["tipoPersonas"] = request.POST["tipoPersonas"]
+			parametros["tipoDocumentos"] = request.POST["tipoDocumentos"]
+			parametros["cajasDeCambios"] = request.POST["cajasDeCambios"]
+			parametros["tipoDeDirecciones"] = request.POST["tipoDeDirecciones"]
+			parametros["estadosVehiculo"] = request.POST["estadosVehiculo"]
+			parametros["tiposTraccion"] = request.POST["tiposTraccion"]
+			parametros["gamas"] = request.POST["gamas"]
+			parametros["tiposMantenimiento"] = request.POST["tiposMantenimiento"]
+			parametros["tiposDeFrenos"] = request.POST["tiposDeFrenos"]
+			parametros["estadosPago"] = request.POST["estadosPago"]
+			parametros["numElementosPorPagina"] = request.POST["numElementosPorPagina"]
+			exito=True
+			param=parametros
+			newInfo = "parametros = "+str(parametros).replace(': u"',': "').replace('"(','(').replace(')",','),\n').replace(')"}',')}')
+			paramFile=open('YourCar\\alquiler\parametros2.py','a')
+			paramFile.write(newInfo)
+			paramFile.close()
+			os.remove("YourCar\\alquiler\parametros.py")
+			os.rename("YourCar\\alquiler\parametros2.py","YourCar\\alquiler\parametros.py")
+			return render_to_response('parametrizar.html', locals(), context_instance = RequestContext(request))
+		else:
+			param=parametros
+			return render_to_response('parametrizar.html', locals(), context_instance = RequestContext(request))
+	else:
+	 return HttpResponseRedirect('/404')

@@ -20,7 +20,7 @@
 
 	<body>
 		<div class="container">
-			<nav class="navbar">
+			<nav class="navbar navbar-inverse">
 				<li><a class="btn btn-primary" href="/">Inicio</a></li>
 				<li><a class="btn btn-primary" href="/vehiculos">Vehículos</a></li>
 				<li><a class="btn btn-primary" href="/cotizar">Cotizar</a></li>
@@ -29,6 +29,7 @@
 					{# <li><a class="btn btn-info" href="/estadisticas">Estadísticas</a></li> #}
 					{# <li><a class="btn btn-info" href="/alertas">Alertas</a></li> #}
 					<li><a class="btn btn-info" href="/voucher">Voucher</a></li>
+					<li><a class="btn btn-info" href="/parametrizar">Parámetros</a></li>
 				{% endif %}
 				{% if request.user.is_authenticated %}
 					<li><a class="btn btn-primary" href="/reservas">Reservas</a></li>

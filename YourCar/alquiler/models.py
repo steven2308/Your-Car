@@ -54,6 +54,8 @@ class ClienteAlquiler(models.Model):
 		verbose_name_plural=u'Clientes de Alquiler'
 
 class Reserva(models.Model):
+	def url(self,filename):
+		return "fotos/pagos/%s"%(self.idReserva)
 	idReserva = models.AutoField(primary_key=True)
 	idVehiculo = models.ForeignKey(Vehiculo)
 	idCliente = models.ForeignKey(ClienteAlquiler)
@@ -62,6 +64,7 @@ class Reserva(models.Model):
 	lugar = models.CharField(max_length=15)
 	pagada = models.BooleanField(default=False)
 	datosDePago = models.CharField(max_length=200,blank=True)
+	fotoPago = models.FileField(upload_to=url)
 	def __unicode__(self):
 		return "Reserva de %s a %s" %(unicode(self.idCliente),unicode(self.idVehiculo))
 

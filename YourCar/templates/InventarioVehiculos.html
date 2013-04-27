@@ -13,7 +13,6 @@
             {% endif %}
     	   <h2>Estás viendo todos los vehículos:</h2>
         {% endif %}
-    	{% if vehiculos %}
             <div class="span12">
                 <div class="span4">
                     <p>Tenemos en total {{ vehiculos|length }} vehículo{{vehiculos|pluralize}}.</p>
@@ -30,6 +29,7 @@
                     {% endif %}
                 </div>
             </div>
+        {% if vehiculos %}
             <form method="POST" action="/vehiculos/" name="filtrarVehiculos">
                 {% csrf_token %}
                 <h4>Filtrar Por:</h4>
