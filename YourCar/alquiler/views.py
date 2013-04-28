@@ -711,7 +711,7 @@ def modificarReservaControl(request):
 			horaFin = request.POST["horaFin"]
 			lugar = request.POST["lugar"]
 			datosDePago = request.POST["datosDePago"]
-			fotoPago = request.POST["fotoPago"]
+			fotoPago = request.FILES["fotoPago"]
 			idReserva = request.POST["idReserva"]
 
 			pagada=False
