@@ -1,12 +1,12 @@
 	{% extends "base.html" %}
 {% block titulo %}Agregar una Reserva{% endblock %}
 {% block contenido %}
-	{%if errorPagada or errorIdCliente or errorIdVehiculo%}
+	{%if errorPagada or errorIdCliente or errorIdVehiculo or errorFechas%}
 		<div class="container">
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
 			{% if errorIdCliente %}
-				El cliente no existe.<br>
+				El cliente no existe o el id del cliente es invalido.<br>
 			{% endif %}
 			{% if errorIdVehiculo %}
 				No tenemos en nuestro inventario este vehiculo.<br>
@@ -14,12 +14,15 @@
 			{% if errorPagada %}
 				No puede ser registrada como pagada si no existen datos de pago.<br>
 			{% endif %}
+			{% if errorFechas %}
+				La fecha de inicio debe ser menor a la de fin y debe ser mayor a la fecha actual.<br>
+            {% endif %}
 		</p>
 	</div>
 	{%else %}
+	<div class="container">
 		<form method="POST" action="/reservas/agregar/" name="agregarReservas">
 				{% csrf_token %}
-				<div class="container">
 				<h3>Ingrese los datos de la reserva.</hs3>
 				<table class="table-bordered table-striped table-hover">
 					<tbody>
@@ -27,18 +30,32 @@
 					        <td><label>Placa del Vehiculo:</label></td>
 					        <td><input type="text" name="idVehiculo" value="{{placa}}" required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
 					    </tr>
+					    {% if not is_staff %}
+					    <tr>
+					        <td><input type="hidden" name="idCliente" value="{{numDocumento}}" required="true" pattern="[a-zA-z0-9_-]{6,20}"/></td>
+					    </tr>
+					    {% else %}
 					    <tr>
 					        <td><label>Numero de Documento Usuario:</label></td>
 					        <td><input type="text" name="idCliente" required="true" pattern="[a-zA-z0-9_-]{6,20}"/>*</td>
 					    </tr>
+					    {% endif %}
 					    <tr>
 					        <td><label>Fecha de Inicio:</label></td>
 					        <td><input type="date" name="fechaInicio" required="true"/>*</td>
 					    </tr>
 					    <tr>
+					    	<td><label>Hora Inicio:</label></td>
+							<td><input type="time" name="horaInicio" required="true"/>*</td>
+						</tr>
+					    <tr>
 					        <td><label>Fecha Fin:</label></td>
 					        <td><input type="date" name="fechaFin" required="true"/>*</td>
 					    </tr>
+						<tr>
+							<td><label>Hora Fin:</label></td>
+							<td><input type="time" name="horaFin" required="true"/>*</td>
+						</tr>
 					    <tr>
 					        <td><label>Lugar de Recogida:</label></td>
 					        <td><input type="text" name="lugar" required="true"/>*</td>
@@ -49,7 +66,7 @@
 					</tbody>
 				</table>
 				<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
-				</div>
 		</form>
+	</div>
 	{%endif %}
 {% endblock %}

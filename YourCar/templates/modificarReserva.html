@@ -15,6 +15,9 @@
             {% if errorIdVehiculo %}
                 el numero de identificacion del vehiculo es incorrecto o no existe.<br>
             {% endif %}
+            {% if errorFechas %}
+                La fecha de inicio debe ser menor a la de fin y debe ser mayor a la fecha actual.<br>
+            {% endif %}
         </p>
     </div>
     {% else %}
@@ -28,22 +31,37 @@
                         <td><label>ID Vehiculo:</label></td>
                         <td><input type="text" name="idVehiculo" value="{{reserva.idVehiculo.placa}}" required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
                     </tr>
+                    {% if not is_staff %}
+                    <tr>
+                        <td><input type="hidden" name="idCliente" value="{{numDocumento}}" required="true" pattern="[a-zA-z0-9_-]{6,20}"/></td>
+                    </tr>
+                    {% else %}
                     <tr>
                         <td><label>ID Cliente:</label></td>
                         <td><input type="text" name="idCliente" value="{{reserva.idCliente.numDocumento}}" required="true" pattern="[a-zA-z0-9_-]{6,20}"/>*</td>
                     </tr>
+                    {% endif %}
                     <tr>
                        <td><label>fecha de Inicio:</label></td>
                        <td><input type="date" name="fechaInicio" value="{{fechaInicio}}" required="true"/>*</td>
+                    </tr>
+                    <tr>
+                        <td><label>Hora de Inicio:</label></td>
+                        <td><input type="time" name="horaInicio" required="true"/>*</td>
                     </tr>
                     <tr>
                        <td><label>fecha de Fin:</label></td>
                        <td><input type="date" name="fechaFin" value="{{fechaFin}}" required="true"/>*</td>
                     </tr>
                     <tr>
+                        <td><label>Hora de Fin:</label></td>
+                        <td><input type="time" name="horaFin" required="true"/>*</td>
+                    </tr>
+                    <tr>
                        <td><label>Lugar:</label></td>
                        <td><input type="text" name="lugar" value="{{reserva.lugar}}" required="true"/>*</td>
                     </tr>
+                    {% if is_staff %}
                     <tr>
                         <td><label>Pagada?:</label></td>
                         <td>
@@ -54,6 +72,11 @@
                             </select>*
                         </td>
                     </tr>
+                    {% else %}
+                    <tr>
+                        <td><input type="hidden" name="pagada" value=False required="true"/></td>
+                    </tr>
+                    {% endif %}
                     <tr>
                         <td><label>Datos de Pago:</label></td>
                         <td><input type="text" name="datosDePago" value="{{reserva.datosDePago}}"/>*</td>

@@ -6,7 +6,7 @@
         <h3>Corrige los siguientes errores para continuar:</h3>
         <p class="text-error">
             {% if errorIdReserva %}
-                ID de reserva invalido. Acceso denegado.<br>
+                ID de reserva invalido.<br>
             {% endif %}
         </p>
     {% else %}
@@ -54,13 +54,11 @@
                     <input name="idReserva" type="hidden" value="{{reserva.idReserva}}" pattern="[1-9]{1,10}">
                     <input type="submit" value="Modificar Reserva" name="modificarReserva"/>
                 </form>
-                {% if is_staff %}
                 <form method="GET" action="/reservas/eliminar/" name="eliminarReserva">
                     {% csrf_token %}
                     <input name="idReserva" value="{{reserva.idReserva}}" type="hidden" pattern="[0-9]{1,10}">
                     <input class="btn btn-danger" type="submit" value="Eliminar Reserva" name="eliminarReserva" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
                 </form>
-                {% endif %}
         </div>
         <div class="span4">
             <img id="foto" src="{{ MEDIA_URL}}{{reserva.fotoPago}}" alt="Imagen no encontrada">
