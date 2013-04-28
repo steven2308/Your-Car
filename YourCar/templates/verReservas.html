@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block titulo %}Reservas{% endblock %}
+{% block contenido %}
+    <div class="container">
+    	<div class="span12">
+    		<div class="span4">
+    			<form method="POST" action="/reservas/detalles/" name="verReserva">
+    				{% csrf_token %}
+    				<label>Ingresa el ID de la reserva que deseas ver en detalle:</label>
+    				<input name="idReserva" type="text" required="true" pattern="[0-9]{1,10}">
+    				<input type="submit" value="Ver Reserva" name="verReserva"/>
+    			</form>
+    		</div>
+    		<div>
+    		<a class="btn" href="/reservas/agregar/">Agregar reserva</a>
+    		</div>
+        </div>
+    	{% if reservas %}
+            <form method="POST" action="/reservas/" name="filtrarVehiculos">
+                {% csrf_token %}
+                <table class="table-bordered table-striped table-hover">
+                    <thead>
+                        <th>ID Cliente</th>
+                        <th>ID Vehiculo</th>
+                    </thead>
+                    <tbody>
+                        <td><input type="text" name="idCliente"></td>
+                        <td><input type="text" name="idVehiculo"></td>
+                    </tbody>
+                </table>
+                <div class="span12">
+                    <div class="span4">
+                        <h4>Ordenar por:</h4>
+                        <ul class="inline">
+                        	<li>
+                                <label>ID Reserva</label>
+                                <input id="btnIdReserva" name="orderBy" type="radio" value="idReserva" checked="checked">
+                            </li>
+                            <li>
+                                <label>Fecha de Inicio</label>
+                                <input id="btnFechaInicio" name="orderBy" type="radio" value="fechaInicio">
+                            </li>
+                        </ul>
+                    </div>    
+                </div>
+                <input type="submit" value="Buscar" name="buscar"/>
+            </form>
+            <table class="table-bordered table-striped table-hover">
+        		<thead>
+        			<th>Id Reserva</th>
+    				<th>Id Vehiculo</th>
+    				<th>Id Cliente</th>
+                	<th>fecha Inicio</th>
+    				<th>fecha Fin</th>
+                	<th>Lugar</th>
+                	<th>Pagada</th>
+        		</thead>
+        		<tbody>
+        			{% for r in reservas %}
+        				<tr>
+        					<td>{{r.idReserva}}</td>
+        					<td>{{r.idVehiculo}}</td>
+        					<td>{{r.idCliente.numDocumento}}</td>
+                        	<td>{{r.fechaInicio}}</td>
+        					<td>{{r.fechaFin}}</td>
+                        	<td>{{r.lugar}}</td>
+                            {% if r.pagada %}
+                        	<td>Si</td>
+                            {% else %}
+                            <td>No</td>
+                            {% endif %}
+        				</tr>
+        			{% endfor %}
+        		</tbody>
+        	</table>
+        	<div class="paginas">
+            	<a href="/reservas/pag/1/"> Primera </a>
+        		{% if reservas.has_previous %}
+            		<a href="/reservas/pag/{{reservas.previous_page_number}}/"> Anterior </a>
+            	{% endif %}
+            	{% if reservas.has_next %}
+            		<a href="/reservas/pag/{{reservas.next_page_number}}/"> Siguiente </a>
+            	{% endif %}
+            		<a href="/reservas/pag/{{reservas.paginator.num_pages}}"> Última </a>
+            		<br>
+            		<strong>Página {{reservas.number}} de {{reservas.paginator.num_pages}}</strong>
+            </div>
+        {% else %}
+            <p>No hay ninguna reserva.</p>
+    	{% endif %}
+	</div>
+{% endblock %}

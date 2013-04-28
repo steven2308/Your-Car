@@ -1,12 +1,18 @@
 	{% extends "base.html" %}
 {% block titulo %}Agregar una Reserva{% endblock %}
 {% block contenido %}
-	{%if errorPagada %}
+	{%if errorPagada or errorIdCliente or errorIdVehiculo%}
 		<div class="container">
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
+			{% if errorIdCliente %}
+				El cliente no existe.<br>
+			{% endif %}
+			{% if errorIdVehiculo %}
+				No tenemos en nuestro inventario este vehiculo.<br>
+			{% endif %}
 			{% if errorPagada %}
-				El estado de pago es incorrecto.<br>
+				No puede ser registrada como pagada si no existen datos de pago.<br>
 			{% endif %}
 		</p>
 	</div>
@@ -21,17 +27,10 @@
 					        <td><label>Placa del Vehiculo:</label></td>
 					        <td><input type="text" name="idVehiculo" value="{{placa}}" required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
 					    </tr>
-					    {%if is_staff %}
-					    	<tr>
-					        	<td><label>Nombre de usuario:</label></td>
-					        	<td><input type="text" name="idCliente" required="true"/>*</td>
-					    	</tr>
-					    {% else %}
-					    	<tr>
-					        	<td><label>Nombre de usuario:</label></td>
-					        	<td><input type="text" name="idCliente" value={{nombre}} disabled="True" required="true"/>*</td>
-					    	</tr>
-					    {% endif %}
+					    <tr>
+					        <td><label>Numero de Documento Usuario:</label></td>
+					        <td><input type="text" name="idCliente" required="true" pattern="[a-zA-z0-9_-]{6,20}"/>*</td>
+					    </tr>
 					    <tr>
 					        <td><label>Fecha de Inicio:</label></td>
 					        <td><input type="date" name="fechaInicio" required="true"/>*</td>
@@ -45,26 +44,12 @@
 					        <td><input type="text" name="lugar" required="true"/>*</td>
 					    </tr>
 					    <tr>
-					        <td><label>Pagada?:</label></td>
-					        <td>
-					        	<select name="pagada" required="true">
-					        		{% for p in  estadosPago %}
-					        			<option>{{p}}</option>
-					        		{% endfor %}
-					        	</select>*
-					    	</td>
-					    </tr>
-					    <tr>
-					        <td><label>Datos de Pago:</label></td>
-					        <td><input type="text" name="datosDePago"/></td>
-					    </tr>
-					    <tr>
-					      <td><input type="submit" value="Reservar" name="agregarReserva"/>
-					</tr>					    
-				</tbody>
-			</table>
-			<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
-			</div>
+					    	<td><input type="submit" value="Agregar Reserva" name="agregarReserva"/>
+						</tr>				    
+					</tbody>
+				</table>
+				<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
+				</div>
 		</form>
 	{%endif %}
 {% endblock %}

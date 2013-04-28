@@ -1,0 +1,70 @@
+{%extends "base.html"%}
+{% block titulo %}Detalles Reserva {% endblock %}
+{% block contenido %}
+    <div class="container">
+        {%if errorIdReserva %}
+        <h3>Corrige los siguientes errores para continuar:</h3>
+        <p class="text-error">
+            {% if errorIdReserva %}
+                ID de reserva invalido. Acceso denegado.<br>
+            {% endif %}
+        </p>
+    {% else %}
+    <div class="span3">
+        <table class="table-bordered table-striped table-hover">
+            <tbody>
+                <tr>
+                    <td>ID Reserva</td>
+                    <td>{{reserva.idReserva}}</td>
+                </tr>
+                <tr>
+                    <td>ID Vehiculo</td>
+                    <td>{{reserva.idVehiculo}}</td>
+                </tr>
+                <tr>
+                    <td>ID Cliente</td>
+                    <td>{{reserva.idCliente.numDocumento}}</td>
+                </tr>
+                <tr>
+                    <td>fecha Inicio</td>
+                    <td>{{reserva.fechaInicio}}</td>
+                </tr>
+                <tr>
+                    <td>fecha Fin</td>
+                    <td>{{reserva.fechaFin}}</td>
+                </tr>
+                <tr>
+                    <td>Pagada? </td>
+                    {%if reserva.pagada%}
+                    <td>Si.</td>
+                    {% else %}
+                    <td>No.</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td>Datos de Pago</td>
+                    <td>{{reserva.datosDePago}}</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <div class="span4">
+                <form method="GET" action="/reservas/modificar/" name="modificarReserva">
+                    {% csrf_token %}
+                    <input name="idReserva" type="hidden" value="{{reserva.idReserva}}" pattern="[1-9]{1,10}">
+                    <input type="submit" value="Modificar Reserva" name="modificarReserva"/>
+                </form>
+                {% if is_staff %}
+                <form method="GET" action="/reservas/eliminar/" name="eliminarReserva">
+                    {% csrf_token %}
+                    <input name="idReserva" value="{{reserva.idReserva}}" type="hidden" pattern="[0-9]{1,10}">
+                    <input class="btn btn-danger" type="submit" value="Eliminar Reserva" name="eliminarReserva" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+                </form>
+                {% endif %}
+        </div>
+        <div class="span4">
+            <img id="foto" src="{{ MEDIA_URL}}{{reserva.fotoPago}}" alt="Imagen no encontrada">
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
