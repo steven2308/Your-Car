@@ -368,13 +368,11 @@ def agregarVehiculoControl(request):
 			limiteKilometraje = request.POST["limiteKilometraje"]
 			tarifa = request.POST["tarifa"]
 			estado = request.POST["estado"]
-			foto = request.POST["foto"]
 			fechaVencSOAT = request.POST["fechaVencSOAT"]
 			fechaVencSeguroTodoRiesgo = request.POST["fechaVencSeguroTodoRiesgo"]
 			fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
 			fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
-			foto = "fotos/carros/%s/%s/%s/%s"%(marca, referencia, placa , request.POST["foto"])
-			#foto = request.POST["foto"]
+			foto = request.FILES["foto"]
 			modificar = ""
 			#inicializo datos opcionales
 			tipoDeFrenos = ""

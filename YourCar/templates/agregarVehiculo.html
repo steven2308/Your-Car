@@ -51,7 +51,7 @@
 	</div>
 	{%endif %}
 	<div class="container">
-		<form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo">
+		<form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo"  enctype="multipart/form-data">
 				{% csrf_token %}
 				<h3>Ingrese los datos del vehiculo.</hs3>
 				<table class="table-bordered table-striped table-hover">
