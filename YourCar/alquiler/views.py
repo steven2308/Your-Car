@@ -701,7 +701,7 @@ def detallesReservaControl(request):
 	return HttpResponseRedirect('/reservas')
 
 def modificarReservaControl(request):
-	if request.user.is_authenticated(): 
+	if request.user.is_authenticated():
 		if request.method == 'POST':
 			idVehiculo = request.POST["idVehiculo"]
 			idCliente = request.POST["idCliente"]
@@ -750,11 +750,14 @@ def modificarReservaControl(request):
 			reserva=Reserva.objects.get(idReserva=idReserva)
 			fechaInicio = formatearFecha(reserva.fechaInicio)
 			fechaFin = formatearFecha(reserva.fechaFin)
-			if request.user.is_staff: 
+			horaInicio = formatearHora(reserva.fechaInicio)
+			horaFin = formatearHora(reserva.fechaFin)
+			if request.user.is_staff:
 				is_staff = True
-			else: 
+			else:
 				cliente = ClienteAlquiler.objects.get(user=request.user)
 				numDocumento = cliente.numDocumento
+			#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
 			return render_to_response('modificarReserva.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/reservas')
 
@@ -821,7 +824,6 @@ def parametrizarControl(request):
 	else:
 	 return HttpResponseRedirect('/404')
 
-
 def formatearFecha(fecha):
 	try:
 		try:
@@ -837,5 +839,19 @@ def formatearFecha(fecha):
 		if len(dia)==1:
 			dia="0"+dia
 		return "%s-%s-%s"%(anyo,mes,dia)
+	except:
+		return fecha
+
+def formatearHora(fecha):
+	try:
+		date = datetime.strptime(str(fecha)[:-6], '%Y-%m-%d %H:%M:%S')
+		tt = date.timetuple()
+		hora = str(tt[3])
+		if len(hora)==1:
+			hora="0"+hora
+		mins = str(tt[4])
+		if len(mins)==1:
+			mins="0"+mins
+		return "%s:%s"%(hora,mins)
 	except:
 		return fecha
