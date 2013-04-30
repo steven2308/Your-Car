@@ -15,8 +15,6 @@ from datetime import datetime
 
 #foto de consignacion es obligatoria
 #error en los errores del agregar vehiculo, no carga los campos
-#revisar si no existe placa en reserva, error
-#si el email de registro ya esta en uso?
 #revisar pattern de ver reserva en detalle y boton de eliminar reserva
 
 
@@ -368,13 +366,11 @@ def agregarVehiculoControl(request):
 			limiteKilometraje = request.POST["limiteKilometraje"]
 			tarifa = request.POST["tarifa"]
 			estado = request.POST["estado"]
-			foto = request.POST["foto"]
 			fechaVencSOAT = request.POST["fechaVencSOAT"]
 			fechaVencSeguroTodoRiesgo = request.POST["fechaVencSeguroTodoRiesgo"]
 			fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
 			fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
-			foto = "fotos/carros/%s/%s/%s/%s"%(marca, referencia, placa , request.POST["foto"])
-			#foto = request.POST["foto"]
+			foto = request.FILES["foto"]
 			modificar = ""
 			#inicializo datos opcionales
 			tipoDeFrenos = ""
@@ -466,7 +462,7 @@ def eliminarVehiculoControl(request):
 		return HttpResponseRedirect('/404')
 
 def eliminarReservaControl(request):
-	if request.user.is_authenticated() and request.user.is_staff and request.method == 'GET':
+	if request.user.is_authenticated() and request.method == 'GET':
 		try:
 			idReserva=request.GET["idReserva"]
 			reserva = Reserva.objects.get(idReserva=idReserva)
@@ -576,14 +572,24 @@ def eliminarVoucherControl(request):
 
 def verReservasControl(request, pagina=1):
 	if request.user.is_authenticated():
+		is_staff = request.user.is_staff
+		cliente=None
 		if request.method == 'POST':
 			query = {}
-			idCliente = request.POST["idCliente"]
+			idCliente = ""
+			if request.POST["idCliente"]: idCliente = request.POST["idCliente"]
 			idVehiculo = request.POST["idVehiculo"]
 			order = request.POST["orderBy"]
 
-			if idCliente:
+			if request.user.is_staff and idCliente:
 				query["idCliente"]=idCliente
+			#si es un usuario, solo muestra las reservas que le corresponden a su id
+			else:
+				if not request.user.is_staff:
+					cliente = ClienteAlquiler.objects.get(user=request.user)
+					idCliente = cliente.numDocumento
+					if idCliente: query["idCliente"]=idCliente
+
 			if idVehiculo:
 				query["idVehiculo"]=idVehiculo
 
@@ -617,12 +623,18 @@ def agregarReservaControl(request):
 			idCliente = request.POST["idCliente"]
 			fechaInicio = request.POST["fechaInicio"]
 			fechaFin = request.POST["fechaFin"]
+			horaInicio = request.POST["horaInicio"]
+			horaFin = request.POST["horaFin"]
 			lugar = request.POST["lugar"]
 			pagada = False
 			datosDePago = ""
 			fotoPago = None
 
+			dtIni = datetime.strptime(fechaInicio+" "+horaInicio, '%Y-%m-%d %H:%M')
+			dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
+
 			#manejo de errores
+			errorFechas = dtIni > dtFin or datetime.now()> dtIni
 			errorIdCliente = False
 			errorIdVehiculo = False
 			errorPagada=False
@@ -634,18 +646,17 @@ def agregarReservaControl(request):
 				vehiculo=Vehiculo.objects.get(placa=idVehiculo)
 			except:
 				errorIdVehiculo = True
-			#error fecha, si la fecha de inicio no es antes que la de fin
 			if (datosDePago=="" and fotoPago==None and pagada==True): 
 				errorPagada=True
-			if (errorIdCliente or errorIdVehiculo or errorPagada):
+			if not request.user.is_staff:
+				usuario = ClienteAlquiler.objects.get(user=request.user)
+				if idCliente != usuario.numDocumento: errorIdCliente=True
+			if (errorIdCliente or errorIdVehiculo or errorPagada or errorFechas):
 				return render_to_response('agregarReserva.html', locals(), context_instance = RequestContext(request))
 
-			reserva = Reserva(idVehiculo = vehiculo, idCliente = cliente, fechaInicio = fechaInicio, fechaFin = fechaFin, lugar = lugar, pagada = False, datosDePago = "", fotoPago = None)
+			reserva = Reserva(idVehiculo = vehiculo, idCliente = cliente, fechaInicio = dtIni, fechaFin = dtFin, lugar = lugar, pagada = False, datosDePago = "", fotoPago = None)
 			reserva.save()
-			if request.user.is_staff:
-				return HttpResponseRedirect('/reservas')
-			else:
-				return HttpResponseRedirect('/')
+			return HttpResponseRedirect('/reservas')
 		else:
 			if not request.user.is_staff: 
 				cliente = ClienteAlquiler.objects.get(user=request.user)
@@ -674,7 +685,9 @@ def detallesReservaControl(request):
 					errorIdReserva=True
 					return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
 			except:
-				return HttpResponseRedirect('/reservas')
+				errorIdReserva=True
+				return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
+				#return HttpResponseRedirect('/reservas')
 		else:
 			try:
 				idReserva=request.POST["idReserva"]
@@ -682,7 +695,9 @@ def detallesReservaControl(request):
 				is_staff=request.user.is_staff
 				return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
 			except:
-				return HttpResponseRedirect('/reservas')
+				errorIdReserva=True
+				return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
+				#return HttpResponseRedirect('/reservas')
 	return HttpResponseRedirect('/reservas')
 
 def modificarReservaControl(request):
@@ -692,13 +707,21 @@ def modificarReservaControl(request):
 			idCliente = request.POST["idCliente"]
 			fechaInicio = request.POST["fechaInicio"]
 			fechaFin = request.POST["fechaFin"]
+			horaInicio = request.POST["horaInicio"]
+			horaFin = request.POST["horaFin"]
 			lugar = request.POST["lugar"]
-			pagada = request.POST["pagada"]
 			datosDePago = request.POST["datosDePago"]
-			fotoPago = request.POST["fotoPago"]
+			fotoPago = request.FILES["fotoPago"]
 			idReserva = request.POST["idReserva"]
 
+			pagada=False
+			if request.POST["pagada"]: pagada=request.POST["pagada"]
+
+			dtIni = datetime.strptime(fechaInicio+" "+horaInicio, '%Y-%m-%d %H:%M')
+			dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
+
 			#errores
+			errorFechas = dtIni > dtFin or datetime.now()> dtIni
 			errorIdCliente=False
 			errorIdVehiculo=False
 			errorPagada=False
@@ -712,18 +735,26 @@ def modificarReservaControl(request):
 				errorIdVehiculo = True
 			if (datosDePago=="" and fotoPago==None and pagada==True): 
 				errorPagada=True
-			if (errorPagada or errorIdCliente or errorIdVehiculo):
+			if not request.user.is_staff:
+				usuario = ClienteAlquiler.objects.get(user=request.user)
+				if idCliente != usuario.numDocumento: errorIdCliente=True
+			if (errorPagada or errorIdCliente or errorIdVehiculo or errorFechas):
 				return render_to_response('modificarReserva.html', locals(), context_instance = RequestContext(request))
 
-			reserva = Reserva(idReserva=idReserva, idVehiculo = vehiculo, idCliente = cliente, fechaInicio = fechaInicio, fechaFin = fechaFin, lugar = lugar, pagada = pagada, datosDePago = datosDePago, fotoPago = fotoPago)
+			reserva = Reserva(idReserva=idReserva, idVehiculo = vehiculo, idCliente = cliente, fechaInicio = dtIni, fechaFin = dtFin, lugar = lugar, pagada = pagada, datosDePago = datosDePago, fotoPago = fotoPago)
 			reserva.save()
+			return HttpResponseRedirect('/reservas')
 		else:
 			estadosPago=parametros["estadosPago"]
 			idReserva=request.GET["idReserva"]
 			reserva=Reserva.objects.get(idReserva=idReserva)
 			fechaInicio = formatearFecha(reserva.fechaInicio)
 			fechaFin = formatearFecha(reserva.fechaFin)
-			if request.user.is_staff: is_staff = True
+			if request.user.is_staff: 
+				is_staff = True
+			else: 
+				cliente = ClienteAlquiler.objects.get(user=request.user)
+				numDocumento = cliente.numDocumento
 			return render_to_response('modificarReserva.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/reservas')
 

@@ -13,6 +13,7 @@
     		</div>
     		<div>
     		<a class="btn" href="/reservas/agregar/">Agregar reserva</a>
+            <a class="btn" href="/vehiculos/">Ver vehículos</a>
     		</div>
         </div>
     	{% if reservas %}
@@ -20,12 +21,19 @@
                 {% csrf_token %}
                 <table class="table-bordered table-striped table-hover">
                     <thead>
+                        {% if is_staff %}
                         <th>ID Cliente</th>
+                        {% endif %}
                         <th>ID Vehiculo</th>
                     </thead>
                     <tbody>
+                        {% if is_staff %}
                         <td><input type="text" name="idCliente"></td>
+                        {% endif %}
                         <td><input type="text" name="idVehiculo"></td>
+                        {% if not is_staff %}
+                        <td><input type="hidden" value="" name="idCliente"></td>
+                        {% endif %}
                     </tbody>
                 </table>
                 <div class="span12">
@@ -87,6 +95,7 @@
             </div>
         {% else %}
             <p>No hay ninguna reserva.</p>
+            <a class="btn" href="/reservas/">Ver reservas</a>
     	{% endif %}
 	</div>
 {% endblock %}

@@ -10,3 +10,8 @@ li
 {
 display:inline;
 }
+td { min-width: 80px;
+	 text-align:center; }
+img{
+	border-radius: 10px;
+}
