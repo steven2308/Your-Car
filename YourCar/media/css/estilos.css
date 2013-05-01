@@ -1,8 +1,27 @@
+
+
+head{
+	
+
+
+}
+
+
+title{
+
+
+
+}
+
 body{
 	font-family:"Trebuchet MS", "Myriad Pro", Arial, sans-serif;
 	font-size:14px;
-	background:#f4f4f4 url(/media/images/bg.gif) repeat top left;
-	color:#333;
+	background:url(/media/images/fondo.png);
+	background-repeat: no-repeat; /*Aca damos la orden de que la imagen no se repita*/
+	background-size: 100% 100%;  /*Esto es para que la imagen quede del tamaño de la pantalla*/
+	-moz-background-repeat: no-repeat; /*Compatibilidad con Firefox*/
+	-moz-background-size: 100% 100%; /*Compatibilidad con Firefox*/
+	
 	text-shadow:1px 1px 1px #fff;
 	overflow-y:scroll;
 }
@@ -14,4 +33,8 @@ td { min-width: 80px;
 	 text-align:center; }
 img{
 	border-radius: 10px;
+}
+
+footer{
+	
 }
