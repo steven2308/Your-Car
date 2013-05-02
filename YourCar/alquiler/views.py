@@ -371,7 +371,7 @@ def agregarVehiculoControl(request):
 			fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
 			fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
 			#foto = request.FILES["foto"]
-			foto = None
+			#foto = None
 			modificar = ""
 
 			#inicializo datos opcionales
@@ -388,13 +388,8 @@ def agregarVehiculoControl(request):
 			except:
 				pass
 
-			if modificar:
-				if request.FILES["foto"]:
-					foto = request.FILES["foto"]
-			else:
-				foto = request.FILES["foto"]
-
 			#tomo datos ingresados por el usuario
+			#if request.POST['foto']: foto = request.FILES['foto']
 			if request.POST['tipoDeFrenos']: tipoDeFrenos = request.POST['tipoDeFrenos']
 			if request.POST['airbags']: airbags = request.POST['airbags']
 			if request.POST['tipoDeDireccion']: tipoDeDireccion = request.POST['tipoDeDireccion']
@@ -409,6 +404,7 @@ def agregarVehiculoControl(request):
 				errorPlaca = not re.match("^([A-Z]{3}[0-9]{3})$",placa)
 			else:
 				errorPlaca = ((Vehiculo.objects.filter(placa=placa)) or not re.match("^([A-Z]{3}[0-9]{3})$",placa))
+				errorFoto = not foto
 			errorTipoDeFrenos = (tipoDeFrenos not in parametros["tiposDeFrenos"])
 			errorNumDePasajeros = not re.match("^[0-9]{1,2}$",numDePasajeros)
 			errorGama = (gama not in parametros["gamas"])
@@ -420,18 +416,15 @@ def agregarVehiculoControl(request):
 			errorEstado = (estado not in parametros["estadosVehiculo"])
 			errorTipoDeDireccion = (tipoDeDireccion not in parametros["tipoDeDirecciones"])
 			errorTipoDeTraccion = (tipoDeTraccion not in parametros["tiposTraccion"])
-			errorFoto = not foto
+			errorFoto = False
 			errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
 			errorFechas= not fechaCorrecta(fechaVencSOAT) or not fechaCorrecta(fechaVencSeguroTodoRiesgo) or not fechaCorrecta(fechaVencRevisionTecMec) or not fechaCorrecta(fechaVencCambioAceite)
 			#manejo de errores
-			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh) or errorFechas:
+			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh or errorFechas):
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 
 			#return render_to_response('pruebas.html', locals(), context_instance = RequestContext(request))
-			#guardar vehiculo
-			if foto == None and modificar:
-				v=Vehiculo.objects.get(placa=placa)#probar abreviado
-				foto = v.foto
+			#guardar vehicul
 
 			vehiculo = Vehiculo(placa = placa, marca = marca, referencia = referencia, gama = gama, descripcionBasica = descripcionBasica, numDePasajeros = numDePasajeros, cilindraje = cilindraje, color = color, cajaDeCambios = cajaDeCambios, limiteKilometraje = limiteKilometraje, tarifa = tarifa, estado = estado, fechaVencSOAT = fechaVencSOAT, fechaVencSeguroTodoRiesgo = fechaVencSeguroTodoRiesgo, fechaVencRevisionTecMec = fechaVencRevisionTecMec, fechaVencCambioAceite = fechaVencCambioAceite, tipoDeFrenos = tipoDeFrenos, airbags = airbags, tipoDeDireccion = tipoDeDireccion, tipoDeTraccion = tipoDeTraccion, modelo = modelo, valorGarantia = valorGarantia, kilometraje = kilometraje, foto=foto)
 			vehiculo.save()
