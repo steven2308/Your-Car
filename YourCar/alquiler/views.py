@@ -388,6 +388,14 @@ def agregarVehiculoControl(request):
 			except:
 				pass
 
+			if modificar:
+				try:
+					foto= request.FILES["foto"]
+				except:
+					foto = Vehiculo.objects.get(placa=placa).foto
+			else:
+				foto = request.FILES["foto"]
+
 			#tomo datos ingresados por el usuario
 			#if request.POST['foto']: foto = request.FILES['foto']
 			if request.POST['tipoDeFrenos']: tipoDeFrenos = request.POST['tipoDeFrenos']
