@@ -71,9 +71,12 @@
 					    <tr>
 					        <td><label>Gama:</label></td>
 					        <td>
-					        	<select name="gama" required="true" value="{{gama}}">
+					        	<select name="gama" required="true">
+					        		<option selected> {{gama}} </option>
 					        		{% for ga in  gamas%}
+					        		 {% if ga != gama%}
 					        			<option>{{ga}}</option>
+					        		{% endif %}
 					        		{% endfor %}
 					        	</select>*
 					    	</td>
@@ -85,9 +88,12 @@
 					    <tr>
 					        <td><label>Tipo de Frenos:</label></td>
 					        <td>
-					        	<select name="tipoDeFrenos" value="{{tipoDeFrenos}}">
+					        	<select name="tipoDeFrenos">
+					        		<option selected> {{tipoDeFrenos}} </option>
 					        		{% for tf in  tiposDeFrenos%}
+					        		{%if tf != tipoDeFrenos %}
 					        			<option>{{tf}}</option>
+					        		{% endif %}
 					        		{% endfor %}
 					        	</select>
 					    	</td>
@@ -108,8 +114,11 @@
 					        <td><label>Caja de Cambios:</label></td>
 					        <td>
 					        	<select name="cajaDeCambios" required="true" value="{{cajaDeCambios}}">
+					        		<option selected> {{cajaDeCambios}} </option>
 					        		{% for c in  cajasDeCambios%}
+					        		{%if c != cajaDeCambios%}
 					        			<option>{{c}}</option>
+					        		{%endif%}
 					        		{% endfor %}
 					        	</select>*
 					    	</td>
@@ -122,8 +131,11 @@
 					        <td><label>Tipo de Direccion:</label></td>
 					        <td>
 					        	<select name="tipoDeDireccion" value="{{tipoDeDireccion}}">
+					        		<option selected> {{tipoDeDireccion}} </option>
 					        		{% for td in  tipoDeDirecciones%}
+					        		{% if  td != tipoDeDireccion%}
 					        			<option>{{td}}</option>
+					        		{% endif %}
 					        		{% endfor %}
 					        	</select>
 					    	</td>
@@ -132,8 +144,11 @@
 					        <td><label>Tipo de Traccion:</label></td>
 					        <td>
 					        	<select name="tipoDeTraccion" value="{{tipoDeTraccion}}">
+					        		<option selected> {{tipoDeTraccion}} </option>
 					        		{% for tr in  tiposTraccion%}
+					        		{% if  tr != tipoDeTraccion%}
 					        			<option>{{tr}}</option>
+					        		{%endif %}
 					        		{% endfor %}
 					        	</select>
 					    	</td>
@@ -150,8 +165,11 @@
 				        <td><label>Estado:</label></td>
 				        <td>
 				        	<select name="estado" required="true" value="{{estado}}">
+				        		<option selected> {{estado}} </option>
 				        		{% for e in  estadosVehiculo%}
+				        		{%if e != estado %}
 				        			<option>{{e}}</option>
+				        		{%endif %}
 				        		{% endfor %}
 
 				        </select>*
