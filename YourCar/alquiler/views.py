@@ -370,8 +370,10 @@ def agregarVehiculoControl(request):
 			fechaVencSeguroTodoRiesgo = request.POST["fechaVencSeguroTodoRiesgo"]
 			fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
 			fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
-			foto = request.FILES["foto"]
+			#foto = request.FILES["foto"]
+			foto = None
 			modificar = ""
+
 			#inicializo datos opcionales
 			tipoDeFrenos = ""
 			airbags = "0"
@@ -380,6 +382,17 @@ def agregarVehiculoControl(request):
 			modelo = "0"
 			valorGarantia = "0"
 			kilometraje = "0"
+
+			try:
+				modificar = request.POST["modificar"] #probar sin try
+			except:
+				pass
+
+			if modificar:
+				if request.FILES["foto"]:
+					foto = request.FILES["foto"]
+			else:
+				foto = request.FILES["foto"]
 
 			#tomo datos ingresados por el usuario
 			if request.POST['tipoDeFrenos']: tipoDeFrenos = request.POST['tipoDeFrenos']
@@ -390,10 +403,7 @@ def agregarVehiculoControl(request):
 			if request.POST['valorGarantia']: valorGarantia = request.POST['valorGarantia']
 			if request.POST['kilometraje']: kilometraje = request.POST['kilometraje']
 			#verifico si estoy modificando
-			try:
-				modificar = request.POST["modificar"]
-			except:
-				pass
+
 			#Control de errores
 			if modificar:
 				errorPlaca = not re.match("^([A-Z]{3}[0-9]{3})$",placa)
@@ -419,6 +429,10 @@ def agregarVehiculoControl(request):
 
 			#return render_to_response('pruebas.html', locals(), context_instance = RequestContext(request))
 			#guardar vehiculo
+			if foto == None and modificar:
+				v=Vehiculo.objects.get(placa=placa)#probar abreviado
+				foto = v.foto
+
 			vehiculo = Vehiculo(placa = placa, marca = marca, referencia = referencia, gama = gama, descripcionBasica = descripcionBasica, numDePasajeros = numDePasajeros, cilindraje = cilindraje, color = color, cajaDeCambios = cajaDeCambios, limiteKilometraje = limiteKilometraje, tarifa = tarifa, estado = estado, fechaVencSOAT = fechaVencSOAT, fechaVencSeguroTodoRiesgo = fechaVencSeguroTodoRiesgo, fechaVencRevisionTecMec = fechaVencRevisionTecMec, fechaVencCambioAceite = fechaVencCambioAceite, tipoDeFrenos = tipoDeFrenos, airbags = airbags, tipoDeDireccion = tipoDeDireccion, tipoDeTraccion = tipoDeTraccion, modelo = modelo, valorGarantia = valorGarantia, kilometraje = kilometraje, foto=foto)
 			vehiculo.save()
 			request.method="GET"

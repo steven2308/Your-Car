@@ -1,17 +1,48 @@
+mi{
+	font-size: 10px;
+}
+
+h1{
+	font-size: 80px;
+	text-shadow: 3px 3px 5px #cecece;
+	color: aqua;
+}
+
+title{
+	border: 4px solid blue;
+	padding: 10px 40px;
+	background: #ffffff;
+	width: 100%;
+	border-radius: 30px 30px 0px 0px;
+	-moz-border-radius: 30px 30px 0px 0px;
+}
+
+
 body{
-	font-family:"Trebuchet MS", "Myriad Pro", Arial, sans-serif;
+	font-family:"Trebuchet MS", "Myriad Pro", Arial, sans-serif, FuenteZabatana;
 	font-size:14px;
-	background:#f4f4f4 url(/media/images/bg.gif) repeat top left;
-	color:#333;
+	background:url(/media/images/fondo.png);
+	background-repeat: no-repeat; /*Aca damos la orden de que la imagen no se repita*/
+	background-size: 100% 100%;  /*Esto es para que la imagen quede del tamaño de la pantalla*/
+	-moz-background-repeat: no-repeat; /*Compatibilidad con Firefox*/
+	-moz-background-size: 100% 100%; /*Compatibilidad con Firefox*/
 	text-shadow:1px 1px 1px #fff;
 	overflow-y:scroll;
 }
-li
-{
-display:inline;
+
+li{
+	display:inline;
 }
+
 td { min-width: 80px;
-	 text-align:center; }
+	 text-align:center;
+}
+
 img{
 	border-radius: 10px;
+}
+
+footer{
+	color: blue;
+	
 }

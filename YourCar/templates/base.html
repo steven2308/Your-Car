@@ -3,6 +3,15 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
+		<style type="text/css">
+			@font-face{
+			font-family: miPrimeraFuente;
+			src:url(/media/fuentes/ChopinScript.otf);
+			}
+			footer{
+			font-family: miPrimeraFuente;
+			}
+		</style>
 		<title>Your Car - {% block titulo %}Inicio{% endblock %}</title>
 		{%block css%}
 		<link rel="stylesheet" type="text/css" href="/media/css/estilos.css"/>
@@ -16,8 +25,10 @@
 		{% endblock %}
 		{% block scripts %}
 		{% endblock%}
-	</head>
 
+	</head>
+		<center><h1>Your Car</h1></center><br>	
+		<mi>Esto es una prueba</mi>	
 	<body>
 		<div class="container">
 			<nav class="navbar navbar-inverse">
@@ -42,8 +53,8 @@
 		{% block contenido %}{% endblock %}
 		{% block footer %}
 			<footer>
-				<div class="container">
-					<p>Gracias por visitar nuestro sitio.</p>
+				<div class="container"> <br><br>
+					<p><h3>Gracias por visitar nuestro sitio.</h3></p>
 				</div>
 			</footer>
 		{% endblock %}
