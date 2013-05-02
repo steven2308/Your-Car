@@ -27,7 +27,7 @@
                     <tbody>
                         <tr>
                             <td><label>ID Vehiculo:</label></td>
-                            <td><input type="text" name="idVehiculo" value="{{reserva.idVehiculo.placa}}" required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
+                            <td><input type="text" name="idVehiculo" value="{{reserva.idVehiculo.placa}}" required="true" pattern="[A-Z]{3}[0-9]{3}" {%if yaPagada %} disabled=True {%endif%}/>*</td>
                         </tr>
                         {% if not is_staff %}
                         <tr>
@@ -36,34 +36,34 @@
                         {% else %}
                         <tr>
                             <td><label>ID Cliente:</label></td>
-                            <td><input type="text" name="idCliente" value="{{reserva.idCliente.numDocumento}}" required="true" pattern="[a-zA-z0-9_-]{6,20}"/>*</td>
+                            <td><input type="text" name="idCliente" value="{{reserva.idCliente.numDocumento}}" required="true" pattern="[a-zA-z0-9_-]{6,20}" {%if yaPagada %} disabled=True {%endif%}/>*</td>
                         </tr>
                         {% endif %}
                         <tr>
                            <td><label>fecha de Inicio:</label></td>
-                           <td><input type="date" name="fechaInicio" value="{{fechaInicio}}" required="true"/>*</td>
+                           <td><input type="date" name="fechaInicio" value="{{fechaInicio}}" required="true" {%if yaPagada %} disabled=True {%endif%}/>*</td>
                         </tr>
                         <tr>
                             <td><label>Hora de Inicio:</label></td>
-                            <td><input type="time" name="horaInicio" value="{{horaInicio}}"required="true"/>*</td>
+                            <td><input type="time" name="horaInicio" value="{{horaInicio}}"required="true" {%if yaPagada %} disabled=True {%endif%}/>*</td>
                         </tr>
                         <tr>
                            <td><label>fecha de Fin:</label></td>
-                           <td><input type="date" name="fechaFin" value="{{fechaFin}}" required="true"/>*</td>
+                           <td><input type="date" name="fechaFin" value="{{fechaFin}}" required="true" {%if yaPagada %} disabled=True {%endif%}/>*</td>
                         </tr>
                         <tr>
                             <td><label>Hora de Fin:</label></td>
-                            <td><input type="time" name="horaFin" value="{{horaFin}}" required="true"/>*</td>
+                            <td><input type="time" name="horaFin" value="{{horaFin}}" required="true" {%if yaPagada %} disabled=True {%endif%}/>*</td>
                         </tr>
                         <tr>
                            <td><label>Lugar:</label></td>
-                           <td><input type="text" name="lugar" value="{{reserva.lugar}}" required="true"/>*</td>
+                           <td><input type="text" name="lugar" value="{{reserva.lugar}}" required="true" {%if yaPagada %} disabled=True {%endif%}/>*</td>
                         </tr>
                         {% if is_staff %}
                         <tr>
                             <td><label>Pagada?:</label></td>
                             <td>
-                                <select name="pagada" required="true">
+                                <select name="pagada" required="true" {%if yaPagada %} disabled=True {%endif%}>
                                     {% for ep in estadosPago%}
                                         <option>{{ep}}</option>
                                     {% endfor %}
@@ -77,19 +77,27 @@
                         {% endif %}
                         <tr>
                             <td><label>Datos de Pago:</label></td>
-                            <td><input type="text" name="datosDePago" value="{{reserva.datosDePago}}"/>*</td>
+                            <td><input type="text" name="datosDePago" value="{{reserva.datosDePago}}" {%if yaPagada %} disabled=True {%endif%}/>*</td>
                         </tr>
                         <tr>
                             <td><label>Foto de Pago:</label></td>
-                            <td><input type="file" name="fotoPago"/></td>
+                            <td><input type="file" name="fotoPago" value={{reserva.fotoPago}} {%if yaPagada %} disabled=True {%endif%}/></td>
                         </tr>
                         <tr>
-                              <input name="idReserva" type="hidden" value="{{reserva.idReserva}}" pattern="[1-9]{1,10}">
-                              <td><input type="submit" value="Modificar Reserva" name="modificarReserva"/>
+                            <input name="idReserva" type="hidden" value="{{reserva.idReserva}}" pattern="[1-9]{1,10}">
+                            {%if not yaPagada %}
+                                <td><input type="submit" value="Modificar Reserva" name="modificarReserva"/>
+                            {%endif%}
                         </tr>
                     </tbody>
                 </table>
             </form>
+            {% if yaPagada %}
+                <a class="btn" href="/reservas/">Ver Reservas</a>
+            {% endif %}
+            <div>
+            <img id="foto" src="{{ MEDIA_URL}}{{reserva.fotoPago}}" alt="Imagen no encontrada">
+        </div>
         {% endif %}
     </div>
 {% endblock %}
