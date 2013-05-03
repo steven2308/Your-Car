@@ -38,7 +38,7 @@ class ClienteAlquiler(models.Model):
 	fechaNacimiento = models.DateField()
 	telFijo = models.CharField(max_length=10)
 	telCelular = models.CharField(max_length=10)
-	genero = models.CharField(max_length=1,blank=True)
+	genero = models.CharField(max_length=20,blank=True)
 	tipoPersona = models.CharField(max_length=10)
 	tipoDocumento  = models.CharField(max_length=10)
 	numDocumento = models.CharField(max_length=20,primary_key=True)

@@ -2,20 +2,10 @@
 {% block titulo %}Reservas{% endblock %}
 {% block contenido %}
     <div class="container">
-    	<div class="span12">
-    		<div class="span4">
-    			<form method="POST" action="/reservas/detalles/" name="verReserva">
-    				{% csrf_token %}
-    				<label>Ingresa el ID de la reserva que deseas ver en detalle:</label>
-    				<input name="idReserva" type="text" required="true" pattern="[0-9]{1,10}">
-    				<input type="submit" value="Ver Reserva" name="verReserva"/>
-    			</form>
-    		</div>
-    		<div>
-    		<a class="btn" href="/reservas/agregar/">Agregar reserva</a>
+        <p>
+        	<a class="btn" href="/reservas/agregar/">Agregar reserva</a>
             <a class="btn" href="/vehiculos/">Ver vehículos</a>
-    		</div>
-        </div>
+        </p>
     	{% if reservas %}
             <form method="POST" action="/reservas/" name="filtrarVehiculos">
                 {% csrf_token %}
@@ -49,7 +39,7 @@
                                 <input id="btnFechaInicio" name="orderBy" type="radio" value="fechaInicio">
                             </li>
                         </ul>
-                    </div>    
+                    </div>
                 </div>
                 <input type="submit" value="Buscar" name="buscar"/>
             </form>
@@ -66,7 +56,7 @@
         		<tbody>
         			{% for r in reservas %}
         				<tr>
-        					<td>{{r.idReserva}}</td>
+                            <td><a href="/reservas/detalles/{{r.idReserva}}/">{{r.idReserva}}</a></td>
         					<td>{{r.idVehiculo}}</td>
         					<td>{{r.idCliente.numDocumento}}</td>
                         	<td>{{r.fechaInicio}}</td>

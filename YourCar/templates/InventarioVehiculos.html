@@ -16,12 +16,6 @@
             <div class="span12">
                 <div class="span4">
                     <p>Tenemos en total {{ vehiculos|length }} vehículo{{vehiculos|pluralize}}.</p>
-                    <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">
-                        {% csrf_token %}
-                        <label>Ingresa la placa del vehículo que quieres ver:</label>
-                        <input name="placa" type="text" required="true" pattern="[A-Z]{3}[0-9]{3}">
-                        <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
-                    </form>
                 </div>
                 <div class="span2">
                     {% if is_staff %}
@@ -115,7 +109,7 @@
                 <tbody>
                     {% for v in vehiculos %}
                         <tr>
-                            <td>{{v.placa}}</td>
+                            <td><a href="/vehiculos/detalles/{{v.placa}}/">{{v.placa}}</a></td>
                             <td>{{v.marca}}</td>
                             <td>{{v.referencia}}</td>
                             <td>{{v.gama}}</td>

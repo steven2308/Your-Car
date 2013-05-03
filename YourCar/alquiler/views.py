@@ -171,17 +171,15 @@ def verVehiculosControl(request,  pagina=1, addSuccess=False):
 	vehiculos=paginar(listaVehiculos,pagina)
 	return render_to_response('inventarioVehiculos.html',locals(), context_instance = RequestContext(request))
 
-def detallesVehiculoControl(request):
-	if request.method == 'POST':
-		try:
-			placa=request.POST["placa"].upper()
-			vehiculo = Vehiculo.objects.get(placa=placa)
-			is_staff = request.user.is_staff
-			is_authenticated = request.user.is_authenticated
-			return render_to_response('detallesVehiculo.html',locals(), context_instance = RequestContext(request))
-		except:
-			return HttpResponseRedirect('/vehiculos')
-	return HttpResponseRedirect('/vehiculos')
+def detallesVehiculoControl(request,placa):
+	try:
+		#placa=request.POST["placa"].upper()
+		vehiculo = Vehiculo.objects.get(placa=placa.upper())
+		is_staff = request.user.is_staff
+		is_authenticated = request.user.is_authenticated
+		return render_to_response('detallesVehiculo.html',locals(), context_instance = RequestContext(request))
+	except:
+		return HttpResponseRedirect('/vehiculos')
 
 def historialMantenimientoControl(request, pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
@@ -681,12 +679,12 @@ def agregarReservaControl(request):
 	else:
 		return HttpResponseRedirect('/404')
 
-def detallesReservaControl(request):
-	if request.user.is_authenticated() and request.method == 'POST':
+def detallesReservaControl(request,idReserva):
+	if request.user.is_authenticated():
 		if not request.user.is_staff:
 			try:
 				errorIdReserva=False
-				idReserva=request.POST["idReserva"]
+				#idReserva=request.POST["idReserva"]
 				reserva=Reserva.objects.get(idReserva=idReserva)
 				clienteReserva=reserva.idCliente
 				clienteActual=ClienteAlquiler.objects.get(user=request.user)
@@ -701,14 +699,13 @@ def detallesReservaControl(request):
 				#return HttpResponseRedirect('/reservas')
 		else:
 			try:
-				idReserva=request.POST["idReserva"]
+				#idReserva=request.POST["idReserva"]
 				reserva=Reserva.objects.get(idReserva=idReserva)
 				is_staff=request.user.is_staff
 				return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
 			except:
 				errorIdReserva=True
 				return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
-				#return HttpResponseRedirect('/reservas')
 	return HttpResponseRedirect('/reservas')
 
 def modificarReservaControl(request):
