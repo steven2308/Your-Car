@@ -25,10 +25,11 @@
 				{% csrf_token %}
 				<h3>Ingrese los datos de la reserva.</hs3>
 				<table class="table-bordered table-striped table-hover">
+					<a class="btn" href="/vehiculos/">Ver vehículos</a>
 					<tbody>
 					    <tr>
 					        <td><label>Placa del Vehiculo:</label></td>
-					        <td><input type="text" name="idVehiculo" value="{{placa}}" required="true" pattern="[A-Z]{3}[0-9]{3}"/>*</td>
+					        <td><input type="text" name="idVehiculo" value="{{idVehiculo}}" required="true" pattern="[a-zA-Z]{3}[0-9]{3}"/>*</td>
 					    </tr>
 					    {% if not is_staff %}
 					    <tr>
@@ -37,28 +38,28 @@
 					    {% else %}
 					    <tr>
 					        <td><label>Numero de Documento Usuario:</label></td>
-					        <td><input type="text" name="idCliente" required="true" pattern="[a-zA-z0-9_-]{6,20}"/>*</td>
+					        <td><input type="text" name="idCliente" value="{{idCliente}}" required="true" pattern="[a-zA-z0-9_-]{6,20}"/>*</td>
 					    </tr>
 					    {% endif %}
 					    <tr>
 					        <td><label>Fecha de Inicio:</label></td>
-					        <td><input type="date" name="fechaInicio" required="true"/>*</td>
+					        <td><input type="date" name="fechaInicio" value="{{fechaInicio}}" required="true"/>*</td>
 					    </tr>
 					    <tr>
 					    	<td><label>Hora Inicio:</label></td>
-							<td><input type="time" name="horaInicio" required="true"/>*</td>
+							<td><input type="time" name="horaInicio" value="{{horaInicio}}" required="true"/>*</td>
 						</tr>
 					    <tr>
 					        <td><label>Fecha Fin:</label></td>
-					        <td><input type="date" name="fechaFin" required="true"/>*</td>
+					        <td><input type="date" name="fechaFin" value="{{fechaFin}}" required="true"/>*</td>
 					    </tr>
 						<tr>
 							<td><label>Hora Fin:</label></td>
-							<td><input type="time" name="horaFin" required="true"/>*</td>
+							<td><input type="time" name="horaFin" value="{{horaFin}}" required="true"/>*</td>
 						</tr>
 					    <tr>
 					        <td><label>Lugar de Recogida:</label></td>
-					        <td><input type="text" name="lugar" required="true"/>*</td>
+					        <td><input type="text" name="lugar" value="{{lugar}}" required="true"/>*</td>
 					    </tr>
 					    <tr>
 					    	<td><input type="submit" value="Agregar Reserva" name="agregarReserva"/>

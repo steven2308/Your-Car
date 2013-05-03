@@ -177,6 +177,7 @@ def detallesVehiculoControl(request):
 			placa=request.POST["placa"].upper()
 			vehiculo = Vehiculo.objects.get(placa=placa)
 			is_staff = request.user.is_staff
+			is_authenticated = request.user.is_authenticated
 			return render_to_response('detallesVehiculo.html',locals(), context_instance = RequestContext(request))
 		except:
 			return HttpResponseRedirect('/vehiculos')
@@ -370,8 +371,6 @@ def agregarVehiculoControl(request):
 			fechaVencSeguroTodoRiesgo = request.POST["fechaVencSeguroTodoRiesgo"]
 			fechaVencRevisionTecMec = request.POST["fechaVencRevisionTecMec"]
 			fechaVencCambioAceite = request.POST["fechaVencCambioAceite"]
-			#foto = request.FILES["foto"]
-			foto = None
 			modificar = ""
 
 			#inicializo datos opcionales
@@ -384,19 +383,18 @@ def agregarVehiculoControl(request):
 			kilometraje = "0"
 
 			try:
-				modificar = request.POST["modificar"] #probar sin try
+				modificar = request.POST["modificar"]
 			except:
 				pass
 
 			if modificar:
 				try:
-					foto= request.FILES["foto"]
+					foto = request.FILES["foto"]
 				except:
 					foto = Vehiculo.objects.get(placa=placa).foto
 			else:
 				foto = request.FILES["foto"]
 
-			#tomo datos ingresados por el usuario
 			if request.POST['tipoDeFrenos']: tipoDeFrenos = request.POST['tipoDeFrenos']
 			if request.POST['airbags']: airbags = request.POST['airbags']
 			if request.POST['tipoDeDireccion']: tipoDeDireccion = request.POST['tipoDeDireccion']
@@ -404,13 +402,13 @@ def agregarVehiculoControl(request):
 			if request.POST['modelo']: modelo = request.POST['modelo']
 			if request.POST['valorGarantia']: valorGarantia = request.POST['valorGarantia']
 			if request.POST['kilometraje']: kilometraje = request.POST['kilometraje']
-			#verifico si estoy modificando
 
 			#Control de errores
 			if modificar:
 				errorPlaca = not re.match("^([A-Z]{3}[0-9]{3})$",placa)
 			else:
 				errorPlaca = ((Vehiculo.objects.filter(placa=placa)) or not re.match("^([A-Z]{3}[0-9]{3})$",placa))
+				errorFoto = not foto
 			errorTipoDeFrenos = (tipoDeFrenos not in parametros["tiposDeFrenos"])
 			errorNumDePasajeros = not re.match("^[0-9]{1,2}$",numDePasajeros)
 			errorGama = (gama not in parametros["gamas"])
@@ -422,19 +420,15 @@ def agregarVehiculoControl(request):
 			errorEstado = (estado not in parametros["estadosVehiculo"])
 			errorTipoDeDireccion = (tipoDeDireccion not in parametros["tipoDeDirecciones"])
 			errorTipoDeTraccion = (tipoDeTraccion not in parametros["tiposTraccion"])
-			errorFoto = not foto
+			errorFoto = False
 			errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
 			errorFechas= not fechaCorrecta(fechaVencSOAT) or not fechaCorrecta(fechaVencSeguroTodoRiesgo) or not fechaCorrecta(fechaVencRevisionTecMec) or not fechaCorrecta(fechaVencCambioAceite)
 			#manejo de errores
-			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh) or errorFechas:
+			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh or errorFechas):
+				errorExist = True
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 
-			#return render_to_response('pruebas.html', locals(), context_instance = RequestContext(request))
 			#guardar vehiculo
-			if foto == None and modificar:
-				v=Vehiculo.objects.get(placa=placa)#probar abreviado
-				foto = v.foto
-
 			vehiculo = Vehiculo(placa = placa, marca = marca, referencia = referencia, gama = gama, descripcionBasica = descripcionBasica, numDePasajeros = numDePasajeros, cilindraje = cilindraje, color = color, cajaDeCambios = cajaDeCambios, limiteKilometraje = limiteKilometraje, tarifa = tarifa, estado = estado, fechaVencSOAT = fechaVencSOAT, fechaVencSeguroTodoRiesgo = fechaVencSeguroTodoRiesgo, fechaVencRevisionTecMec = fechaVencRevisionTecMec, fechaVencCambioAceite = fechaVencCambioAceite, tipoDeFrenos = tipoDeFrenos, airbags = airbags, tipoDeDireccion = tipoDeDireccion, tipoDeTraccion = tipoDeTraccion, modelo = modelo, valorGarantia = valorGarantia, kilometraje = kilometraje, foto=foto)
 			vehiculo.save()
 			request.method="GET"
@@ -670,6 +664,7 @@ def agregarReservaControl(request):
 			if (errorIdCliente or errorIdVehiculo or errorPagada or errorFechas):
 				return render_to_response('agregarReserva.html', locals(), context_instance = RequestContext(request))
 
+			#guardo la reserva
 			reserva = Reserva(idVehiculo = vehiculo, idCliente = cliente, fechaInicio = dtIni, fechaFin = dtFin, lugar = lugar, pagada = False, datosDePago = "", fotoPago = None)
 			reserva.save()
 			return HttpResponseRedirect('/reservas')
@@ -678,7 +673,7 @@ def agregarReservaControl(request):
 				cliente = ClienteAlquiler.objects.get(user=request.user)
 				numDocumento = cliente.numDocumento
 			try:
-				placa = request.GET["placa"]
+				idVehiculo = request.GET["placa"]
 			except:
 				pass
 			is_staff = request.user.is_staff
@@ -726,12 +721,26 @@ def modificarReservaControl(request):
 			horaInicio = request.POST["horaInicio"]
 			horaFin = request.POST["horaFin"]
 			lugar = request.POST["lugar"]
-			datosDePago = request.POST["datosDePago"]
-			fotoPago = request.FILES["fotoPago"]
 			idReserva = request.POST["idReserva"]
 
-			pagada=False
-			if request.POST["pagada"]: pagada=request.POST["pagada"]
+			if request.user.is_staff:
+				if request.POST["pagada"] == 'Si': 
+					pagada = True
+				else:
+					pagada = False
+			else:
+				pagada=False
+
+			try:
+				fotoPago = request.FILES["fotoPago"]
+			except:
+				fotoPago = Reserva.objects.get(idReserva=idReserva).fotoPago
+
+			try:
+				datosDePago = request.POST["datosDePago"]
+			except:
+				datosDePago = Reserva.objects.get(idReserva=idReserva).fotoPago
+
 
 			dtIni = datetime.strptime(fechaInicio+" "+horaInicio, '%Y-%m-%d %H:%M')
 			dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
@@ -757,6 +766,7 @@ def modificarReservaControl(request):
 			if (errorPagada or errorIdCliente or errorIdVehiculo or errorFechas):
 				return render_to_response('modificarReserva.html', locals(), context_instance = RequestContext(request))
 
+			#reemplazo la reserva
 			reserva = Reserva(idReserva=idReserva, idVehiculo = vehiculo, idCliente = cliente, fechaInicio = dtIni, fechaFin = dtFin, lugar = lugar, pagada = pagada, datosDePago = datosDePago, fotoPago = fotoPago)
 			reserva.save()
 			return HttpResponseRedirect('/reservas')
@@ -768,11 +778,14 @@ def modificarReservaControl(request):
 			fechaFin = formatearFecha(reserva.fechaFin)
 			horaInicio = formatearHora(reserva.fechaInicio)
 			horaFin = formatearHora(reserva.fechaFin)
+			pagada = reserva.pagada
 			if request.user.is_staff:
 				is_staff = True
 			else:
 				cliente = ClienteAlquiler.objects.get(user=request.user)
 				numDocumento = cliente.numDocumento
+				is_staff=False
+			if pagada == True and not is_staff: yaPagada = True
 			#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
 			return render_to_response('modificarReserva.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/reservas')

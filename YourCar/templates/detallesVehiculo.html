@@ -124,6 +124,7 @@
                     <input name="placaActual" type="hidden" value="{{vehiculo.placa}}" pattern="[A-Z]{3}[0-9]{3}">
                     <input type="submit" value="Cotizar este vehiculo" name="cotizarVehiculo"/>
                 </form>
+                {%if is_authenticated %}
                 <form method="GET" action="/reservas/agregar/" name="modificarVehiculo">
                     {% csrf_token %}
                     <input name="placa" value="{{vehiculo.placa}}" type="hidden" pattern="[A-Z]{3}[0-9]{3}">
@@ -140,6 +141,7 @@
                     <input name="placa" value="{{vehiculo.placa}}" type="hidden" pattern="[A-Z]{3}[0-9]{3}">
                     <input class="btn btn-danger" type="submit" value="Eliminar este Vehículo" name="eliminarVehiculo" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
                 </form>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
