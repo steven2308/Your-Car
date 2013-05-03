@@ -8,51 +8,49 @@
             <input name="placa" type="text" value="{{placa}}" pattern="[A-Z]{3}[0-9]{3}" required="true">
             <input type="submit" value="Buscar Vehiculo" name="buscarVehiculo"/>
         </form>
-        {% if  vehiculoCargado%}
-            <form method="GET" action="/vehiculos/historialMantenimiento/agregar/" name="agregarMantenimiento">
-                <input name="placaActual" type="hidden" value="{{placa}}">
-                <input type="submit" value="Agregar Mantenimiento" name="agregar"/>
-            </form>
-            <form method="POST" action="/vehiculos/historialMantenimiento/eliminar/" name="eliminarMantenimiento">
-                {% csrf_token %}
-                <label>Identificador del mantenimiento:</label>
-    			<input name="idMantenimiento" type="text" required="true" pattern="[0-9]{1,3}" ><br>
-                <input  class="btn btn-danger"  type="submit" value="Eliminar Mantenimiento" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
-            </form>
-        {% endif %}
-        	<table class="table-bordered table-striped table-hover">
-        		<thead>
-        			<th>IdMantenimiento</th>
-    				<th>Fecha</th>
-    				<th>Descripcion</th>
-                    <th>Costo</th>
-    				<th>Tipo</th>
-                    <th>Vehículo</th>
-        		</thead>
-        		<tbody>
-        			{% for m in mantenimientos %}
-        				<tr>
-        					<td>{{m.pk}}</td>
-        					<td>{{m.fecha}}</td>
-        					<td>{{m.descripcion}}</td>
-                            <td>{{m.costo}}</td>
-        					<td>{{m.tipo}}</td>
-                            <td>{{m.idVehiculo}}</td>
-        				</tr>
-        			{% endfor %}
-        		</tbody>
-        	</table>
-            <div class="paginas">
-                <a href="/vehiculos/historialMantenimiento/pag/1/"> Primera </a>
-                {% if mantenimientos.has_previous %}
-                    <a href="/vehiculos/historialMantenimiento/pag/{{mantenimientos.previous_page_number}}/"> Anterior </a>
-                {% endif %}
-                {% if mantenimientos.has_next %}
-                    <a href="/vehiculos/historialMantenimiento/pag/{{mantenimientos.next_page_number}}/"> Siguiente </a>
-                {% endif %}
-                <a href="/vehiculos/historialMantenimiento/pag/{{mantenimientos.paginator.num_pages}}"> Última </a>
-                <br>
-                <strong>Página {{mantenimientos.number}} de {{mantenimientos.paginator.num_pages}}</strong>
-            </div>
+        <form method="GET" action="/vehiculos/historialMantenimiento/agregar/" name="agregarMantenimiento">
+            <input name="placaActual" type="hidden" value="{{placa}}">
+            <input type="submit" value="Agregar Mantenimiento" name="agregar"/>
+        </form>
+        <form method="POST" action="/vehiculos/historialMantenimiento/eliminar/" name="eliminarMantenimiento">
+            {% csrf_token %}
+            <label>Identificador del mantenimiento:</label>
+			<input name="idMantenimiento" type="text" required="true" pattern="[0-9]{1,3}" ><br>
+            <input  class="btn btn-danger"  type="submit" value="Eliminar Mantenimiento" name="eliminar" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+        </form>
+    	<table class="table-bordered table-striped table-hover">
+    		<thead>
+    			<th>IdMantenimiento</th>
+				<th>Fecha</th>
+				<th>Descripcion</th>
+                <th>Costo</th>
+				<th>Tipo</th>
+                <th>Vehículo</th>
+    		</thead>
+    		<tbody>
+    			{% for m in mantenimientos %}
+    				<tr>
+    					<td>{{m.pk}}</td>
+    					<td>{{m.fecha}}</td>
+    					<td>{{m.descripcion}}</td>
+                        <td>{{m.costo}}</td>
+    					<td>{{m.tipo}}</td>
+                        <td>{{m.idVehiculo}}</td>
+    				</tr>
+    			{% endfor %}
+    		</tbody>
+    	</table>
+        <div class="paginas">
+            <a href="/vehiculos/historialMantenimiento/pag/1/"> Primera </a>
+            {% if mantenimientos.has_previous %}
+                <a href="/vehiculos/historialMantenimiento/pag/{{mantenimientos.previous_page_number}}/"> Anterior </a>
+            {% endif %}
+            {% if mantenimientos.has_next %}
+                <a href="/vehiculos/historialMantenimiento/pag/{{mantenimientos.next_page_number}}/"> Siguiente </a>
+            {% endif %}
+            <a href="/vehiculos/historialMantenimiento/pag/{{mantenimientos.paginator.num_pages}}"> Última </a>
+            <br>
+            <strong>Página {{mantenimientos.number}} de {{mantenimientos.paginator.num_pages}}</strong>
+        </div>
 	</div>
 {% endblock %}
