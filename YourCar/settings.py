@@ -14,12 +14,12 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'yourcarDB',
-        'USER': '',
-        'PASSWORD': '',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'yourcar',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
         'HOST': '',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 

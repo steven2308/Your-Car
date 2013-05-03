@@ -32,3 +32,6 @@ si hay conflictos organizar
 Para correrlo:
 abren una consola de windows, se ubican en la carpeta y simplemente escriben:
 python manage.py runserver
+
+Para ignorar archivos:
+git rm -r 'regex'
