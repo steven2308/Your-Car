@@ -668,6 +668,8 @@ def detallesReservaControl(request,idReserva):
 			dtFin = reserva.fechaFin
 			cotizacion = cotizar(dtIni,dtFin,vehiculo)
 			cotizado=True
+			if reserva.fotoPago:
+				hayFoto=True
 			return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
 		#except:
 		#	errorIdReserva=True

@@ -100,9 +100,11 @@
             </table>
         {% endif %}
         </div>
-        <div class="span4">
-            <img id="foto" src="{{ MEDIA_URL}}{{reserva.fotoPago}}" alt="Imagen no encontrada">
-        </div>
+        {% if hayFoto %}
+            <div class="span4">
+                <img id="foto" src="{{ MEDIA_URL}}{{reserva.fotoPago}}" alt="Imagen no encontrada">
+            </div>
+        {% endif %}
         <div class="span4">
                 <form method="GET" action="/reservas/modificar/" name="modificarReserva">
                     {% csrf_token %}
