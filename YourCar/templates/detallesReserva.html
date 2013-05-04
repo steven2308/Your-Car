@@ -11,6 +11,7 @@
         </p>
     {% else %}
     <div class="span3">
+        <h4>Datos de reserva</h3>
         <table class="table-bordered table-striped table-hover">
             <tbody>
                 <tr>
@@ -26,11 +27,11 @@
                     <td>{{reserva.idCliente.numDocumento}}</td>
                 </tr>
                 <tr>
-                    <td>fecha Inicio</td>
+                    <td>Fecha Inicio</td>
                     <td>{{reserva.fechaInicio}}</td>
                 </tr>
                 <tr>
-                    <td>fecha Fin</td>
+                    <td>Fecha Fin</td>
                     <td>{{reserva.fechaFin}}</td>
                 </tr>
                 <tr>
@@ -47,6 +48,60 @@
                 </tr>
             </tbody>
         </table>
+        {% if cotizado %}
+            <h4>Datos de cotización</h3>
+            <table class="table-bordered table-striped table-hover">
+                <tbody>
+                    <tr>
+                        <td>Total días</td>
+                        <td>{{cotizacion.diasReal}}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Horas</td>
+                        <td>{{cotizacion.horasReal}}</td>
+                    </tr>
+                    <tr>
+                        <td>Total días a cobrar</td>
+                        <td>{{cotizacion.dias}}</td>
+                    </tr>
+                    <tr>
+                        <td>Total horas a cobrar</td>
+                        <td>{{cotizacion.horas}}</td>
+                    </tr>
+                    <tr>
+                        <td>Tarifa día</td>
+                        <td class="number">{{cotizacion.tarifaDia}}</td>
+                    </tr>
+                    <tr>
+                        <td>Limite de kms por día</td>
+                        <td>{{cotizacion.limiteKilometraje}}</td>
+                    </tr>
+                    <tr>
+                        <td>Máximo de kms totales</td>
+                        <td>{{cotizacion.maxKms}}</td>
+                    </tr>
+                    <tr>
+                        <td>Tarifa hora</td>
+                        <td>{{cotizacion.tarifaHora}}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Por días</td>
+                        <td>{{cotizacion.totalPorDias}}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Por Horas</td>
+                        <td>{{cotizacion.totalPorHoras}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td><strong>{{cotizacion.total}}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
+        </div>
+        <div class="span4">
+            <img id="foto" src="{{ MEDIA_URL}}{{reserva.fotoPago}}" alt="Imagen no encontrada">
         </div>
         <div class="span4">
                 <form method="GET" action="/reservas/modificar/" name="modificarReserva">
@@ -59,9 +114,6 @@
                     <input name="idReserva" value="{{reserva.idReserva}}" type="hidden" pattern="[0-9]{1,10}">
                     <input class="btn btn-danger" type="submit" value="Eliminar Reserva" name="eliminarReserva" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
                 </form>
-        </div>
-        <div class="span4">
-            <img id="foto" src="{{ MEDIA_URL}}{{reserva.fotoPago}}" alt="Imagen no encontrada">
         </div>
     </div>
     {% endif %}

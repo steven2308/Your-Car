@@ -263,7 +263,7 @@ def eliminarHistorialMantenimientoControl(request):
 
 def cotizarControl(request):
 	if request.method == 'POST':
-		try:
+		#try:
 			#Tomo datos
 			placa=request.POST["placa"].upper()
 			vehiculo = Vehiculo.objects.get(placa=placa)
@@ -282,7 +282,6 @@ def cotizarControl(request):
 				#Calculo dias y diferencia
 				dtIni = datetime.strptime(fechaIni+" "+horaIni, '%Y-%m-%d %H:%M')
 				dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
-				diferencia =  dtFin-dtIni
 				#La fecha inicial debe ser menor a la final y mayor a la actual
 				errorFechas2 = dtIni > dtFin or datetime.now()> dtIni
 			#Si hay errores vuelvo al formulario y los informo
@@ -290,38 +289,11 @@ def cotizarControl(request):
 				return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 
 			#Calculos
-			diasReal = diferencia.days
-			dias = diasReal
-			segs  = diferencia.seconds
-			horasReal = math.floor(segs/3600)
-			horas=horasReal
-			mins = (segs%3600)/60
-			if mins>=30:
-				horas+=1
-			if(horas>6):
-				dias+=1
-				horas=0
-			tarifaDia = vehiculo.tarifa
-			totalPorDias = dias*tarifaDia
-			tarifaHora = math.floor(tarifaDia/24)
-			totalPorHoras = horas*tarifaHora
-			tarifaDia = vehiculo.tarifa
-			limiteKilometraje = vehiculo.limiteKilometraje
-			kmPorHora = math.floor(limiteKilometraje/24)
-			maxKms = limiteKilometraje*dias+kmPorHora*horas
-			total=totalPorDias+totalPorHoras
-
-			#formateo resultados
-			tarifaDia = intWithCommas(tarifaDia)
-			tarifaHora = intWithCommas(tarifaHora)
-			totalPorDias = intWithCommas(totalPorDias)
-			totalPorHoras = intWithCommas(totalPorHoras)
-			total= intWithCommas(total)
+			cotizacion = cotizar(dtIni,dtFin,vehiculo)
 			cotizado=True
-
-		except:
-			pass
-		return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
+		#except:
+		#	pass
+			return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 	#Sino es post cargo el formulario
 	else:
 		try:
@@ -681,31 +653,25 @@ def agregarReservaControl(request):
 
 def detallesReservaControl(request,idReserva):
 	if request.user.is_authenticated():
-		if not request.user.is_staff:
-			try:
-				errorIdReserva=False
-				#idReserva=request.POST["idReserva"]
-				reserva=Reserva.objects.get(idReserva=idReserva)
+		#try:
+			errorIdReserva=False
+			reserva=Reserva.objects.get(idReserva=idReserva)
+			if not request.user.is_staff:
 				clienteReserva=reserva.idCliente
 				clienteActual=ClienteAlquiler.objects.get(user=request.user)
-				if clienteReserva.numDocumento == clienteActual.numDocumento:
-					return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
-				else:
+				if clienteReserva.numDocumento != clienteActual.numDocumento:
 					errorIdReserva=True
-					return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
-			except:
-				errorIdReserva=True
-				return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
-				#return HttpResponseRedirect('/reservas')
-		else:
-			try:
-				#idReserva=request.POST["idReserva"]
-				reserva=Reserva.objects.get(idReserva=idReserva)
-				is_staff=request.user.is_staff
-				return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
-			except:
-				errorIdReserva=True
-				return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
+			is_staff=request.user.is_staff
+			#Tomo los datos necesarios para la cotizacion
+			vehiculo = reserva.idVehiculo
+			dtIni = reserva.fechaInicio
+			dtFin = reserva.fechaFin
+			cotizacion = cotizar(dtIni,dtFin,vehiculo)
+			cotizado=True
+			return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
+		#except:
+		#	errorIdReserva=True
+		#	return render_to_response('detallesReserva.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/reservas')
 
 def modificarReservaControl(request):
@@ -881,3 +847,48 @@ def formatearHora(fecha):
 		return "%s:%s"%(hora,mins)
 	except:
 		return fecha
+
+def cotizar(dtIni, dtFin, vehiculo):
+	diferencia =  dtFin-dtIni
+	diasReal = diferencia.days
+	dias = diasReal
+	segs  = diferencia.seconds
+	horasReal = math.floor(segs/3600)
+	horas=horasReal
+	mins = (segs%3600)/60
+	if mins>=30:
+		horas+=1
+	if(horas>6):
+		dias+=1
+		horas=0
+	tarifaDia = vehiculo.tarifa
+	totalPorDias = dias*tarifaDia
+	tarifaHora = math.floor(tarifaDia/24)
+	totalPorHoras = horas*tarifaHora
+	tarifaDia = vehiculo.tarifa
+	limiteKilometraje = vehiculo.limiteKilometraje
+	kmPorHora = math.floor(limiteKilometraje/24)
+	maxKms = limiteKilometraje*dias+kmPorHora*horas
+	total=totalPorDias+totalPorHoras
+
+	#formateo resultados
+	tarifaDia = intWithCommas(tarifaDia)
+	tarifaHora = intWithCommas(tarifaHora)
+	totalPorDias = intWithCommas(totalPorDias)
+	totalPorHoras = intWithCommas(totalPorHoras)
+	total= intWithCommas(total)
+
+	#guardo todo en un diccionario y lo retorno
+	cotizacion = {}
+	cotizacion["diasReal"]=diasReal
+	cotizacion["horasReal"]=horasReal
+	cotizacion["dias"]=dias
+	cotizacion["horas"]=horas
+	cotizacion["tarifaDia"]=tarifaDia
+	cotizacion["limiteKilometraje"]=limiteKilometraje
+	cotizacion["maxKms"]=maxKms
+	cotizacion["tarifaHora"]=tarifaHora
+	cotizacion["totalPorDias"]=totalPorDias
+	cotizacion["totalPorHoras"]=totalPorHoras
+	cotizacion["total"]=total
+	return cotizacion
