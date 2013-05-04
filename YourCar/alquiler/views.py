@@ -112,7 +112,7 @@ def loginControl(request):
 			if request.user.is_superuser:
 				return HttpResponseRedirect('/admin')
 			elif request.user.is_staff:
-				return HttpResponseRedirect('/alertas')
+				return HttpResponseRedirect('/vehiculos')
 			return HttpResponseRedirect('/vehiculos')
 	except:
 		return HttpResponseRedirect('/')
