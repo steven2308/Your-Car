@@ -3,7 +3,7 @@
 {% block contenido %}
 	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh or errorFechas %}
 		<div class="container">
-		<h3>Corrige los siguientes errores para continuar:</h3>
+		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
 			{% if errorPlaca %}
 				La placa del vehiculo tiene un formato erroneo o el vehiculo ya se encuentra registrado.<br>
@@ -53,7 +53,7 @@
 	<div class="container">
 		<form method="POST" action="/vehiculos/agregar/" name="agregarVehiculo"  enctype="multipart/form-data">
 				{% csrf_token %}
-				<h3>Ingrese los datos del vehiculo.</hs3>
+				<h4>Ingrese los datos del vehiculo.</h4>
 				<table class="table-bordered table-striped table-hover">
 					<tbody>
 						<tr>
@@ -212,7 +212,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
+			<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>
 		</form>
 	</div>
 {% endblock %}

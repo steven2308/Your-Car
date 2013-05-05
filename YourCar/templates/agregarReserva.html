@@ -3,7 +3,7 @@
 {% block contenido %}
 	{%if errorPagada or errorIdCliente or errorIdVehiculo or errorFechas%}
 		<div class="container">
-		<h3>Corrige los siguientes errores para continuar:</h3>
+		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
 			{% if errorIdCliente %}
 				El cliente no existe o el id del cliente es invalido.<br>
@@ -66,7 +66,7 @@
 						</tr>				    
 					</tbody>
 				</table>
-				<p class="text-info">Por favor ingrese todos los campos requeridos (*)</p>
+				<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>
 		</form>
 	</div>
 	{%endif %}

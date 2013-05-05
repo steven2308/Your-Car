@@ -3,25 +3,13 @@ mi{
 }
 
 h1{
-	font-size: 80px;
-	text-shadow: 3px 3px 5px #cecece;
-	color: aqua;
+	text-shadow: 3px 3px 5px #00009a;
 }
-
-title{
-	border: 4px solid blue;
-	padding: 10px 40px;
-	background: #ffffff;
-	width: 100%;
-	border-radius: 30px 30px 0px 0px;
-	-moz-border-radius: 30px 30px 0px 0px;
-}
-
 
 body{
 	font-family:"Trebuchet MS", "Myriad Pro", Arial, sans-serif, FuenteZabatana;
 	font-size:14px;
-	background:url(/media/images/fondo.jpg);
+	background:url(/media/images/fondod.jpg);
 	background-repeat: no-repeat; /*Aca damos la orden de que la imagen no se repita*/
 	background-size: 100% 100%;  /*Esto es para que la imagen quede del tamaño de la pantalla*/
 	-moz-background-repeat: no-repeat; /*Compatibilidad con Firefox*/

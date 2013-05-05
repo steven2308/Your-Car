@@ -2,7 +2,7 @@
 {% block titulo %}Parametrizar{% endblock %}
 {% block contenido %}
     <div class="container">
-        <h2>Modificar parámetros.</h2>
+        <h4>Modificar parámetros.</h4>
         <form method="POST" action="/parametrizar/" name="parametrizar">
             {% csrf_token %}
             {% if exito %}
