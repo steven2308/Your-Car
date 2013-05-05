@@ -644,10 +644,6 @@ def agregarReservaControl(request):
 					numDocumento = cliente.numDocumento
 			except:
 				errorIdCliente = True
-			try:
-				idVehiculo = request.GET["placa"]
-			except:
-				errorIdVehiculo = True
 			is_staff = request.user.is_staff
 			return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
 	else:
