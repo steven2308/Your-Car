@@ -6,12 +6,12 @@
             <p class="text-info">El vehículo se agregó exitosamente!</p>
         {% endif %}
         {% if filtrados %}
-            <h2>Estás viendo los vehículos filtrados y ordenados:</h2>
+            <h4>Estás viendo los vehículos filtrados y ordenados:</h4>
         {% else %}
             {% if  noResults %}
                 <h2>No se encontró ningún vehículo con esa placa.</h2>
             {% endif %}
-    	   <h2>Estás viendo todos los vehículos:</h2>
+    	   <h4>Estás viendo todos los vehículos:</h4>
         {% endif %}
             <div class="span12">
                 <div class="span4">
@@ -94,7 +94,7 @@
                     <th>Marca</th>
                     <th>Referencia</th>
                     <th>Gama</th>
-                    <th>Descripcion Basica</th>
+                    {# <th>Descripcion Basica</th> #}
                     <th># Pasajeros</th>
                     <th>Caja De Cambios</th>
                     <th>Tarifa</th>
@@ -113,7 +113,7 @@
                             <td>{{v.marca}}</td>
                             <td>{{v.referencia}}</td>
                             <td>{{v.gama}}</td>
-                            <td>{{v.descripcionBasica}}</td>
+                            {# <td>{{v.descripcionBasica}}</td> #}
                             <td>{{v.numDePasajeros}}</td>
                             <td>{{v.cajaDeCambios}}</td>
                             <td>{{v.tarifa}}</td>
