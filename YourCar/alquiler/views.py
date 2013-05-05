@@ -72,7 +72,7 @@ def registroControl(request):
 			errorLongDatosOpcionales= (len(nombrePersonaContacto)>20 or len(direccionContacto)>40)
 			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"])==0 or len(nombres)==0 or len(apellidos)==0)
 
-			if (errorUser or errorContrasena or errorEmail or errorFecha or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios):
+			if (errorUser or errorContrasena or errorEmail or errorFecha or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios or errorLongDatosResidencia or errorLongDatosOpcionales):
 				return render_to_response('registro.html', locals(), context_instance = RequestContext(request))
 
 			#Guardo el usuario
@@ -640,8 +640,8 @@ def agregarReservaControl(request):
 		else:
 			try:
 				if not request.user.is_staff: 
-				cliente = ClienteAlquiler.objects.get(user=request.user)
-				numDocumento = cliente.numDocumento
+					cliente = ClienteAlquiler.objects.get(user=request.user)
+					numDocumento = cliente.numDocumento
 			except:
 				errorIdCliente = True
 			try:
