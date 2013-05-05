@@ -11,10 +11,7 @@ import re, math, os
 from datetime import datetime
 
 #Correcciones:
-#agregar foto
-
-#foto de consignacion es obligatoria
-#error en los errores del agregar vehiculo, no carga los campos
+#Revisar TODOS los datos del registro y tal vez tambien de vehiculos
 #revisar pattern de ver reserva en detalle y boton de eliminar reserva
 
 
@@ -71,6 +68,8 @@ def registroControl(request):
 			errorTipoDocumento= (tipoDocumento  not in (parametros["tipoDocumentos"]))
 			errorNumDocumento=  ((ClienteAlquiler.objects.filter(numDocumento=numDocumento)) or not re.match("^([a-zA-z0-9_-]{6,20})$",numDocumento))
 			errorDatosResidencia= (not paisResidencia or not ciudadResidencia or not dirResidencia)
+			errorLongDatosResidencia= (len(paisResidencia)>20 or len(ciudadResidencia)>20 or len(dirResidencia)>40)
+			errorLongDatosOpcionales= (len(nombrePersonaContacto)>20 or len(direccionContacto)>40)
 			errorCamposVacios = (len(nombreUsuario)==0 or len(request.POST["contrasena"])==0 or len(nombres)==0 or len(apellidos)==0)
 
 			if (errorUser or errorContrasena or errorEmail or errorFecha or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios):
@@ -639,13 +638,16 @@ def agregarReservaControl(request):
 			reserva.save()
 			return HttpResponseRedirect('/reservas')
 		else:
-			if not request.user.is_staff: 
+			try:
+				if not request.user.is_staff: 
 				cliente = ClienteAlquiler.objects.get(user=request.user)
 				numDocumento = cliente.numDocumento
+			except:
+				errorIdCliente = True
 			try:
 				idVehiculo = request.GET["placa"]
 			except:
-				pass
+				errorIdVehiculo = True
 			is_staff = request.user.is_staff
 			return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
 	else:

@@ -1,7 +1,7 @@
 {%extends "base.html"%}
 {% block titulo %}Registro{% endblock %}
 {% block contenido %}
-	{%if errorUser or errorContrasena or errorEmail or errorFecha or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios%}
+	{%if errorUser or errorContrasena or errorEmail or errorFecha or errorGenero or errorTipoPersona or errorTipoDocumento or errorTels or errorNumDocumento or errorDatosResidencia or errorCamposVacios or errorLongDatosResidencia or errorLongDatosOpcionales%}
 	<div class="container">
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
@@ -27,13 +27,19 @@
 				No seleccionaste un tipo de documento correcto.<br>
 			{% endif %}
 			{% if errorTels %}
-				Los telefonos deben ser solo número, por favor revisa los campos de teléfono fijo, celular y de contacto.<br>
+				Los telefonos deben ser solo números y no exceder los 12 caracteres, por favor revisa los campos de teléfono fijo, celular y de contacto.<br>
 			{% endif %}
 			{% if errorNumDocumento %}
-				El número de documento que seleccionaste ya está en uso o no es un número.
+				El número de documento que seleccionaste ya está en uso o no es un número.<br>
 			{% endif %}
 			{% if errorDatosResidencia %}
-				Por favor complete los datos de residencia.
+				Por favor complete los datos de residencia. <br>
+			{% endif %}
+			{% if errorLongDatosResidencia %}
+				Uno o mas datos de residencia son demasiado largos. <br>
+			{% endif %}
+			{% if errorLongDatosOpcionales %}
+				Uno o mas datos de la persona de contacto son demasiado largos. <br>
 			{% endif %}
 			{% if errorCamposVacios %}
 				Por favor llena todos los campos obligatorios.
@@ -149,11 +155,11 @@
 				    </tr>
 				    <tr>
 				        <td><label>Teléfono:</label></td>
-				        <td><input type="text" name="telContacto" pattern="[0-9]{7,12}"/></td>
+				        <td><input type="text" name="telContacto" value="{{telContacto}}" pattern="[0-9]{7,12}"/></td>
 				    </tr>
 				    <tr>
 				        <td><label>Dirección:</label></td>
-				        <td><input type="text" name="direccionContacto"/></td>
+				        <td><input type="text" name="direccionContacto" value="{{direccionContacto}}"/></td>
 				    </tr>
 				    <tr>
 				        <td><input type="submit" value="Regístrate" name="registrar"/>

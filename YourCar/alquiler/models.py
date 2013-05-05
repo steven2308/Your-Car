@@ -36,18 +36,18 @@ class Vehiculo(models.Model):
 class ClienteAlquiler(models.Model):
 	user = models.ForeignKey(User, unique=True)
 	fechaNacimiento = models.DateField()
-	telFijo = models.CharField(max_length=10)
-	telCelular = models.CharField(max_length=10)
+	telFijo = models.CharField(max_length=12)
+	telCelular = models.CharField(max_length=12)
 	genero = models.CharField(max_length=20,blank=True)
-	tipoPersona = models.CharField(max_length=10)
-	tipoDocumento  = models.CharField(max_length=10)
+	tipoPersona = models.CharField(max_length=20)
+	tipoDocumento  = models.CharField(max_length=20)
 	numDocumento = models.CharField(max_length=20,primary_key=True)
-	paisResidencia = models.CharField(max_length=10)
-	ciudadResidencia = models.CharField(max_length=10)
-	dirResidencia = models.CharField(max_length=30)
+	paisResidencia = models.CharField(max_length=20)
+	ciudadResidencia = models.CharField(max_length=20)
+	dirResidencia = models.CharField(max_length=40)
 	nombrePersonaContacto = models.CharField(max_length=20,blank=True)
-	telContacto = models.IntegerField(blank=True)
-	direccionContacto = models.CharField(max_length=30,blank=True)
+	telContacto = models.CharField(max_length=12,blank=True)
+	direccionContacto = models.CharField(max_length=40,blank=True)
 	def __unicode__(self):
 		return self.user.first_name+" "+self.user.last_name
 	class Meta:
