@@ -11,8 +11,8 @@ import re, math, os
 from datetime import datetime
 
 #Correcciones:
-#Revisar TODOS los datos del registro y tal vez tambien de vehiculos
-#revisar pattern de ver reserva en detalle y boton de eliminar reserva
+#Verificar la longitud de TODOS los campos en agregar :
+#vehiculo,historial de mantenimiento
 
 
 def inicioControl(request, registerSuccess=False):
@@ -222,9 +222,10 @@ def agregarHistorialMantenimientoControl(request):
 				errorFecha= not fechaCorrecta(fecha)
 				errorTipo = tipo not in tipos
 				errorCosto = not re.match("^([0-9]{3,10})$",costo)
+				errorDescripcion = len(descripcion)>200
 
 				#Si hay errores vuelvo al formulario y los informo
-				if (errorPlaca or errorFecha or errorTipo or errorCosto):
+				if (errorPlaca or errorFecha or errorTipo or errorCosto or errorDescripcion):
 					return render_to_response('agregarHistorialMantenimiento.html',locals(), context_instance = RequestContext(request))
 
 				#Si no hay errores guardo el mantenimiento y vuelvo al historial
@@ -392,8 +393,10 @@ def agregarVehiculoControl(request):
 			errorFoto = False
 			errorCamposVaciosVeh = (len(placa)==0 or len(marca)==0 or len(referencia)==0 or len(gama)==0 or len(descripcionBasica)==0 or len(numDePasajeros)==0 or len(cilindraje)==0 or len(color)==0 or len(limiteKilometraje)==0 or len(tarifa)==0 or len(fechaVencSOAT)==0 or len(fechaVencCambioAceite)==0 or len(fechaVencRevisionTecMec)==0 or len(fechaVencSeguroTodoRiesgo)==0)
 			errorFechas= not fechaCorrecta(fechaVencSOAT) or not fechaCorrecta(fechaVencSeguroTodoRiesgo) or not fechaCorrecta(fechaVencRevisionTecMec) or not fechaCorrecta(fechaVencCambioAceite)
+			errorEnteros = cilindraje>2000000000 or tarifa>2000000000 or kilometraje>2000000000 or limiteKilometraje>2000000000
+			errorLongDatos = len(marca)>15 or len (referencia)>15 or len(color)>15 or len(descripcionBasica)>100
 			#manejo de errores
-			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh or errorFechas):
+			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh or errorFechas or errorEnteros or errorLongDatos):
 				errorExist = True
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 
@@ -490,8 +493,9 @@ def agregarVoucherControl(request):
 			errorcodigoVerifTarjeta = not re.match("^([0-9]{3,4})$",codigoVerifTarjeta)
 			errorFecha = not fechaCorrecta(fechaVencTarjeta)
 			errorCamposVacios = (len(codigoAutorizacion)==0 or len(numTarjetaCredito)==0 or len(codigoVerifTarjeta)==0 or len(nombreBanco)==0)
+			errorNombreBanco = len(nombreBanco)>20
 
-			if (errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorFecha or errorCamposVacios):
+			if (errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorFecha or errorCamposVacios or errorNombreBanco):
 				return render_to_response('agregarVoucher.html', locals(), context_instance = RequestContext(request))
 
 			#Guardo el voucher

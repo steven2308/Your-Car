@@ -6,14 +6,14 @@ class Vehiculo(models.Model):
 		return "fotos/carros/%s/%s/%s/%s"%(self.marca, self.referencia, self.placa , filename)
 	print url
 	placa = models.CharField(max_length=6,primary_key=True)
-	marca = models.CharField(max_length=15)
-	referencia = models.CharField(max_length=15)
+	# marca = models.CharField(max_length=15)
+	# referencia = models.CharField(max_length=15)
 	gama = models.CharField(max_length=15)
-	descripcionBasica = models.CharField(max_length=100)
+	# descripcionBasica = models.CharField(max_length=100)
 	tipoDeFrenos = models.CharField(max_length=15, blank=True)
 	numDePasajeros = models.IntegerField()
 	cilindraje = models.IntegerField()
-	color = models.CharField(max_length=15)
+	# color = models.CharField(max_length=15)
 	cajaDeCambios = models.CharField(max_length=15) #poner opciones de a,m,t
 	airbags = models.IntegerField(blank=True, null=True)
 	tipoDeDireccion = models.CharField(max_length=15) #mecanica, hidraulica, electronica
@@ -81,10 +81,10 @@ class Voucher(models.Model):
 	codigoAutorizacion = models.CharField(max_length=15,primary_key=True)
 	idCliente = models.ForeignKey(ClienteAlquiler)
 	montoVoucher = models.IntegerField()
-	numTarjetaCredito = models.CharField(max_length=15)
+	numTarjetaCredito = models.CharField(max_length=18)
 	fechaVencTarjeta = models.DateField()
-	codigoVerifTarjeta = models.CharField(max_length=15)
-	nombreBanco = models.CharField(max_length=15)
+	codigoVerifTarjeta = models.CharField(max_length=5)
+	nombreBanco = models.CharField(max_length=20)
 	def __unicode__(self):
 		return "Voucher de %s codigo: %s" %(unicode(self.idCliente),self.codigoAutorizacion)
 

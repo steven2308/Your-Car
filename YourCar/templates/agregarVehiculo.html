@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar un Vehículo{% endblock %}
 {% block contenido %}
-	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh or errorFechas %}
+	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh or errorFechas  or errorEnteros or errorLongDatos%}
 		<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -46,6 +46,12 @@
 			{% endif %}
 			{% if errorFechas %}
 				Una o mas fechas no son correctas, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
+			{% endif %}
+			{% if errorEnteros %}
+				Uno o mas números son demasiado grandes. Verifica los datos. <br>
+			{% endif %}
+			{% if errorLongDatos %}
+				Alguno de los campos tiene una longitud mayor a la soportada. La marca, la referencia y el color no deben exceder los 15 caracteres. La descripción no debe exceder los 100.
 			{% endif %}
 		</p>
 	</div>

@@ -2,7 +2,7 @@
 {% block titulo %}Agregar Historial Mantenimiento{% endblock %}
 {% block contenido %}
     <div class="container">
-        {% if errorPlaca or errorFecha or errorTipo or errorCosto%}
+        {% if errorPlaca or errorFecha or errorTipo or errorCosto or errorDescripcion%}
             <p class="text-error">
                 {% if errorPlaca%}
                     La placa no es correcta o no se encuentra en el sistema.<br>
@@ -19,6 +19,9 @@
                 {% endif %}
                 {% if  errorCosto%}
                     El costo debe ser un número entre 3 y 10 cifras. <br>
+                {% endif %}
+                {% if  errorCosto%}
+                    La descripción no debe exceder los 200 caracteres.
                 {% endif %}
             </p>
         {% endif %}

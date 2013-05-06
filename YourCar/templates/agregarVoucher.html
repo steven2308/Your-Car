@@ -2,7 +2,7 @@
 {% block titulo %}Agregar Voucher{% endblock %}
 {% block contenido %}
 	<div class="container">
-	{%if errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorFecha or errorCamposVacios %}
+	{%if errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorFecha or errorCamposVacios or errorNombreBanco%}
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
 			{% if errorcodigoAutorizacion %}
@@ -25,6 +25,9 @@
 			{% endif %}
 			{% if errorCamposVacios %}
 				Por favor complete todos los campos obligatorios.<br>
+			{% endif %}
+			{% if errorNombreBanco %}
+				El nombre del banco no debe exceder los 20 caracteres.
 			{% endif %}
 		</p>
 	{% endif %}
