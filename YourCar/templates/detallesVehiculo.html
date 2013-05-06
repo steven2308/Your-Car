@@ -125,12 +125,17 @@
                     <input type="submit" value="Cotizar este vehiculo" name="cotizarVehiculo"/>
                 </form>
                 {%if is_authenticated %}
-                <form method="GET" action="/reservas/agregar/" name="modificarVehiculo">
+                <form method="GET" action="/reservas/agregar/" name="agregarReserva">
                     {% csrf_token %}
                     <input name="placa" value="{{vehiculo.placa}}" type="hidden" pattern="[A-Z]{3}[0-9]{3}">
                     <input type="submit" value="Reservar este vehiculo" name="agregarReserva"/>
                 </form>
                 {% if is_staff %}
+                <form method="POST" action="/vehiculos/historialMantenimiento/" name="verhistorialMantenimiento">
+                    {% csrf_token %}
+                    <input name="placa" value="{{vehiculo.placa}}" type="hidden" pattern="[A-Z]{3}[0-9]{3}">
+                    <input type="submit" value="Ver Historial de Mantenimiento" name="verhistorialMantenimiento"/>
+                </form>
                 <form method="GET" action="/vehiculos/modificar/" name="modificarVehiculo">
                     {% csrf_token %}
                     <input name="placa" value="{{vehiculo.placa}}" type="hidden" pattern="[A-Z]{3}[0-9]{3}">
