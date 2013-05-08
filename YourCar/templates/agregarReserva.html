@@ -1,7 +1,7 @@
 	{% extends "base.html" %}
 {% block titulo %}Agregar una Reserva{% endblock %}
 {% block contenido %}
-	{%if errorPagada or errorIdCliente or errorIdVehiculo or errorFechas%}
+	{%if errorPagada or errorIdCliente or errorIdVehiculo or errorFechas or errorLugares%}
 		<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -16,6 +16,9 @@
 			{% endif %}
 			{% if errorFechas %}
 				La fecha de inicio debe ser menor a la de fin y debe ser mayor a la fecha actual.<br>
+            {% endif %}
+            {% if errorLugares %}
+				Los lugares de reocgida y entrega deben seleccionarse entre las opciones.<br>
             {% endif %}
 		</p>
 	</div>
@@ -58,12 +61,34 @@
 							<td><input type="time" name="horaFin" value="{{horaFin}}" required="true"/>*</td>
 						</tr>
 					    <tr>
-					        <td><label>Lugar de Recogida:</label></td>
-					        <td><input type="text" name="lugar" value="{{lugar}}" required="true"/>*</td>
+					    	<td><label>Lugar de Recogida:</label></td>
+					    	<td>
+	                            <select name="lugarRecogida" required="true">
+	                                <option selected>{{lugarRecogida}}</option>
+	                                {% for l in  lugares%}
+	                                    {% if l != lugarRecogida %}
+                                            <option>{{l}}</option>
+                                        {% endif %}
+	                                {% endfor %}
+	                            </select>*
+                        	</td>
 					    </tr>
 					    <tr>
-					    	<td><input type="submit" value="Agregar Reserva" name="agregarReserva"/>
-						</tr>				    
+					    	<td><label>Lugar de Entrega:</label></td>
+					    	<td>
+	                            <select name="lugarEntrega" required="true">
+	                                <option selected>{{lugarEntrega}}</option>
+	                                {% for l in  lugares%}
+	                                    {% if l != lugarEntrega %}
+                                            <option>{{l}}</option>
+                                        {% endif %}
+	                                {% endfor %}
+	                            </select>*
+                        	</td>
+					    </tr>
+					    <tr>
+					    	<td><input type="submit" value="Agregar Reserva" name="agregarReserva"/></td>
+						</tr>
 					</tbody>
 				</table>
 				<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>

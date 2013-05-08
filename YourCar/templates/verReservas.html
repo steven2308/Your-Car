@@ -48,9 +48,10 @@
         			<th>Id Reserva</th>
     				<th>Id Vehiculo</th>
     				<th>Id Cliente</th>
-                	<th>fecha Inicio</th>
-    				<th>fecha Fin</th>
-                	<th>Lugar</th>
+                	<th>Fecha Inicio</th>
+    				<th>Fecha Fin</th>
+                	<th>Lugar Recogida</th>
+                    <th>Lugar Entrega</th>
                 	<th>Pagada</th>
         		</thead>
         		<tbody>
@@ -61,7 +62,8 @@
         					<td>{{r.idCliente.numDocumento}}</td>
                         	<td>{{r.fechaInicio}}</td>
         					<td>{{r.fechaFin}}</td>
-                        	<td>{{r.lugar}}</td>
+                        	<td>{{r.lugarRecogida}}</td>
+                            <td>{{r.lugarEntrega}}</td>
                             {% if r.pagada %}
                         	<td>Si</td>
                             {% else %}

@@ -2,7 +2,7 @@
 {% block titulo %}Cotizar{% endblock %}
 {% block contenido %}
 	<div class="container">
-		{% if errorPlaca or errorFechas1 or errorFechas2 or errorHoras%}
+		{% if errorPlaca or errorFechas1 or errorFechas2 or errorHoras or errorLugares%}
 			{% if errorPlaca %}
 				<p class="text-error">Por favor ingrese una placa correcta.</p>
 			{% endif %}
@@ -15,8 +15,11 @@
             {% if errorHoras %}
                 <p class="text-error">La hora no es correcta, si tu navegador no muestra el formato de hora por favor ingresalo de esta forma: hh:mm:x.m.</p>
             {% endif %}
+            {% if errorLugares %}
+                <p class="text-error">Los lugares de reocgida y entrega deben seleccionarse entre las opciones.</p>
+            {% endif %}
 		{% endif %}
-		<form method="POST" action="/cotizar/" name="verMantenimiento">
+		<form method="POST" action="/cotizar/" name="cotizar">
             {% csrf_token %}
 			<table>
 				<thead>
@@ -43,6 +46,32 @@
 						<td>
 							<input type="time" name="horaFin" required="true" value="{{horaFin}}">
 						</td>
+                </tbody>
+                <thead>
+                    <th>Lugar Recogida</th>
+                    <th>Lugar Entrega</th>
+                </thead>
+                <tbody>
+                        <td>
+                            <select name="lugarRecogida" required="true">
+                                <option selected>{{lugarRecogida}}</option>
+                                {% for l in  lugares%}
+                                    {% if l != lugarRecogida %}
+                                        <option>{{l}}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                                <select name="lugarEntrega" required="true">
+                                    <option selected>{{lugarEntrega}}</option>
+                                    {% for l in  lugares%}
+                                        {% if l != lugarEntrega %}
+                                            <option>{{l}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </td>
 					</tr>
 				</tbody>
 			</table>
@@ -88,6 +117,14 @@
         				<td>Total Por días</td>
         				<td>{{cotizacion.totalPorDias}}</td>
         			</tr>
+                    <tr>
+                        <td>Costo Recogida</td>
+                        <td>{{cotizacion.costoRecogida}}</td>
+                    </tr>
+                    <tr>
+                        <td>Costo Entrega</td>
+                        <td>{{cotizacion.costoEntrega}}</td>
+                    </tr>
         			<tr>
         				<td>Total Por Horas</td>
         				<td>{{cotizacion.totalPorHoras}}</td>
@@ -97,6 +134,17 @@
         				<td><strong>{{cotizacion.total}}</strong></td>
         			</tr>
         		</table>
+                <form action="/reservas/agregar/">
+                    {% csrf_token %}
+                    <input name="placa" type="hidden" value="{{placa}}">
+                    <input name="fechaIni" type="hidden" value="{{fechaIni}}">
+                    <input name="fechaFin" type="hidden" value="{{fechaFin}}">
+                    <input name="horaIni" type="hidden" value="{{horaIni}}">
+                    <input name="horaFin" type="hidden" value="{{horaFin}}">
+                    <input name="lugarRecogida" type="hidden" value="{{lugarRecogida}}">
+                    <input name="lugarEntrega" type="hidden" value="{{lugarEntrega}}">
+                    <input type="submit" value="Reservar" name="cotizarVehiculo"/>
+                </form>
             </p>
 		{% endif %}
 	</div>

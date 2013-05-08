@@ -113,12 +113,6 @@
                 </div>
             </div>
             <div class="span2">
-                <form method="POST" action="/vehiculos/detalles/" name="verVehiculo">
-                    {% csrf_token %}
-                    <label>Quiere ver otro vehículo? Ingrese la placa:</label>
-                    <input name="placa" type="text" pattern="[A-Z]{3}[0-9]{3}">
-                    <input type="submit" value="Ver Vehiculo" name="verVehiculo"/>
-                </form>
                 <form method="GET" action="/cotizar/" name="cotizar">
                     {% csrf_token %}
                     <input name="placaActual" type="hidden" value="{{vehiculo.placa}}" pattern="[A-Z]{3}[0-9]{3}">

@@ -7,7 +7,7 @@ from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Vo
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator,EmptyPage,InvalidPage
-import re, math, os
+import re, math, os, ast
 from datetime import datetime
 
 def inicioControl(request, registerSuccess=False):
@@ -257,6 +257,8 @@ def eliminarHistorialMantenimientoControl(request):
 		return HttpResponseRedirect('/404')
 
 def cotizarControl(request):
+	lugaresCostos = parametros["lugaresCostos"]
+	lugares = lugaresCostos.keys
 	if request.method == 'POST':
 		#try:
 			#Tomo datos
@@ -266,12 +268,20 @@ def cotizarControl(request):
 			fechaFin = request.POST["fechaFin"]
 			horaIni = request.POST["horaIni"]
 			horaFin = request.POST["horaFin"]
+			lugarRecogida = request.POST["lugarRecogida"]
+			lugarEntrega = request.POST["lugarEntrega"]
 
 			#Hago validaciones
+			errorLugares = False
 			errorPlaca = not Vehiculo.objects.filter(placa=placa) or not re.match("^([A-Z]{3}[0-9]{3})$",placa)
 			errorFechas1 =  not fechaCorrecta(fechaIni) or not fechaCorrecta(fechaFin)
 			errorHoras = not re.match('[0-9]{2}:[0-9]{2}',horaIni) or  not re.match('[0-9]{2}:[0-9]{2}',horaFin)
 			errorFechas2 = False
+			try:
+				costoRecogida=int(lugaresCostos[lugarRecogida])
+				costoEntrega=int(lugaresCostos[lugarEntrega])
+			except:
+				errorLugares = True
 			#Si las fechas y las horas tienen un formato correcto verifico la logica
 			if not errorFechas1 and not errorHoras:
 				#Calculo dias y diferencia
@@ -280,11 +290,11 @@ def cotizarControl(request):
 				#La fecha inicial debe ser menor a la final y mayor a la actual
 				errorFechas2 = dtIni > dtFin or datetime.now()> dtIni
 			#Si hay errores vuelvo al formulario y los informo
-			if (errorPlaca or errorFechas1 or errorFechas2 or errorHoras):
+			if (errorPlaca or errorFechas1 or errorFechas2 or errorHoras or errorLugares):
 				return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 
 			#Calculos
-			cotizacion = cotizar(dtIni,dtFin,vehiculo)
+			cotizacion = cotizar(dtIni,dtFin,costoRecogida,costoEntrega,vehiculo)
 			cotizado=True
 		#except:
 		#	pass
@@ -599,6 +609,8 @@ def verReservasControl(request, pagina=1):
 
 def agregarReservaControl(request):
 	estadosPago=parametros["estadosPago"]
+	lugaresCostos = parametros["lugaresCostos"]
+	lugares = lugaresCostos.keys
 	if request.user.is_authenticated:
 		if request.method == 'POST':
 			idVehiculo = request.POST["idVehiculo"]
@@ -607,7 +619,8 @@ def agregarReservaControl(request):
 			fechaFin = request.POST["fechaFin"]
 			horaInicio = request.POST["horaInicio"]
 			horaFin = request.POST["horaFin"]
-			lugar = request.POST["lugar"]
+			lugarRecogida = request.POST["lugarRecogida"]
+			lugarEntrega = request.POST["lugarEntrega"]
 			pagada = False
 			datosDePago = ""
 			fotoPago = None
@@ -617,9 +630,15 @@ def agregarReservaControl(request):
 
 			#manejo de errores
 			errorFechas = dtIni > dtFin or datetime.now()> dtIni
+			errorLugares = False
 			errorIdCliente = False
 			errorIdVehiculo = False
 			errorPagada=False
+			try:
+				costoRecogida=int(lugaresCostos[lugarRecogida])
+				costoEntrega=int(lugaresCostos[lugarEntrega])
+			except:
+				errorLugares = True
 			try:
 				cliente=ClienteAlquiler.objects.get(numDocumento=idCliente)
 			except:
@@ -633,26 +652,34 @@ def agregarReservaControl(request):
 			if not request.user.is_staff:
 				usuario = ClienteAlquiler.objects.get(user=request.user)
 				if idCliente != usuario.numDocumento: errorIdCliente=True
-			if (errorIdCliente or errorIdVehiculo or errorPagada or errorFechas):
+			if (errorIdCliente or errorIdVehiculo or errorPagada or errorFechas or errorLugares):
 				return render_to_response('agregarReserva.html', locals(), context_instance = RequestContext(request))
 
 			#guardo la reserva
-			reserva = Reserva(idVehiculo = vehiculo, idCliente = cliente, fechaInicio = dtIni, fechaFin = dtFin, lugar = lugar, pagada = False, datosDePago = "", fotoPago = None)
+			reserva = Reserva(idVehiculo = vehiculo, idCliente = cliente, fechaInicio = dtIni, fechaFin = dtFin, lugarRecogida = lugarRecogida, lugarEntrega = lugarEntrega,  pagada = False, datosDePago = "", fotoPago = None)
 			reserva.save()
 			return HttpResponseRedirect('/reservas')
 		else:
 			try:
-				if not request.user.is_staff: 
+				idVehiculo = request.GET["placa"]
+				if not request.user.is_staff:
 					cliente = ClienteAlquiler.objects.get(user=request.user)
 					numDocumento = cliente.numDocumento
+				fechaInicio = formatearFecha(request.GET["fechaIni"])
+				fechaFin = formatearFecha(request.GET["fechaFin"])
+				horaInicio = formatearHora(request.GET["horaIni"])
+				horaFin = formatearHora(request.GET["horaFin"])
+				lugarRecogida = request.GET["lugarRecogida"]
+				lugarEntrega = request.GET["lugarEntrega"]
 			except:
-				errorIdCliente = True
+				pass
 			is_staff = request.user.is_staff
 			return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
 
 def detallesReservaControl(request,idReserva):
+	lugaresCostos = parametros["lugaresCostos"]
 	if request.user.is_authenticated():
 		#try:
 			errorIdReserva=False
@@ -667,7 +694,11 @@ def detallesReservaControl(request,idReserva):
 			vehiculo = reserva.idVehiculo
 			dtIni = reserva.fechaInicio
 			dtFin = reserva.fechaFin
-			cotizacion = cotizar(dtIni,dtFin,vehiculo)
+			lugarRecogida = reserva.lugarRecogida
+			lugarEntrega = reserva.lugarEntrega
+			costoRecogida=int(lugaresCostos[lugarRecogida])
+			costoEntrega=int(lugaresCostos[lugarEntrega])
+			cotizacion = cotizar(dtIni,dtFin,costoRecogida, costoEntrega, vehiculo)
 			cotizado=True
 			if reserva.fotoPago:
 				hayFoto=True
@@ -678,6 +709,8 @@ def detallesReservaControl(request,idReserva):
 	return HttpResponseRedirect('/reservas')
 
 def modificarReservaControl(request):
+	lugaresCostos = parametros["lugaresCostos"]
+	lugares = lugaresCostos.keys
 	if request.user.is_authenticated():
 		if request.method == 'POST':
 			idVehiculo = request.POST["idVehiculo"]
@@ -686,7 +719,8 @@ def modificarReservaControl(request):
 			fechaFin = request.POST["fechaFin"]
 			horaInicio = request.POST["horaInicio"]
 			horaFin = request.POST["horaFin"]
-			lugar = request.POST["lugar"]
+			lugarRecogida = request.POST["lugarRecogida"]
+			lugarEntrega = request.POST["lugarEntrega"]
 			idReserva = request.POST["idReserva"]
 
 			if request.user.is_staff:
@@ -712,10 +746,17 @@ def modificarReservaControl(request):
 			dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
 
 			#errores
+
+			errorLugares = False
 			errorFechas = dtIni > dtFin or datetime.now()> dtIni
 			errorIdCliente=False
 			errorIdVehiculo=False
 			errorPagada=False
+			try:
+				costoRecogida=int(lugaresCostos[lugarRecogida])
+				costoEntrega=int(lugaresCostos[lugarEntrega])
+			except:
+				errorLugares = True
 			try:
 				cliente=ClienteAlquiler.objects.get(numDocumento=idCliente)
 			except:
@@ -729,11 +770,11 @@ def modificarReservaControl(request):
 			if not request.user.is_staff:
 				usuario = ClienteAlquiler.objects.get(user=request.user)
 				if idCliente != usuario.numDocumento: errorIdCliente=True
-			if (errorPagada or errorIdCliente or errorIdVehiculo or errorFechas):
+			if (errorPagada or errorIdCliente or errorIdVehiculo or errorFechas or errorLugares):
 				return render_to_response('modificarReserva.html', locals(), context_instance = RequestContext(request))
 
 			#reemplazo la reserva
-			reserva = Reserva(idReserva=idReserva, idVehiculo = vehiculo, idCliente = cliente, fechaInicio = dtIni, fechaFin = dtFin, lugar = lugar, pagada = pagada, datosDePago = datosDePago, fotoPago = fotoPago)
+			reserva = Reserva(idReserva=idReserva, idVehiculo = vehiculo, idCliente = cliente, fechaInicio = dtIni, fechaFin = dtFin, lugarRecogida = lugarRecogida, lugarEntrega = lugarEntrega, pagada = pagada, datosDePago = datosDePago, fotoPago = fotoPago)
 			reserva.save()
 			return HttpResponseRedirect('/reservas')
 		else:
@@ -744,6 +785,8 @@ def modificarReservaControl(request):
 			fechaFin = formatearFecha(reserva.fechaFin)
 			horaInicio = formatearHora(reserva.fechaInicio)
 			horaFin = formatearHora(reserva.fechaFin)
+			lugarRecogida = reserva.lugarRecogida
+			lugarEntrega = reserva.lugarEntrega
 			pagada = reserva.pagada
 			if request.user.is_staff:
 				is_staff = True
@@ -752,7 +795,6 @@ def modificarReservaControl(request):
 				numDocumento = cliente.numDocumento
 				is_staff=False
 			if pagada == True and not is_staff: yaPagada = True
-			#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
 			return render_to_response('modificarReserva.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/reservas')
 
@@ -804,6 +846,7 @@ def parametrizarControl(request):
 			parametros["tiposDeFrenos"] = request.POST["tiposDeFrenos"]
 			parametros["estadosPago"] = request.POST["estadosPago"]
 			parametros["numElementosPorPagina"] = request.POST["numElementosPorPagina"]
+			parametros["lugaresCostos"] = ast.literal_eval(request.POST["lugaresCostos"])
 			exito=True
 			param=parametros
 			newInfo = "parametros = "+str(parametros).replace(': u"',': "').replace('"(','(').replace(')",','),\n').replace(')"}',')}')
@@ -851,7 +894,7 @@ def formatearHora(fecha):
 	except:
 		return fecha
 
-def cotizar(dtIni, dtFin, vehiculo):
+def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,vehiculo):
 	diferencia =  dtFin-dtIni
 	diasReal = diferencia.days
 	dias = diasReal
@@ -872,9 +915,11 @@ def cotizar(dtIni, dtFin, vehiculo):
 	limiteKilometraje = vehiculo.limiteKilometraje
 	kmPorHora = math.floor(limiteKilometraje/24)
 	maxKms = limiteKilometraje*dias+kmPorHora*horas
-	total=totalPorDias+totalPorHoras
+	total=totalPorDias+totalPorHoras+costoEntrega+costoRecogida
 
 	#formateo resultados
+	costoRecogida = intWithCommas(costoRecogida)
+	costoEntrega = intWithCommas(costoEntrega)
 	tarifaDia = intWithCommas(tarifaDia)
 	tarifaHora = intWithCommas(tarifaHora)
 	totalPorDias = intWithCommas(totalPorDias)
@@ -890,6 +935,8 @@ def cotizar(dtIni, dtFin, vehiculo):
 	cotizacion["tarifaDia"]=tarifaDia
 	cotizacion["limiteKilometraje"]=limiteKilometraje
 	cotizacion["maxKms"]=maxKms
+	cotizacion["costoRecogida"]=costoRecogida
+	cotizacion["costoEntrega"]=costoEntrega
 	cotizacion["tarifaHora"]=tarifaHora
 	cotizacion["totalPorDias"]=totalPorDias
 	cotizacion["totalPorHoras"]=totalPorHoras
