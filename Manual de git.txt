@@ -35,3 +35,18 @@ python manage.py runserver
 
 Para ignorar archivos:
 git rm -r 'regex'
+
+Heroku:
+
+Resetear db:
+heroku pg:reset DATABASE
+yourcar
+
+Sync db:
+heroku run python manage.py syncdb
+
+Actualizar la pag:
+git add -A
+git commit -m "cambios"
+git push heroku master
+
