@@ -119,6 +119,7 @@ def loginControl(request):
 def verVehiculosControl(request,  pagina=1, addSuccess=False):
 	is_staff = request.user.is_staff
 	gamas=parametros["gamas"]
+	estadosVehiculo=parametros["estadosVehiculo"]
 	if request.method=="POST":
 		query = {}
 		if request.POST["ascDesc"]=="True":
@@ -130,11 +131,11 @@ def verVehiculosControl(request,  pagina=1, addSuccess=False):
 		marca=request.POST["marca"]
 		modelo=request.POST["modelo"]
 		numDePasajeros=""
-		cilindraje=""
+		estado=""
 		cajaDeCambios=""
 		try:
 			numDePasajeros=request.POST["numDePasajeros"]
-			cilindraje=request.POST["cilindraje"]
+			estado=request.POST["estado"]
 			cajaDeCambios=request.POST["cajaDeCambios"]
 		except:
 			pass
@@ -147,8 +148,8 @@ def verVehiculosControl(request,  pagina=1, addSuccess=False):
 			query["modelo__icontains"]=modelo
 		if numDePasajeros and re.match("^([0-9]{1,2})$",numDePasajeros):
 			query["numDePasajeros"]=numDePasajeros
-		if cilindraje and re.match("^([0-9]{4})$",cilindraje):
-			query["cilindraje"]=cilindraje
+		if estado and estado in estadosVehiculo:
+			query["estado__iexact"]=estado
 		if cajaDeCambios:
 			query["cajaDeCambios__icontains"]=cajaDeCambios
 
@@ -726,6 +727,12 @@ def modificarReservaControl(request):
 			if request.user.is_staff:
 				if request.POST["pagada"] == 'Si': 
 					pagada = True
+					try:
+						vehiculo=Vehiculo.objects.get(placa=idVehiculo)
+						vehiculo.estado = "Reservado"
+						vehiculo.save()
+					except:
+						pass
 				else:
 					pagada = False
 			else:
@@ -740,7 +747,6 @@ def modificarReservaControl(request):
 				datosDePago = request.POST["datosDePago"]
 			except:
 				datosDePago = Reserva.objects.get(idReserva=idReserva).fotoPago
-
 
 			dtIni = datetime.strptime(fechaInicio+" "+horaInicio, '%Y-%m-%d %H:%M')
 			dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
@@ -763,6 +769,7 @@ def modificarReservaControl(request):
 				errorIdCliente = True
 			try:
 				vehiculo=Vehiculo.objects.get(placa=idVehiculo)
+				vehiculo.estado = "Reservado"
 			except:
 				errorIdVehiculo = True
 			if (datosDePago=="" and fotoPago==None and pagada==True): 

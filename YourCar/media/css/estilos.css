@@ -9,10 +9,10 @@ h1{
 body{
 	font-family:"Trebuchet MS", "Myriad Pro", Arial, sans-serif, FuenteZabatana;
 	font-size:14px;
-	background:url(/media/images/fondod.jpg);
-	background-repeat: no-repeat; /*Aca damos la orden de que la imagen no se repita*/
-	background-size: 100% 100%;  /*Esto es para que la imagen quede del tamaño de la pantalla*/
-	-moz-background-repeat: no-repeat; /*Compatibilidad con Firefox*/
+	background:url(/media/images/car.jpg);
+	background-repeat: repeat; /*Aca damos la orden de que la imagen no se repita*/
+	/*background-size: 100% 100%;  Esto es para que la imagen quede del tamaño de la pantalla*/
+	-moz-background-repeat: repeat; /*Compatibilidad con Firefox*/
 	-moz-background-size: 100% 100%; /*Compatibilidad con Firefox*/
 	text-shadow:1px 1px 1px #fff;
 	overflow-y:scroll;
