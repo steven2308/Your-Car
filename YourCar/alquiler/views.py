@@ -259,11 +259,11 @@ def eliminarHistorialMantenimientoControl(request):
 def cotizarControl(request):
 	lugaresCostos = parametros["lugaresCostos"]
 	lugares = lugaresCostos.keys
+	logged = request.user.is_authenticated()
 	if request.method == 'POST':
 		#try:
 			#Tomo datos
 			placa=request.POST["placa"].upper()
-			vehiculo = Vehiculo.objects.get(placa=placa)
 			fechaIni = request.POST["fechaIni"]
 			fechaFin = request.POST["fechaFin"]
 			horaIni = request.POST["horaIni"]
@@ -292,7 +292,7 @@ def cotizarControl(request):
 			#Si hay errores vuelvo al formulario y los informo
 			if (errorPlaca or errorFechas1 or errorFechas2 or errorHoras or errorLugares):
 				return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
-
+			vehiculo = Vehiculo.objects.get(placa=placa)
 			#Calculos
 			cotizacion = cotizar(dtIni,dtFin,costoRecogida,costoEntrega,vehiculo)
 			cotizado=True
@@ -611,7 +611,7 @@ def agregarReservaControl(request):
 	estadosPago=parametros["estadosPago"]
 	lugaresCostos = parametros["lugaresCostos"]
 	lugares = lugaresCostos.keys
-	if request.user.is_authenticated:
+	if request.user.is_authenticated():
 		if request.method == 'POST':
 			idVehiculo = request.POST["idVehiculo"]
 			idCliente = request.POST["idCliente"]

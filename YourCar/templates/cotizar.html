@@ -134,17 +134,19 @@
         				<td><strong>{{cotizacion.total}}</strong></td>
         			</tr>
         		</table>
-                <form action="/reservas/agregar/">
-                    {% csrf_token %}
-                    <input name="placa" type="hidden" value="{{placa}}">
-                    <input name="fechaIni" type="hidden" value="{{fechaIni}}">
-                    <input name="fechaFin" type="hidden" value="{{fechaFin}}">
-                    <input name="horaIni" type="hidden" value="{{horaIni}}">
-                    <input name="horaFin" type="hidden" value="{{horaFin}}">
-                    <input name="lugarRecogida" type="hidden" value="{{lugarRecogida}}">
-                    <input name="lugarEntrega" type="hidden" value="{{lugarEntrega}}">
-                    <input type="submit" value="Reservar" name="cotizarVehiculo"/>
-                </form>
+                {% if logged %}
+                    <form action="/reservas/agregar/">
+                        {% csrf_token %}
+                        <input name="placa" type="hidden" value="{{placa}}">
+                        <input name="fechaIni" type="hidden" value="{{fechaIni}}">
+                        <input name="fechaFin" type="hidden" value="{{fechaFin}}">
+                        <input name="horaIni" type="hidden" value="{{horaIni}}">
+                        <input name="horaFin" type="hidden" value="{{horaFin}}">
+                        <input name="lugarRecogida" type="hidden" value="{{lugarRecogida}}">
+                        <input name="lugarEntrega" type="hidden" value="{{lugarEntrega}}">
+                        <input type="submit" value="Reservar" name="cotizarVehiculo"/>
+                    </form>
+                {% endif %}
             </p>
 		{% endif %}
 	</div>
