@@ -49,7 +49,7 @@ class ClienteAlquiler(models.Model):
 	telContacto = models.CharField(max_length=12,blank=True)
 	direccionContacto = models.CharField(max_length=40,blank=True)
 	def __unicode__(self):
-		return self.user.first_name+" "+self.user.last_name
+		return self.user.first_name+" "+self.user.last_name+". Id: "+self.numDocumento
 	class Meta:
 		verbose_name_plural=u'Clientes de Alquiler'
 
@@ -87,15 +87,16 @@ class Voucher(models.Model):
 	codigoVerifTarjeta = models.CharField(max_length=5)
 	nombreBanco = models.CharField(max_length=20)
 	def __unicode__(self):
-		return "Voucher de %s codigo: %s" %(unicode(self.idCliente),self.codigoAutorizacion)
+		return "Voucher de codigo: %s" %(self.codigoAutorizacion)
 
 class Contrato(models.Model):
 	idContrato = models.AutoField(primary_key=True)
 	idVehiculo = models.ForeignKey(Vehiculo)
 	idVoucher = models.ForeignKey(Voucher)
+	idCliente = models.ForeignKey(ClienteAlquiler)
 	fecha = models.DateTimeField()
 	def __unicode__(self):
-		return "Contrato de %s por %s" %(unicode(self.idCliente),unicode(self.idVehiculo))
+		return "Contrato de %s Vehiculo:  %s" %((self.idVoucher),unicode(self.idVehiculo))
 
 class ConductorAutorizado(models.Model):
 	docIdentidad = models.IntegerField(primary_key=True)
@@ -114,11 +115,10 @@ class InventarioVehiculo(models.Model):
 	idInventarioVehiculo = models.AutoField(primary_key=True)
 
 class DatosAlquiler(models.Model):
-	idDatosAlquiler = models.AutoField(primary_key=True)
 	idContrato = models.ForeignKey(Contrato)
 	idReserva = models.ForeignKey(Reserva) #puede ser nulo
 	idInventario = models.ForeignKey(InventarioVehiculo)
-	#estado (abierto, cerrado)
+	metodoPago = models.CharField(max_length=15)
 	tarifaEstablecida = models.IntegerField()
 	tarifaAplicada = models.IntegerField()
 	fechaAlquiler = models.DateTimeField()
@@ -127,7 +127,7 @@ class DatosAlquiler(models.Model):
 	kmInicial = models.IntegerField()
 	kmFinal = models.IntegerField()
 	valorAlquiler = models.IntegerField()
-	metodoPago = models.CharField(max_length=10)
+	metodoPago = models.CharField(max_length=15)
 	class Meta:
 		verbose_name_plural=u'Datos Alquiler'
 

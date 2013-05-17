@@ -1,0 +1,140 @@
+{%extends "base.html"%}
+{% block titulo %}Detalles de Contrato {{contrato.idContrato}}{% endblock %}
+{% block contenido %}
+    <div class="container">
+        <div class="span12">
+            <div class="span3">
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <h4>Información del Vehículo</h4>
+                        <tr>
+                            <td>Placa</td>
+                            <td>{{vehiculo.placa}}</td>
+                        </tr>
+                        <tr>
+                            <td>Marca</td>
+                            <td>{{vehiculo.marca}}</td>
+                        </tr>
+                        <tr>
+                            <td>Referencia</td>
+                            <td>{{vehiculo.referencia}}</td>
+                        </tr>
+                        <tr>
+                            <td>Gama</td>
+                            <td>{{vehiculo.gama}}</td>
+                        </tr>
+                        <tr>
+                            <td>Valor Garantia</td>
+                            <td>{{vehiculo.valorGarantia}}</td>
+                        </tr>
+                        <tr>
+                            <td>Limite Kilometraje</td>
+                            <td>{{vehiculo.limiteKilometraje}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tarifa</td>
+                            <td>{{vehiculo.tarifa}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <h4>Información del Voucher</h4>
+                        <tr>
+                            <td>Código Autorizacion</td>
+                            <td>{{voucher.codigoAutorizacion}}</td>
+                        </tr>
+                        <tr>
+                            <td>Monto Voucher</td>
+                            <td>{{voucher.montoVoucher}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tarjeta de Crédito</td>
+                            <td>{{voucher.numTarjetaCredito}}</td>
+                        </tr>
+                        <tr>
+                            <td>Nombre banco</td>
+                            <td>{{voucher.nombreBanco}}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="span6">
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <h4>Información del Cliente</h4>
+                        <tr>
+                            <td>Nombres</td>
+                            <td>{{user.first_name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Apellidos</td>
+                            <td>{{user.last_name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tipo de Persona</td>
+                            <td>{{cliente.tipoPersona}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tipo de Documento</td>
+                            <td>{{cliente.tipoDocumento}}</td>
+                        </tr>
+                        <tr>
+                            <td>Documento</td>
+                            <td>{{cliente.numDocumento}}</td>
+                        </tr>
+                        <tr>
+                            <td>Nombre banco</td>
+                            <td>{{voucher.nombreBanco}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <h4>Fecha del contrato</h4>
+                    <tbody>
+                        <tr>
+                            <td>{{contrato.fecha}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <h4>Conductores Autorizados</h4>
+                    <th>Doc. de Identidad</th>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>Licencia</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>Tipo de Sangre</th>
+                    <tbody>
+                        {% for c in conductores %}
+                            <tr>
+                                <td>{{c.docIdentidad}}</td>
+                                <td>{{c.nombres}}</td>
+                                <td>{{c.apellidos}}</td>
+                                <td>{{c.licencia}}</td>
+                                <td>{{c.fechaNacimiento}}</td>
+                                <td>{{c.tipoSangre}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="span2">
+                <p>
+                    <a class="btn" href="/contratos">Regresar a contratos</a>
+                </p>
+                <form method="GET" action="/contratos/agregarConductor/" name="agregarConductor">
+                    {% csrf_token %}
+                    <input name="idContrato" value="{{contrato.idContrato}}" type="hidden">
+                    <input class="btn" type="submit" value="Agregar Conductor" name="agregarConductor"/>
+                </form>
+                <form method="POST" action="/contratos/eliminar/" name="eliminarVehiculo">
+                    {% csrf_token %}
+                    <input name="idContrato" value="{{contrato.idContrato}}" type="hidden">
+                    <input class="btn btn-danger" type="submit" value="Eliminar este contrato" name="eliminarContrato" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

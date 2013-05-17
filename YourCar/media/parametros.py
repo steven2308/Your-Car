@@ -1,5 +1,5 @@
 parametros = {'gamas': ('Baja', 'Media', 'Alta'),
- 'tipoPersonas': ('Natural', 'Empresa'),
+ 'tipoPersonas': ('Natural', 'Juridica'),
  'tiposTraccion': ('', 'Delantera', 'Trasera', '4x4'),
  'tiposMantenimiento': ('Preventivo', 'Correctivo'),
  'misionInicio': u'En este campo se ingresa la misi\xf3n de la empresa.', 'tipoDeDirecciones': ('', 'Mecanica', 'Hidraulica', 'Electronica'),

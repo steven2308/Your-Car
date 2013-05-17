@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
-from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva
+from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator,EmptyPage,InvalidPage
@@ -949,3 +949,122 @@ def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,vehiculo):
 	cotizacion["totalPorHoras"]=totalPorHoras
 	cotizacion["total"]=total
 	return cotizacion
+
+def contratosControl(request,pagina=1,addSuccess=False):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method=="POST":
+			query = {}
+			if request.POST["ascDesc"]=="True":
+				order = request.POST["orderBy"]
+			else:
+				order = "-"+request.POST["orderBy"]
+			#Tomo los datos
+			idContrato=request.POST["idContrato"]
+			idVoucher=request.POST["idVoucher"]
+			idCliente=request.POST["idCliente"]
+			idVehiculo=request.POST["idVehiculo"].upper()
+
+			#Los datos que no son vacios los agrego al query
+			if idContrato:
+				query["idContrato"]=idContrato
+			if idVoucher:
+				query["idVoucher"]=idVoucher
+			if idCliente:
+				query["idCliente"]=idCliente
+			if idVehiculo and re.match("^([A-Z]{3}[0-9]{3})$",idVehiculo):
+				query["idVehiculo"]=idVehiculo
+
+			#squery = str(query)
+			#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
+			#Si la consulta no es vacia la hago
+			if query:
+				listacontratos= Contrato.objects.filter(**query).order_by(order)
+				filtrados=True
+			else:
+				listacontratos = Contrato.objects.all().order_by(order)
+			contratos=paginar(listacontratos,pagina)
+			return render_to_response('contratos.html',locals(), context_instance = RequestContext(request))
+		#sino es un post cargo todos
+		listacontratos = Contrato.objects.all()
+		contratos=paginar(listacontratos,pagina)
+		return render_to_response('contratos.html',locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')
+
+def detallesContratoControl(request,idContrato):
+	lugaresCostos = parametros["lugaresCostos"]
+	if request.user.is_authenticated() and request.user.is_staff:
+		errorIdContrato=False
+		#try:
+		contrato=Contrato.objects.get(idContrato=idContrato)
+		if not errorIdContrato:
+			voucher = contrato.idVoucher
+			cliente = contrato.idCliente
+			user = cliente.user
+			vehiculo = contrato.idVehiculo
+			fecha = contrato.fecha
+			conductores = ConductorAutorizado.objects.filter(idContrato=contrato)
+		#except:
+			# errorIdContrato=True
+			# return HttpResponseRedirect('/contratos')
+		return render_to_response('detallesContrato.html',locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
+
+def agregarContratosControl(request):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			idVehiculo = request.POST["idVehiculo"]
+			idVoucher = request.POST["idVoucher"]
+			fecha = request.POST["fecha"]
+
+			errorIdCliente = False
+			errorIdVoucher = False
+			errorIdVehiculo = False
+			errorFecha= not fechaCorrecta(fecha)
+			try:
+				voucher = Voucher.objects.get(codigoAutorizacion=idVoucher)
+			except:
+				errorIdVoucher = True
+			try:
+				cliente= voucher.idCliente
+			except:
+				errorIdCliente = True
+			try:
+				vehiculo=Vehiculo.objects.get(placa=idVehiculo)
+			except:
+				errorIdVehiculo = True
+
+			#Si hay errores retorno a la pagina
+			if (errorIdCliente or errorIdVoucher or errorIdVehiculo or errorFecha):
+				return render_to_response('agregarContrato.html', locals(), context_instance = RequestContext(request))
+
+			#Si no, guardo el contrato
+			contrato = Contrato(idVehiculo = vehiculo, idVoucher = voucher, idCliente = cliente, fecha = fecha)
+			contrato.save()
+			request.method="GET"
+			return contratosControl(request,addSuccess=True)
+		else:
+			try:
+				idVoucher = request.GET["idVoucher"]
+				voucher = Voucher.objects.get(idVoucher=idVoucher)
+				idCliente = voucher.idCliente
+			except:
+				pass
+			return render_to_response('agregarContrato.html',locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')
+
+def eliminarContratosControl(request):
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+		try:
+			idContrato=request.POST["idContrato"]
+			contrato = Contrato.objects.get(idContrato=idContrato)
+			contrato.delete()
+		except:
+			pass
+		return HttpResponseRedirect('/contratos')
+	else:
+		return HttpResponseRedirect('/404')
+
+def agregarConductorControl(request):
+	pass
