@@ -98,7 +98,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <table>
+                <table class="table-bordered table-striped table-hover">
                     <h4>Conductores Autorizados</h4>
                     <th>Doc. de Identidad</th>
                     <th>Nombres</th>
@@ -127,7 +127,13 @@
                 <form method="GET" action="/contratos/agregarConductor/" name="agregarConductor">
                     {% csrf_token %}
                     <input name="idContrato" value="{{contrato.idContrato}}" type="hidden">
-                    <input class="btn" type="submit" value="Agregar Conductor" name="agregarConductor"/>
+                    <input class="btn" type="submit" value="Agregar Conductor Autorizado" name="agregarConductor"/>
+                </form>
+                <form method="GET" action="/contratos/agregarConductor/" name="agregarConductor">
+                    {% csrf_token %}
+                    <input name="clienteconductor" value="True" type="hidden">
+                    <input name="idContrato" value="{{contrato.idContrato}}" type="hidden">
+                    <input class="btn" type="submit" value="Agregar Cliente como Conductor" name="agregarClienteConductor"/>
                 </form>
                 <form method="POST" action="/contratos/eliminar/" name="eliminarVehiculo">
                     {% csrf_token %}

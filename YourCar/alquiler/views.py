@@ -626,11 +626,12 @@ def agregarReservaControl(request):
 			datosDePago = ""
 			fotoPago = None
 
-			dtIni = datetime.strptime(fechaInicio+" "+horaInicio, '%Y-%m-%d %H:%M')
-			dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
-
-			#manejo de errores
-			errorFechas = dtIni > dtFin or datetime.now()> dtIni
+			errorFormatoFechas = not fechaCorrecta(fechaInicio) or not fechaCorrecta(fechaFin)
+			if not errorFormatoFechas:
+				dtIni = datetime.strptime(fechaInicio+" "+horaInicio, '%Y-%m-%d %H:%M')
+				dtFin = datetime.strptime(fechaFin+" "+horaFin, '%Y-%m-%d %H:%M')
+				#manejo de errores
+				errorFechas = dtIni > dtFin or datetime.now()> dtIni
 			errorLugares = False
 			errorIdCliente = False
 			errorIdVehiculo = False
@@ -653,7 +654,7 @@ def agregarReservaControl(request):
 			if not request.user.is_staff:
 				usuario = ClienteAlquiler.objects.get(user=request.user)
 				if idCliente != usuario.numDocumento: errorIdCliente=True
-			if (errorIdCliente or errorIdVehiculo or errorPagada or errorFechas or errorLugares):
+			if (errorIdCliente or errorIdVehiculo or errorPagada or errorFormatoFechas or errorFechas or errorLugares):
 				return render_to_response('agregarReserva.html', locals(), context_instance = RequestContext(request))
 
 			#guardo la reserva
@@ -991,22 +992,21 @@ def contratosControl(request,pagina=1,addSuccess=False):
 	else:
 		return HttpResponseRedirect('/404')
 
-def detallesContratoControl(request,idContrato):
+def detallesContratoControl(request,idContrato,addSuccess=False, addDriverSuccess=False):
 	lugaresCostos = parametros["lugaresCostos"]
 	if request.user.is_authenticated() and request.user.is_staff:
 		errorIdContrato=False
-		#try:
-		contrato=Contrato.objects.get(idContrato=idContrato)
-		if not errorIdContrato:
+		try:
+			contrato=Contrato.objects.get(idContrato=idContrato)
 			voucher = contrato.idVoucher
-			cliente = contrato.idCliente
+			cliente = voucher.idCliente
 			user = cliente.user
 			vehiculo = contrato.idVehiculo
 			fecha = contrato.fecha
 			conductores = ConductorAutorizado.objects.filter(idContrato=contrato)
-		#except:
-			# errorIdContrato=True
-			# return HttpResponseRedirect('/contratos')
+		except:
+			errorIdContrato=True
+			return HttpResponseRedirect('/contratos')
 		return render_to_response('detallesContrato.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
 
@@ -1039,10 +1039,10 @@ def agregarContratosControl(request):
 				return render_to_response('agregarContrato.html', locals(), context_instance = RequestContext(request))
 
 			#Si no, guardo el contrato
-			contrato = Contrato(idVehiculo = vehiculo, idVoucher = voucher, idCliente = cliente, fecha = fecha)
+			contrato = Contrato(idVehiculo = vehiculo, idVoucher = voucher, fecha = fecha)
 			contrato.save()
 			request.method="GET"
-			return contratosControl(request,addSuccess=True)
+			return detallesContratoControl(request,idContrato=contrato.idContrato,addSuccess=True)
 		else:
 			try:
 				idVoucher = request.GET["idVoucher"]
@@ -1067,4 +1067,56 @@ def eliminarContratosControl(request):
 		return HttpResponseRedirect('/404')
 
 def agregarConductorControl(request):
-	pass
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			idContrato = request.POST["idContrato"]
+			docIdentidad = request.POST["docIdentidad"]
+			nombres = request.POST["nombres"]
+			apellidos = request.POST["apellidos"]
+			licencia = request.POST["licencia"]
+			fechaNacimiento = request.POST["fechaNacimiento"]
+			tipoSangre = request.POST["tipoSangre"]
+
+			#Posibles errores
+			errorIdContrato = False
+			errorNumDocumento = len(docIdentidad)==0 or not re.match("^([a-zA-z0-9_-]{6,20})$",docIdentidad)
+			errorCamposVacios = len(nombres)==0 or len(apellidos)==0 or len(licencia)==0 or len(tipoSangre)==0
+			errorCamposLargos = len(nombres)>20 or len(apellidos)>20 or len(licencia)>20 or len(tipoSangre)>6
+			errorFecha= not fechaCorrecta(fechaNacimiento)
+			errorEdad = False #REVISAR EDAD
+			try:
+				contrato=Contrato.objects.get(idContrato=idContrato)
+			except:
+				errorIdContrato = True
+
+
+			#Si hay errores retorno a la pagina
+			if (errorIdContrato or errorNumDocumento or errorCamposVacios or errorCamposLargos or errorFecha or errorEdad):
+				return render_to_response('agregarConductor.html', locals(), context_instance = RequestContext(request))
+
+			#Si no, guardo el conductor
+			conductor = ConductorAutorizado(idContrato = contrato, docIdentidad = docIdentidad, nombres = nombres, apellidos = apellidos, licencia = licencia, fechaNacimiento = fechaNacimiento, tipoSangre = tipoSangre)
+			conductor.save()
+			request.method="GET"
+			return detallesContratoControl(request,idContrato=idContrato,addDriverSuccess=True)
+		else:
+			errorIdContrato = False
+			try:
+				idContrato = request.GET["idContrato"]
+			except:
+				errorIdContrato = True
+				idContrato = ""
+			try:
+				clienteConductor = request.GET["clienteconductor"]
+				if clienteConductor and not errorIdContrato:
+					contrato = Contrato.objects.get(idContrato=idContrato)
+					cliente = contrato.idVoucher.idCliente
+					user = cliente.user
+					docIdentidad = cliente.numDocumento
+					nombres = user.first_name
+					apellidos = user.last_name
+			except:
+				pass
+			return render_to_response('agregarConductor.html',locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')

@@ -87,13 +87,12 @@ class Voucher(models.Model):
 	codigoVerifTarjeta = models.CharField(max_length=5)
 	nombreBanco = models.CharField(max_length=20)
 	def __unicode__(self):
-		return "Voucher de codigo: %s" %(self.codigoAutorizacion)
+		return "Voucher de %s codigo: %s" %(self.idCliente,self.codigoAutorizacion)
 
 class Contrato(models.Model):
 	idContrato = models.AutoField(primary_key=True)
 	idVehiculo = models.ForeignKey(Vehiculo)
 	idVoucher = models.ForeignKey(Voucher)
-	idCliente = models.ForeignKey(ClienteAlquiler)
 	fecha = models.DateTimeField()
 	def __unicode__(self):
 		return "Contrato de %s Vehiculo:  %s" %((self.idVoucher),unicode(self.idVehiculo))
