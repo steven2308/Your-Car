@@ -93,7 +93,7 @@ class Contrato(models.Model):
 	idContrato = models.AutoField(primary_key=True)
 	idVehiculo = models.ForeignKey(Vehiculo)
 	idVoucher = models.ForeignKey(Voucher)
-	fecha = models.DateTimeField()
+	fecha = models.DateField()
 	def __unicode__(self):
 		return "Contrato de %s Vehiculo:  %s" %((self.idVoucher),unicode(self.idVehiculo))
 
