@@ -1079,11 +1079,20 @@ def agregarConductorControl(request):
 
 			#Posibles errores
 			errorIdContrato = False
+
+
+
 			errorNumDocumento = len(docIdentidad)==0 or not re.match("^([a-zA-z0-9_-]{6,20})$",docIdentidad)
 			errorCamposVacios = len(nombres)==0 or len(apellidos)==0 or len(licencia)==0 or len(tipoSangre)==0
 			errorCamposLargos = len(nombres)>20 or len(apellidos)>20 or len(licencia)>20 or len(tipoSangre)>6
+			errorConductorExistente = False
+			if not errorNumDocumento:
+				errorConductorExistente = ConductorAutorizado.objects.filter(docIdentidad=docIdentidad)
 			errorFecha= not fechaCorrecta(fechaNacimiento)
-			errorEdad = False #REVISAR EDAD
+			errorEdad = False
+			if not errorFecha:
+				fecha = datetime.strptime(fechaNacimiento, '%Y-%m-%d')
+				errorEdad = not mayor21(fecha)
 			try:
 				contrato=Contrato.objects.get(idContrato=idContrato)
 			except:
@@ -1091,7 +1100,7 @@ def agregarConductorControl(request):
 
 
 			#Si hay errores retorno a la pagina
-			if (errorIdContrato or errorNumDocumento or errorCamposVacios or errorCamposLargos or errorFecha or errorEdad):
+			if (errorIdContrato or errorNumDocumento or errorCamposVacios or errorCamposLargos or errorFecha or errorEdad or errorConductorExistente):
 				return render_to_response('agregarConductor.html', locals(), context_instance = RequestContext(request))
 
 			#Si no, guardo el conductor
@@ -1120,3 +1129,7 @@ def agregarConductorControl(request):
 			return render_to_response('agregarConductor.html',locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
+
+def mayor21(fecha):
+	diferencia = datetime.now()-fecha
+	return diferencia.days/365 >= 21

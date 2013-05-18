@@ -1,7 +1,7 @@
 	{% extends "base.html" %}
 {% block titulo %}Agregar Contrato{% endblock %}
 {% block contenido %}
-	{%if errorIdContrato or errorNumDocumento or errorCamposVacios or errorCamposLargos or errorFecha or errorEdad%}
+	{%if errorIdContrato or errorNumDocumento or errorCamposVacios or errorCamposLargos or errorFecha or errorEdad or errorConductorExistente%}
 		<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -23,6 +23,9 @@
             {% if errorEdad %}
             	El conductor debe tener mínimo 21 años.<br>
             {% endif %}
+            {% if errorConductorExistente %}
+				Ya se agregó un conductor con este número de documento.<br>
+			{% endif %}
 		</p>
 	</div>
 	{%endif %}
