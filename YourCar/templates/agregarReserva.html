@@ -1,7 +1,7 @@
 	{% extends "base.html" %}
 {% block titulo %}Agregar una Reserva{% endblock %}
 {% block contenido %}
-	{%if errorPagada or errorIdCliente or errorIdVehiculo or errorFechas or errorLugares%}
+	{%if errorPagada or errorIdCliente or errorIdVehiculo or errorFechas or errorLugares or errorFormatoFechas%}
 		<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -20,13 +20,16 @@
             {% if errorLugares %}
 				Los lugares de reocgida y entrega deben seleccionarse entre las opciones.<br>
             {% endif %}
+            {% if errorFormatoFechas %}
+				Una o mas fechas no son correctas, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
+			{% endif %}
 		</p>
 	</div>
 	{%else %}
 	<div class="container">
 		<form method="POST" action="/reservas/agregar/" name="agregarReservas">
 				{% csrf_token %}
-				<h3>Ingrese los datos de la reserva.</hs3>
+				<h3>Ingrese los datos de la reserva.</h3>
 				<table class="table-bordered table-striped table-hover">
 					<a class="btn" href="/vehiculos/">Ver vehículos</a>
 					<tbody>

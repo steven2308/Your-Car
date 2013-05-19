@@ -1,0 +1,121 @@
+{%extends "base.html"%}
+{% block titulo %}Detalles de Contrato {{contrato.idContrato}}{% endblock %}
+{% block contenido %}
+    <div class="container">
+        <div class="span4">
+        	<table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <h4>Datos de Alquiler.</h4>
+                        <tr>
+                            <td>Id Contrato</td>
+                            <td>{{datosAlquiler.idContrato.idContrato}}</td>
+                        </tr>
+                        <tr>
+                            <td>ID Reserva</td>
+                            <td>{{datosAlquiler.idReserva.idReserva}}</td>
+                        </tr>
+                        <tr>
+                            <td>Metodo de Pago</td>
+                            <td>{{datosAlquiler.metodoPago}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tarifa Establecida</td>
+                            <td>{{datosAlquiler.tarifaEstablecida}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tarifa Aplicada</td>
+                            <td>{{datosAlquiler.tarifaAplicada}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha Alquiler</td>
+                            <td>{{datosAlquiler.fechaAlquiler}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha de Devolucion</td>
+                            <td>{{datosAlquiler.fechaDevolucion}}</td>
+                        </tr>
+                        <tr>
+                            <td>Total Dias</td>
+                            <td>{{datosAlquiler.totalDias}}</td>
+                        </tr>
+                        <tr>
+                            <td>Kilometraje Inicial</td>
+                            <td>{{datosAlquiler.kmInicial}}</td>
+                        </tr>
+                        <tr>
+                            <td>Kilometraje Final</td>
+                            <td>{{datosAlquiler.kmFinal}}</td>
+                        </tr>
+                        <tr>
+                            <td>Valor Alquiler</td>
+                            <td>{{datosAlquiler.valorAlquiler}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <h4>Informacion Contrato.</h4>
+                        <tr>
+                            <td>ID Contrato </td>
+                            <td>{{contrato.idContrato}}</td>
+                        </tr>
+                        <tr>
+                            <td>ID Vehiculo (placa)</td>
+                            <td>{{contrato.idVehiculo.placa}}</td>
+                        </tr>
+                        <tr>
+                            <td>ID Voucher</td>
+                            <td>{{contrato.idVoucher.codigoAutorizacion}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha</td>
+                            <td>{{contrato.fecha}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <h4>Informacion Vehiculo.</h4>
+                        <tr>
+                            <td>Placa</td>
+                            <td>{{vehiculo.placa}}</td>
+                        </tr>
+                        <tr>
+                            <td>Marca</td>
+                            <td>{{vehiculo.marca}}</td>
+                        </tr>
+                        <tr>
+                            <td>Referencia</td>
+                            <td>{{vehiculo.referencia}}</td>
+                        </tr>
+                        <tr>
+                            <td>Gama</td>
+                            <td>{{vehiculo.gama}}</td>
+                        </tr>
+                        <tr>
+                            <td>Valor Garantia</td>
+                            <td>{{vehiculo.valorGarantia}}</td>
+                        </tr>
+                        <tr>
+                            <td>Limite Kilometraje</td>
+                            <td>{{vehiculo.limiteKilometraje}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tarifa</td>
+                            <td>{{vehiculo.tarifa}}</td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="span5">
+        	<p>
+        		<a class="btn" href="/alquiler">Regresar a Datos de Alquiler</a>
+        	</p>
+        	<form method="POST" action="/alquiler/eliminar/" name="eliminarAlquiler">
+                    {% csrf_token %}
+                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
+                    <input class="btn btn-danger" type="submit" value="Eliminar estos Datos de Alquiler" name="eliminarDatosAlquiler" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+                </form>
+        </div>
+    </div>
+{% endblock %}

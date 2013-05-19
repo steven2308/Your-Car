@@ -24,9 +24,9 @@
 				<li><a class="btn btn-primary" href="/cotizar">Cotizar</a></li>
 				{% if request.user.is_staff %}
 					<li><a class="btn btn-info" href="/vehiculos/historialMantenimiento">Mantenimientos</a></li>
-					{# <li><a class="btn btn-info" href="/estadisticas">Estadísticas</a></li> #}
-					{# <li><a class="btn btn-info" href="/alertas">Alertas</a></li> #}
 					<li><a class="btn btn-info" href="/voucher">Voucher</a></li>
+					<li><a class="btn btn-info" href="/contratos">Contratos</a></li>
+					<li><a class="btn btn-info" href="/alquiler">Alquileres</a></li>
 					<li><a class="btn btn-info" href="/parametrizar">Parámetros</a></li>
 				{% endif %}
 				{% if request.user.is_authenticated %}

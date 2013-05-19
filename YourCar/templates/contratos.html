@@ -1,0 +1,110 @@
+{%extends "base.html"%}
+{% block titulo %}Contratos{% endblock %}
+{% block contenido %}
+    <div class="container">
+        {% if addSuccess %}
+            <p class="text-info">El contrato se agregó exitosamente!</p>
+        {% endif %}
+        {% if filtrados %}
+            <h4>Estás viendo los contratos filtrados y ordenados:</h4>
+        {% else %}
+    	   <h4>Estás viendo todos los contratos:</h4>
+        {% endif %}
+            <div class="span12">
+                <div class="span4">
+                    <p>Hay en total {{ contratos|length }} contrato{{contratos|pluralize}}.</p>
+                </div>
+                <div class="span2">
+                        <a class="btn" href="/contratos/agregar/">Agregar Contrato</a>
+                </div>
+            </div>
+        {% if contratos %}
+            <form method="POST" action="/contratos/" name="filtrarContratos">
+                {% csrf_token %}
+                <h4>Filtrar Por:</h4>
+                <table class="table-bordered table-striped table-hover">
+                    <thead>
+                        <th>Id Contrato</th>
+                        <th>Placa Vehículo</th>
+                        <th>Id Voucher</th>
+                    </thead>
+                    <tbody>
+                        <td><input type="text" name="idContrato"></td>
+                        <td><input type="text" name="idVehiculo" pattern="[a-zA-z]{3}[0-9]{3}"></td>
+                        <td><input type="text" name="idVoucher" pattern="[0-9]{1,20}"></td>
+                    </tbody>
+                </table>
+                <div class="span12">
+                    <div class="span4">
+                        <h4>Ordenar por:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Id Contrato</label>
+                                <input id="btnIdContrato" name="orderBy" type="radio" value="idContrato" checked="checked">
+                            </li>
+                            <li>
+                                <label>Vehículo</label>
+                                <input id="btnIdVehiculo" name="orderBy" type="radio" value="idVehiculo">
+                            </li>
+                            <li>
+                                <label>Id Voucher</label>
+                                <input id="btnIdVoucher" name="orderBy" type="radio" value="idVoucher">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4">
+                        <h4>Sentido:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Ascendente</label>
+                                <input id="btnAsc" name="ascDesc" type="radio" value="True" checked="checked">
+                            </li>
+                            <li>
+                                <label>Descendente</label>
+                                <input id="btnDsc" name="ascDesc" type="radio" value="False">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4"></div>
+                </div>
+                <input type="submit" value="Filtrar" name="filtrar"/>
+            </form>
+            <table class="table-bordered table-striped table-hover">
+                <thead>
+                    <th>Id Contrato</th>
+                    <th>Vehículo</th>
+                    <th>Voucher</th>
+                    <th>Cliente</th>
+                    <th>Fecha</th>
+                </thead>
+                <tbody>
+                    {% for c in contratos %}
+                        <tr>
+                            <td><a href="/contratos/detalles/{{c.idContrato}}/">{{c.idContrato}}</a></td>
+                            <td>{{c.idVehiculo}}</td>
+                            <td>{{c.idVoucher}}</td>
+                            <td>{{c.idVoucher.idCliente}}</td>
+                            <td>{{c.fecha}}</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="paginas">
+                <a href="/contratos/pag/1/"> Primera </a>
+                {% if contratos.has_previous %}
+                    <a href="/contratos/pag/{{contratos.previous_page_number}}/"> Anterior </a>
+                {% endif %}
+                {% if contratos.has_next %}
+                    <a href="/contratos/pag/{{contratos.next_page_number}}/"> Siguiente </a>
+                {% endif %}
+                <a href="/contratos/pag/{{contratos.paginator.num_pages}}"> Última </a>
+                <br>
+                <strong>Página {{contratos.number}} de {{contratos.paginator.num_pages}}</strong>
+            </div>
+    	{% elif filtrados%}
+    	    <p>No hay ningún contrato con las características que buscas, intenta menos parámetros.</p>
+            <a class="btn" href="/contratos/">Ver todos</a>
+        {% else %}
+            <p>No hay ningún contrato.</p>
+    	{% endif %}
+    </div>
+{% endblock %}

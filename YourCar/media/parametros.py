@@ -1,5 +1,5 @@
 parametros = {'gamas': ('Baja', 'Media', 'Alta'),
- 'tipoPersonas': ('Natural', 'Empresa'),
+ 'tipoPersonas': ('Natural', 'Juridica'),
  'tiposTraccion': ('', 'Delantera', 'Trasera', '4x4'),
  'tiposMantenimiento': ('Preventivo', 'Correctivo'),
  'misionInicio': u'En este campo se ingresa la misi\xf3n de la empresa.', 'tipoDeDirecciones': ('', 'Mecanica', 'Hidraulica', 'Electronica'),
@@ -8,6 +8,4 @@ parametros = {'gamas': ('Baja', 'Media', 'Alta'),
  'visionInicio': u'En este campo se ingresa la vision de la empresa.', 'estadosPago': ('No', 'Si'),
  'tiposDeFrenos': ('', 'Disco', 'Tambor', 'ABS','Tambor/Disco'),
  'quienesSomosInicio': u'Datos de la empresa', 'numElementosPorPagina': u'10', 'estadosVehiculo': ('Disponible', 'Reservado', 'Rentado', 'En Mantenimiento'),
- 'lugaresCostos': {'Otro': 15000, 'Empresa': 0, 'Aeropuerto': 10000},
- 'cajasDeCambios': ('Automatica', 'Manual', 'Triptonica'),
- 'metodosPago': ('Efectivo', 'Cheque', 'Tarjeta Credito', 'Tarjeta Debito', 'PayPal')}
+ 'lugaresCostos': {'Otro': 15000, 'Empresa': 0, 'Aeropuerto': 10000}, 'cajasDeCambios': ('Automatica', 'Manual', 'Triptonica')}

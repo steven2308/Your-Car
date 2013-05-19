@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block titulo %}Agregar Contrato{% endblock %}
+{% block contenido %}
+	{%if errorIdCliente or errorIdVoucher or errorIdVehiculo or errorFecha%}
+		<div class="container">
+		<h4>Corrige los siguientes errores para continuar:</h4>
+		<p class="text-error">
+			{% if errorIdVoucher %}
+				No se encuentra el voucher ingresado. <br>
+			{% endif %}
+			{% if errorIdCliente %}
+				El cliente asociado al voucher no existe no se encontró.<br>
+			{% endif %}
+			{% if errorIdVehiculo %}
+				No tenemos en nuestro inventario este vehículo.<br>
+			{% endif %}
+			{% if errorFecha %}
+				El formato de fecha no es correcto, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
+            {% endif %}
+		</p>
+	</div>
+	{%endif %}
+	<div class="container">
+		<form method="POST" action="/contratos/agregar/" name="agregarContratos">
+				{% csrf_token %}
+				<h3>Ingrese los datos del contrato.</h3>
+				<table class="table-bordered table-striped table-hover">
+					<p>
+						<a class="btn" href="/voucher/">Ver Vouchers</a>
+						<a class="btn" href="/vehiculos/">Ver vehículos</a>
+					</p>
+					<tbody>
+						<tr>
+					        <td><label>Placa del Vehiculo:</label></td>
+					        <td><input type="text" name="idVehiculo" value="{{idVehiculo}}" required="true" pattern="[a-zA-Z]{3}[0-9]{3}"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Id Voucher:</label></td>
+					        <td><input type="text" name="idVoucher" value="{{idVoucher}}" required="true" pattern="[0-9]{1,9}"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Fecha del contrato:</label></td>
+					        <td><input type="date" name="fecha" value="{{fecha}}" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					    	<td><input type="submit" value="Crear contrato" name="agregarReserva"/></td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>
+		</form>
+	</div>
+{% endblock %}

@@ -49,7 +49,7 @@ class ClienteAlquiler(models.Model):
 	telContacto = models.CharField(max_length=12,blank=True)
 	direccionContacto = models.CharField(max_length=40,blank=True)
 	def __unicode__(self):
-		return self.user.first_name+" "+self.user.last_name
+		return self.user.first_name+" "+self.user.last_name+". Id: "+self.numDocumento
 	class Meta:
 		verbose_name_plural=u'Clientes de Alquiler'
 
@@ -87,15 +87,15 @@ class Voucher(models.Model):
 	codigoVerifTarjeta = models.CharField(max_length=5)
 	nombreBanco = models.CharField(max_length=20)
 	def __unicode__(self):
-		return "Voucher de %s codigo: %s" %(unicode(self.idCliente),self.codigoAutorizacion)
+		return "Voucher codigo: %s" %(self.codigoAutorizacion)
 
 class Contrato(models.Model):
 	idContrato = models.AutoField(primary_key=True)
 	idVehiculo = models.ForeignKey(Vehiculo)
 	idVoucher = models.ForeignKey(Voucher)
-	fecha = models.DateTimeField()
+	fecha = models.DateField()
 	def __unicode__(self):
-		return "Contrato de %s por %s" %(unicode(self.idCliente),unicode(self.idVehiculo))
+		return "Contrato de %s Vehiculo:  %s" %((self.idVoucher),unicode(self.idVehiculo))
 
 class ConductorAutorizado(models.Model):
 	docIdentidad = models.IntegerField(primary_key=True)
@@ -110,15 +110,11 @@ class ConductorAutorizado(models.Model):
 	class Meta:
 		verbose_name_plural=u'Conductores Autorizados'
 
-class InventarioVehiculo(models.Model):
-	idInventarioVehiculo = models.AutoField(primary_key=True)
-
 class DatosAlquiler(models.Model):
 	idDatosAlquiler = models.AutoField(primary_key=True)
 	idContrato = models.ForeignKey(Contrato)
-	idReserva = models.ForeignKey(Reserva) #puede ser nulo
-	idInventario = models.ForeignKey(InventarioVehiculo)
-	#estado (abierto, cerrado)
+	idReserva = models.ForeignKey(Reserva, null=True) #puede ser nulo
+	metodoPago = models.CharField(max_length=15)
 	tarifaEstablecida = models.IntegerField()
 	tarifaAplicada = models.IntegerField()
 	fechaAlquiler = models.DateTimeField()
@@ -127,13 +123,17 @@ class DatosAlquiler(models.Model):
 	kmInicial = models.IntegerField()
 	kmFinal = models.IntegerField()
 	valorAlquiler = models.IntegerField()
-	metodoPago = models.CharField(max_length=10)
 	class Meta:
 		verbose_name_plural=u'Datos Alquiler'
 
+class InventarioVehiculo(models.Model):
+	idInventarioVehiculo = models.AutoField(primary_key=True)
+	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
+	cierre = models.BooleanField(default=False)
+
 class Factura(models.Model):
 	numFactura = models.AutoField(primary_key=True)
-	idDatatosAlquiler = models.ForeignKey(DatosAlquiler)
+	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
 	fecha = models.DateField()
 	referenciaServicio = models.CharField(max_length=20)
 	#Tabla de servicios? Yo creo que si
