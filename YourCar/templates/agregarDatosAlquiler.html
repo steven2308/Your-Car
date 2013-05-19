@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block titulo %}Agregar Datos de Alquiler{% endblock %}
+{% block contenido %}
+	{%if errorIdContrato or errorIdReserva or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago%}
+	<div class="container">
+		<h4>Corrige los siguientes errores para continuar:</h4>
+		<p class="text-error">
+			{% if errorIdContrato %}
+				El Id del contrato asociado no existe o es invalido.<br>
+			{% endif %}
+			{% if errorIdReserva %}
+				el Id de la reserva asociada no existe o es invalida.<br>
+			{% endif %}
+			{% if errorFechaAlquiler %}
+				La fecha de alquiler es invalida.<br>
+			{% endif %}
+			{% if errorFechaDevolucion %}
+				La fecha de devolucion es invalida.<br>
+			{% endif %}
+			{% if errorKmInicial %}
+				El kilometraje inicial es invalido.<br>
+			{% endif %}
+			{% if errorKmFinal %}
+				el kilometraje final es invalido.<br>
+			{% endif %}
+			{% if errorMetodoPago %}
+				El metodo de pago ingresado es invalido.<br>
+			{% endif %}
+		</p>
+	</div>
+	{%endif %}
+	<div class="container">
+		<form method="POST" action="/alquiler/agregar/" name="agregarDatosAlquiler">
+				{% csrf_token %}
+				<h3>Ingrese los datos del alquiler.</h3>
+				<table class="table-bordered table-striped table-hover">
+					<p>
+						<a class="btn" href="/contratos/">Ver Contratos</a>
+					</p>
+					<tbody>
+						<tr>
+					        <td><label>ID Contrato:</label></td>
+					        <td><input type="text" name="idContrato" value="{{idContrato}}" required="true" pattern="[1-9]{1,5}"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>ID Reserva:</label></td>
+					        <td><input type="text" name="idReserva" value="{{idReserva}}"/></td>
+					    </tr>
+					    <tr>
+					        <td><label>Metodo de pago:</label></td>
+					        <td>
+					        	<select name="metodoPago" required="true">
+					        		{% for mp in  metodosPago%}
+					        		<option>{{mp}}</option>
+					        		{% endfor %}
+					        	</select>*
+					    	</td>
+					    </tr>
+					    <tr>
+					        <td><label>Tarifa Establecida:</label></td>
+					        <td><input type="text" name="tarifaEstablecida" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Tarifa Aplicada:</label></td>
+					        <td><input type="text" name="tarifaAplicada" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Fecha Alquiler:</label></td>
+					        <td><input type="date" name="fechaAlquiler" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Fecha Devolucion:</label></td>
+					        <td><input type="date" name="fechaDevolucion" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Total Dias:</label></td>
+					        <td><input type="text" name="totalDias" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Kilometraje Inicial:</label></td>
+					        <td><input type="text" name="kmInicial" required="true" pattern="[0-9]{1,6}"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Kilometraje Final:</label></td>
+					        <td><input type="text" name="kmFinal"  required="true" pattern="[0-9]{1,6}"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Valor Alquiler:</label></td>
+					        <td><input type="text" name="valorAlquiler"  required="true"/>*</td>
+					    </tr>
+					    <tr>
+					    	<td><input type="submit" value="Agregar Datos de Alquiler" name="agregarDatosAlquiler"/></td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>
+		</form>
+	</div>
+{% endblock %}

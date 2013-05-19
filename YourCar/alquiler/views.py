@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
-from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado
+from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado, DatosAlquiler
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator,EmptyPage,InvalidPage
@@ -664,9 +664,6 @@ def agregarReservaControl(request):
 		else:
 			try:
 				idVehiculo = request.GET["placa"]
-				if not request.user.is_staff:
-					cliente = ClienteAlquiler.objects.get(user=request.user)
-					numDocumento = cliente.numDocumento
 				fechaInicio = formatearFecha(request.GET["fechaIni"])
 				fechaFin = formatearFecha(request.GET["fechaFin"])
 				horaInicio = formatearHora(request.GET["horaIni"])
@@ -676,6 +673,9 @@ def agregarReservaControl(request):
 			except:
 				pass
 			is_staff = request.user.is_staff
+			if not request.user.is_staff:
+					cliente = ClienteAlquiler.objects.get(user=request.user)
+					numDocumento = cliente.numDocumento
 			return render_to_response('agregarReserva.html',locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
@@ -1133,3 +1133,116 @@ def agregarConductorControl(request):
 def mayor21(fecha):
 	diferencia = datetime.now()-fecha
 	return diferencia.days/365 >= 21
+
+def alquileresControl (request,pagina=1,addSuccess=False):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			query = {}
+			if request.POST["ascDesc"]=="True":
+				order = request.POST["orderBy"]
+			else:
+				order = "-"+request.POST["orderBy"]
+			#Tomo datos
+			idDatosAlquiler=request.POST["idDatosAlquiler"]
+			idContrato=request.POST["idContrato"]
+			metodoPago=request.POST["metodoPago"]
+
+			if idDatosAlquiler and re.match("^([1-9]{1,5})$",idDatosAlquiler):
+				query["idDatosAlquiler"]=idDatosAlquiler
+			if idContrato and re.math("^([1-9]{1,5})$",idContrato):
+				query["idContrato"]=idContrato
+			if metodoPago:
+				query["metodoPago"]=metodoPago
+
+			if query:
+				listadodatosalquiler= DatosAlquiler.objects.filter(**query).order_by(order)
+				filtrados=True
+			else:
+				listadodatosalquiler = DatosAlquiler.objects.all().order_by(order)
+			listadatosalquiler = paginar(listadodatosalquiler,pagina)
+			return render_to_response('alquileres.html',locals(), context_instance = RequestContext(request))
+		listadodatosalquiler = DatosAlquiler.objects.all()
+		listadatosalquiler=paginar(listadodatosalquiler,pagina)
+		return render_to_response('alquileres.html',locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')
+
+def agregarDatosAlquilerControl(request):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			idContrato = request.POST["idContrato"]
+			##idReserva = 1
+			idReserva = request.POST["idReserva"]
+			metodoPago = request.POST["metodoPago"]
+			tarifaEstablecida = request.POST["tarifaEstablecida"]
+			tarifaAplicada = request.POST["tarifaAplicada"]
+			fechaAlquiler = request.POST["fechaAlquiler"]
+			fechaDevolucion = request.POST["fechaDevolucion"] #que pasa si en el cierre la fecha de devolucion es distinta?
+			totalDias = 0 #totalPorDias = request.POST["totalPorDias"] #revisar cotizacion
+			kmInicial = request.POST["kmInicial"]
+			#kmFinal = 10
+			#cierre=False
+			#if cierre: 
+			kmFinal = request.POST["kmFinal"]
+			valorAlquiler = request.POST["valorAlquiler"]
+
+			#if request.POST["idReserva"]: idReserva = request.POST["idReserva"]
+
+			#manejo de errores
+			errorIdContrato=False
+			errorIdReserva=False
+			try:
+				contrato = Contrato.objects.get(idContrato=idContrato)
+			except:
+				errorIdContrato=True
+			try:
+				reserva = Reserva.objects.get(idReserva=idReserva)
+			except:
+				errorIdReserva=True
+
+			errorFechaAlquiler = not fechaCorrecta(fechaAlquiler)
+			errorFechaDevolucion = not fechaCorrecta(fechaDevolucion) #incluir que la fecha de devolucion debe ser despues de la de alquiler
+			errorKmInicial = not re.match("^([0-9]{1,6})$",kmInicial)
+			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
+			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
+
+			if (errorIdContrato or errorIdReserva or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago):
+				return render_to_response('agregarDatosAlquiler.html', locals(), context_instance = RequestContext(request))
+
+			datosAlquiler = DatosAlquiler(idContrato=contrato, idReserva=reserva, metodoPago=metodoPago, tarifaEstablecida=tarifaEstablecida, tarifaAplicada=tarifaAplicada, fechaAlquiler=fechaAlquiler, fechaDevolucion=fechaDevolucion, totalDias=totalDias, kmInicial=kmInicial, kmFinal=kmFinal, valorAlquiler=valorAlquiler)
+			datosAlquiler.save()
+			request.method = 'GET'
+			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=True)
+		else:
+			try:
+				idContrato =  request.GET["idContrato"]
+				contrato = Contrato.objects.get(idContrato=idContrato)
+			except:
+				pass
+			metodosPago = parametros["metodosPago"]
+			return render_to_response('agregarDatosAlquiler.html',locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')
+
+def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
+	if request.user.is_authenticated() and request.user.is_staff:
+		try:
+			datosAlquiler = DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
+			contrato = datosAlquiler.idContrato
+			vehiculo = contrato.idVehiculo
+		except:
+			return HttpResponseRedirect('/alquiler')
+		return render_to_response('detallesDatosAlquiler.html',locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
+
+def eliminarDatosAlquilerControl(request):
+	if request.user.is_authenticated() and request.user.is_staff and request.method == 'POST':
+		try:
+			idDatosAlquiler = request.POST["idDatosAlquiler"]
+			datosAlquiler = DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
+			datosAlquiler.delete()
+		except:
+			pass
+		return HttpResponseRedirect('/alquiler')
+	else:
+		return HttpResponseRedirect('/404')

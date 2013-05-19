@@ -1,0 +1,132 @@
+{%extends "base.html"%}
+{% block titulo %}Datos Alquiler{% endblock %}
+{% block contenido %}
+    <div class="container">
+        {% if addSuccess %}
+            <p class="text-info">Datos de Alquiler agregados exitosamente</p>
+        {% endif %}
+        {% if filtrados %}
+            <h4>Estás viendo los contratos filtrados y ordenados:</h4>
+        {% else %}
+    	   <h4>Estás viendo todos los datos de alquiler:</h4>
+        {% endif %}
+            <div class="span12">
+                <div class="span4">
+                    <p>Hay en total {{ listadatosalquiler|length }} datos de alquiler{{listadatosalquiler|pluralize}}.</p>
+                </div>
+                <div class="span2">
+                        <a class="btn" href="/alquiler/agregar/">Agregar Datos de Alquiler</a>
+                </div>
+            </div>
+        {% if listadatosalquiler %}
+            <form method="POST" action="/alquiler/" name="filtrarContratos">
+                {% csrf_token %}
+                <h4>Filtrar Por:</h4>
+                <table class="table-bordered table-striped table-hover">
+                    <thead>
+                        <th>ID Datos Alquiler</th>
+                        <th>ID Contrato</th>
+                        <th>Metodo Pago</th>
+                    </thead>
+                    <tbody>
+                        <td><input type="text" name="idDatosAlquiler" pattern="1-9]{1,5}"></td>
+                        <td><input type="text" name="idContrato" pattern="[1-9]{1,5}"></td>
+                        <td><input type="text" name="metodoPago"></td>
+                    </tbody>
+                </table>
+                <div class="span12">
+                    <div class="span4">
+                        <h4>Ordenar por:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>ID Datos Alquiler</label>
+                                <input id="btnIdContrato" name="orderBy" type="radio" value="idDatosAlquiler" checked="checked">
+                            </li>
+                            <li>
+                                <label>ID Contrato</label>
+                                <input id="btnIdVehiculo" name="orderBy" type="radio" value="idContrato">
+                            </li>
+                            <li>
+                                <label>Metodo de Pago</label>
+                                <input id="btnIdVoucher" name="orderBy" type="radio" value="metodoPago">
+                            </li>
+                            <li>
+                                <label>Fecha Alquiler</label>
+                                <input id="btnIdCliente" name="orderBy" type="radio" value="fechaAlquiler">
+                            </li>
+                            <li>
+                                <label>Fecha Devolucion</label>
+                                <input id="btnIdCliente" name="orderBy" type="radio" value="fechaDevolucion">
+                            </li>
+                            <li>
+                                <label>Valor Alquiler</label>
+                                <input id="btnIdCliente" name="orderBy" type="radio" value="valorAlquiler">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4">
+                        <h4>Sentido:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Ascendente</label>
+                                <input id="btnAsc" name="ascDesc" type="radio" value="True" checked="checked">
+                            </li>
+                            <li>
+                                <label>Descendente</label>
+                                <input id="btnDsc" name="ascDesc" type="radio" value="False">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4"></div>
+                </div>
+                <input type="submit" value="Filtrar" name="filtrar"/>
+            </form>
+            <table class="table-bordered table-striped table-hover">
+                <thead>
+                    <th>Id Datos Alquiler</th>
+                    <th>ID Contrato</th>
+                    <th>Metodo de Pago</th>
+                    <th>Tarifa Establecida</th>
+                    <th>Tarifa Aplicada</th>
+                    <th>Fecha Alquiler</th>
+                    <th>Fecha Devolucion</th>
+                    <th>Total Dias</th>
+                    <th>Kilometraje Inicial</th>
+                    <th>Valor Alquiler</th>
+                </thead>
+                <tbody>
+                    {% for da in listadatosalquiler %}
+                        <tr>
+                            <td><a href="/alquiler/detalles/{{da.idDatosAlquiler}}/">{{da.idDatosAlquiler}}</a></td>
+                            <td>{{da.idContrato.idContrato}}</td>
+                            <td>{{da.metodoPago}}</td>
+                            <td>{{da.tarifaEstablecida}}</td>
+                            <td>{{da.tarifaAplicada}}</td>
+                            <td>{{da.fechaAlquiler}}</td>
+                            <td>{{da.fechaDevolucion}}</td>
+                            <td>{{da.totalDias}}</td>
+                            <td>{{da.kmInicial}}</td>
+                            <td>{{da.valorAlquiler}}</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="paginas">
+                <a href="/alquiler/pag/1/"> Primera </a>
+                {% if listadatosalquiler.has_previous %}
+                    <a href="/alquiler/pag/{{listadatosalquiler.previous_page_number}}/"> Anterior </a>
+                {% endif %}
+                {% if listadatosalquiler.has_next %}
+                    <a href="/alquiler/pag/{{listadatosalquiler.next_page_number}}/"> Siguiente </a>
+                {% endif %}
+                <a href="/alquiler/pag/{{listadatosalquiler.paginator.num_pages}}"> Última </a>
+                <br>
+                <strong>Página {{listadatosalquiler.number}} de {{listadatosalquiler.paginator.num_pages}}</strong>
+            </div>
+    	{% elif filtrados%}
+    	    <p>No hay datos de alquiler con las características que buscas, intenta menos parámetros.</p>
+            <a class="btn" href="/alquiler/">Ver todos</a>
+        {% else %}
+            <p>No hay datos de alquiler.</p>
+    	{% endif %}
+    </div>
+{% endblock %}

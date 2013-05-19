@@ -40,6 +40,10 @@ urlpatterns = patterns('YourCar.alquiler.views',
     url(r'^contratos/agregar/$', 'agregarContratosControl', name='vistaAgregarContrato'),
     url(r'^contratos/agregarConductor/$', 'agregarConductorControl', name='vistaAgregarConductor'),
     url(r'^contratos/eliminar/$', 'eliminarContratosControl', name='vistaEliminarContrato'),
+    url(r'^alquiler/(pag/(?P<pagina>\d{1,5})/)?$', 'alquileresControl', name='vistaAlquileres'),
+    url(r'^alquiler/detalles/(?P<idDatosAlquiler>[0-9]{1,9})/$$', 'detallesDatosAlquilerControl', name='vistaDatosAlquiler'),
+    url(r'^alquiler/agregar/$', 'agregarDatosAlquilerControl', name='vistaAgregarDatosAlquiler'),
+    url(r'^alquiler/eliminar/$', 'eliminarDatosAlquilerControl', name='vistaEliminarDatosAlquiler'),
 )
 
 if settings.DEBUG:

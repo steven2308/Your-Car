@@ -112,11 +112,13 @@ class ConductorAutorizado(models.Model):
 
 class InventarioVehiculo(models.Model):
 	idInventarioVehiculo = models.AutoField(primary_key=True)
+	idReserva = models.ForeignKey(Reserva)
+	cierre = models.BooleanField(default=False)
 
 class DatosAlquiler(models.Model):
+	idDatosAlquiler = models.AutoField(primary_key=True)
 	idContrato = models.ForeignKey(Contrato)
 	idReserva = models.ForeignKey(Reserva) #puede ser nulo
-	idInventario = models.ForeignKey(InventarioVehiculo)
 	metodoPago = models.CharField(max_length=15)
 	tarifaEstablecida = models.IntegerField()
 	tarifaAplicada = models.IntegerField()
@@ -126,13 +128,12 @@ class DatosAlquiler(models.Model):
 	kmInicial = models.IntegerField()
 	kmFinal = models.IntegerField()
 	valorAlquiler = models.IntegerField()
-	metodoPago = models.CharField(max_length=15)
 	class Meta:
 		verbose_name_plural=u'Datos Alquiler'
 
 class Factura(models.Model):
 	numFactura = models.AutoField(primary_key=True)
-	idDatatosAlquiler = models.ForeignKey(DatosAlquiler)
+	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
 	fecha = models.DateField()
 	referenciaServicio = models.CharField(max_length=20)
 	#Tabla de servicios? Yo creo que si
