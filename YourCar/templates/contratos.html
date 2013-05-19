@@ -27,13 +27,11 @@
                         <th>Id Contrato</th>
                         <th>Placa Vehículo</th>
                         <th>Id Voucher</th>
-                        <th>Cliente</th>
                     </thead>
                     <tbody>
                         <td><input type="text" name="idContrato"></td>
                         <td><input type="text" name="idVehiculo" pattern="[a-zA-z]{3}[0-9]{3}"></td>
                         <td><input type="text" name="idVoucher" pattern="[0-9]{1,20}"></td>
-                        <td><input type="text" name="idCliente" pattern="[a-zA-Z0-9_-]{6,20}"></td>
                     </tbody>
                 </table>
                 <div class="span12">
@@ -51,10 +49,6 @@
                             <li>
                                 <label>Id Voucher</label>
                                 <input id="btnIdVoucher" name="orderBy" type="radio" value="idVoucher">
-                            </li>
-                            <li>
-                                <label>Cliente</label>
-                                <input id="btnIdCliente" name="orderBy" type="radio" value="idCliente">
                             </li>
                         </ul>
                     </div>
@@ -89,7 +83,7 @@
                             <td><a href="/contratos/detalles/{{c.idContrato}}/">{{c.idContrato}}</a></td>
                             <td>{{c.idVehiculo}}</td>
                             <td>{{c.idVoucher}}</td>
-                            <td>{{c.idCliente}}</td>
+                            <td>{{c.idVoucher.idCliente}}</td>
                             <td>{{c.fecha}}</td>
                     {% endfor %}
                 </tbody>

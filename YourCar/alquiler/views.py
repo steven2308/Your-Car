@@ -962,7 +962,6 @@ def contratosControl(request,pagina=1,addSuccess=False):
 			#Tomo los datos
 			idContrato=request.POST["idContrato"]
 			idVoucher=request.POST["idVoucher"]
-			idCliente=request.POST["idCliente"]
 			idVehiculo=request.POST["idVehiculo"].upper()
 
 			#Los datos que no son vacios los agrego al query
@@ -970,8 +969,6 @@ def contratosControl(request,pagina=1,addSuccess=False):
 				query["idContrato"]=idContrato
 			if idVoucher:
 				query["idVoucher"]=idVoucher
-			if idCliente:
-				query["idCliente"]=idCliente
 			if idVehiculo and re.match("^([A-Z]{3}[0-9]{3})$",idVehiculo):
 				query["idVehiculo"]=idVehiculo
 
