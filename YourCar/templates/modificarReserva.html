@@ -61,7 +61,7 @@
                         <tr>
                             <td><label>Lugar de Recogida:</label></td>
                             <td>
-                                <select name="lugarRecogida" required="true">
+                                <select name="lugarRecogida" required="true" {%if yaPagada %} disabled=True {%endif%}>
                                     <option selected>{{lugarRecogida}}</option>
                                     {% for l in  lugares%}
                                         {% if l != lugarRecogida %}
@@ -74,7 +74,7 @@
                         <tr>
                             <td><label>Lugar de Entrega:</label></td>
                             <td>
-                                <select name="lugarEntrega" required="true">
+                                <select name="lugarEntrega" required="true" {%if yaPagada %} disabled=True {%endif%}>
                                     <option selected>{{lugarEntrega}}</option>
                                     {% for l in  lugares%}
                                         {% if l != lugarEntrega %}
@@ -88,10 +88,14 @@
                         <tr>
                             <td><label>Pagada?:</label></td>
                             <td>
-                                <select name="pagada" required="true" {%if yaPagada %} disabled=True {%endif%}>
-                                    {% for ep in estadosPago%}
-                                        <option>{{ep}}</option>
-                                    {% endfor %}
+                                <select name="pagada" required="true">
+                                    {% if pagada %}
+                                    <option selected>Si</option>
+                                    <option>No</option>
+                                    {% else %}
+                                    <option selected>No</option>
+                                    <option>Si</option>
+                                    {% endif %}
                                 </select>*
                             </td>
                         </tr>

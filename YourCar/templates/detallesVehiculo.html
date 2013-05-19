@@ -124,11 +124,6 @@
                     <input name="placa" value="{{vehiculo.placa}}" type="hidden" pattern="[A-Z]{3}[0-9]{3}">
                     <input type="submit" value="Reservar este vehiculo" name="agregarReserva"/>
                 </form>
-                <form method="GET" action="/alquiler/agregar/" name="agregarReserva">
-                    {% csrf_token %}
-                    <input name="placa" value="{{vehiculo.placa}}" type="hidden" pattern="[A-Z]{3}[0-9]{3}">
-                    <input type="submit" value="Alquilar este vehiculo" name="agregarReserva"/>
-                </form>
                 {% if is_staff %}
                 <form method="POST" action="/vehiculos/historialMantenimiento/" name="verhistorialMantenimiento">
                     {% csrf_token %}

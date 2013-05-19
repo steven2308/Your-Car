@@ -1,15 +1,21 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar Datos de Alquiler{% endblock %}
 {% block contenido %}
-	{%if errorIdContrato or errorIdReserva or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago%}
+	{%if errorIdContrato or errorIdContratoExists or errorIdReserva or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago%}
 	<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
 			{% if errorIdContrato %}
 				El Id del contrato asociado no existe o es invalido.<br>
 			{% endif %}
+			{% if errorIdContratoExists %}
+				El Id del contrato ya esta asociado a otros datos de alquiler.<br>
+			{% endif %}
 			{% if errorIdReserva %}
 				el Id de la reserva asociada no existe o es invalida.<br>
+			{% endif %}
+			{% if errorFechas %}
+				La fecha de devolucion tiene que ser despues de la fecha de alquiler.<br>
 			{% endif %}
 			{% if errorFechaAlquiler %}
 				La fecha de alquiler es invalida.<br>
@@ -50,6 +56,7 @@
 					        <td><label>Metodo de pago:</label></td>
 					        <td>
 					        	<select name="metodoPago" required="true">
+					        		<option selected>{{metodoPago}}</option>
 					        		{% for mp in  metodosPago%}
 					        		<option>{{mp}}</option>
 					        		{% endfor %}
@@ -58,35 +65,35 @@
 					    </tr>
 					    <tr>
 					        <td><label>Tarifa Establecida:</label></td>
-					        <td><input type="text" name="tarifaEstablecida" required="true"/>*</td>
+					        <td><input type="text" name="tarifaEstablecida" required="true" value="{{tarifaEstablecida}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Tarifa Aplicada:</label></td>
-					        <td><input type="text" name="tarifaAplicada" required="true"/>*</td>
+					        <td><input type="text" name="tarifaAplicada" required="true" value="{{tarifaAplicada}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Fecha Alquiler:</label></td>
-					        <td><input type="date" name="fechaAlquiler" required="true"/>*</td>
+					        <td><input type="date" name="fechaAlquiler" required="true" value="{{fechaAlquiler}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Fecha Devolucion:</label></td>
-					        <td><input type="date" name="fechaDevolucion" required="true"/>*</td>
+					        <td><input type="date" name="fechaDevolucion" required="true" value="{{fechaDevolucion}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Total Dias:</label></td>
-					        <td><input type="text" name="totalDias" required="true"/>*</td>
+					        <td><input type="text" name="totalDias" required="true" value="{{totalDias}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Kilometraje Inicial:</label></td>
-					        <td><input type="text" name="kmInicial" required="true" pattern="[0-9]{1,6}"/>*</td>
+					        <td><input type="text" name="kmInicial" required="true" value="{{kmInicial}}" pattern="[0-9]{1,6}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Kilometraje Final:</label></td>
-					        <td><input type="text" name="kmFinal"  required="true" pattern="[0-9]{1,6}"/>*</td>
+					        <td><input type="text" name="kmFinal"  required="true" value="{{kmFinal}}" pattern="[0-9]{1,6}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Valor Alquiler:</label></td>
-					        <td><input type="text" name="valorAlquiler"  required="true"/>*</td>
+					        <td><input type="text" name="valorAlquiler" value="{{valorAlquiler}}" required="true"/>*</td>
 					    </tr>
 					    <tr>
 					    	<td><input type="submit" value="Agregar Datos de Alquiler" name="agregarDatosAlquiler"/></td>

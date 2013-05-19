@@ -1168,14 +1168,12 @@ def agregarDatosAlquilerControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
 			idContrato = request.POST["idContrato"]
-			##idReserva = 1
-			idReserva = request.POST["idReserva"]
 			metodoPago = request.POST["metodoPago"]
 			tarifaEstablecida = request.POST["tarifaEstablecida"]
 			tarifaAplicada = request.POST["tarifaAplicada"]
 			fechaAlquiler = request.POST["fechaAlquiler"]
 			fechaDevolucion = request.POST["fechaDevolucion"] #que pasa si en el cierre la fecha de devolucion es distinta?
-			totalDias = 0 #totalPorDias = request.POST["totalPorDias"] #revisar cotizacion
+			totalDias = request.POST["totalDias"] #revisar cotizacion
 			kmInicial = request.POST["kmInicial"]
 			#kmFinal = 10
 			#cierre=False
@@ -1183,27 +1181,51 @@ def agregarDatosAlquilerControl(request):
 			kmFinal = request.POST["kmFinal"]
 			valorAlquiler = request.POST["valorAlquiler"]
 
-			#if request.POST["idReserva"]: idReserva = request.POST["idReserva"]
+			if request.POST["idReserva"]:
+				idReserva = request.POST["idReserva"]
+
+			if request.POST["idReserva"]: 
+				idReserva = request.POST["idReserva"]
+			else:
+				idReserva = None
 
 			#manejo de errores
 			errorIdContrato=False
+			errorIdContratoExists=False
 			errorIdReserva=False
+			errorIdReservaExists=False
 			try:
 				contrato = Contrato.objects.get(idContrato=idContrato)
 			except:
 				errorIdContrato=True
 			try:
-				reserva = Reserva.objects.get(idReserva=idReserva)
+				if idReserva == None:
+					reserva = None
+				else:
+					reserva = Reserva.objects.get(idReserva=idReserva)
 			except:
 				errorIdReserva=True
+			#evalua si el contrato y/0 la reserva ya se encuentra asociado a otros datos de alquiler
+			try:
+				DatosAlquiler.objects.get(idContrato=contrato)
+				errorIdContratoExists=True
+			except:
+				pass
+			try:
+				if idReserva != None: DatosAlquiler.objects.get(idReserva=reserva)
+				errorIdReservaExists=True
+			except:
+				pass
 
+
+			errorFechas = fechaDevolucion < fechaAlquiler
 			errorFechaAlquiler = not fechaCorrecta(fechaAlquiler)
 			errorFechaDevolucion = not fechaCorrecta(fechaDevolucion) #incluir que la fecha de devolucion debe ser despues de la de alquiler
 			errorKmInicial = not re.match("^([0-9]{1,6})$",kmInicial)
 			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
 			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
 
-			if (errorIdContrato or errorIdReserva or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago):
+			if (errorIdContrato or errorIdContratoExists or errorIdReserva or errorFechas or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago):
 				return render_to_response('agregarDatosAlquiler.html', locals(), context_instance = RequestContext(request))
 
 			datosAlquiler = DatosAlquiler(idContrato=contrato, idReserva=reserva, metodoPago=metodoPago, tarifaEstablecida=tarifaEstablecida, tarifaAplicada=tarifaAplicada, fechaAlquiler=fechaAlquiler, fechaDevolucion=fechaDevolucion, totalDias=totalDias, kmInicial=kmInicial, kmFinal=kmFinal, valorAlquiler=valorAlquiler)

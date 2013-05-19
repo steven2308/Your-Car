@@ -110,15 +110,10 @@ class ConductorAutorizado(models.Model):
 	class Meta:
 		verbose_name_plural=u'Conductores Autorizados'
 
-class InventarioVehiculo(models.Model):
-	idInventarioVehiculo = models.AutoField(primary_key=True)
-	idReserva = models.ForeignKey(Reserva)
-	cierre = models.BooleanField(default=False)
-
 class DatosAlquiler(models.Model):
 	idDatosAlquiler = models.AutoField(primary_key=True)
 	idContrato = models.ForeignKey(Contrato)
-	idReserva = models.ForeignKey(Reserva) #puede ser nulo
+	idReserva = models.ForeignKey(Reserva, null=True) #puede ser nulo
 	metodoPago = models.CharField(max_length=15)
 	tarifaEstablecida = models.IntegerField()
 	tarifaAplicada = models.IntegerField()
@@ -130,6 +125,11 @@ class DatosAlquiler(models.Model):
 	valorAlquiler = models.IntegerField()
 	class Meta:
 		verbose_name_plural=u'Datos Alquiler'
+
+class InventarioVehiculo(models.Model):
+	idInventarioVehiculo = models.AutoField(primary_key=True)
+	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
+	cierre = models.BooleanField(default=False)
 
 class Factura(models.Model):
 	numFactura = models.AutoField(primary_key=True)
