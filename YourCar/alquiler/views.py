@@ -1181,9 +1181,6 @@ def agregarDatosAlquilerControl(request):
 			kmFinal = request.POST["kmFinal"]
 			valorAlquiler = request.POST["valorAlquiler"]
 
-			if request.POST["idReserva"]:
-				idReserva = request.POST["idReserva"]
-
 			if request.POST["idReserva"]: 
 				idReserva = request.POST["idReserva"]
 			else:
@@ -1217,10 +1214,9 @@ def agregarDatosAlquilerControl(request):
 			except:
 				pass
 
-
-			errorFechas = fechaDevolucion < fechaAlquiler
+			errorFechas = (fechaDevolucion < fechaAlquiler) or (datetime.now() > fechaAlquiler)
 			errorFechaAlquiler = not fechaCorrecta(fechaAlquiler)
-			errorFechaDevolucion = not fechaCorrecta(fechaDevolucion) #incluir que la fecha de devolucion debe ser despues de la de alquiler
+			errorFechaDevolucion = not fechaCorrecta(fechaDevolucion)
 			errorKmInicial = not re.match("^([0-9]{1,6})$",kmInicial)
 			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
 			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
@@ -1263,5 +1259,62 @@ def eliminarDatosAlquilerControl(request):
 		except:
 			pass
 		return HttpResponseRedirect('/alquiler')
+	else:
+		return HttpResponseRedirect('/404')
+
+def cierreDatosAlquilerControl(request):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			idDatosAlquiler = request.POST["idDatosAlquiler"]
+			idContrato = request.POST["idContrato"]
+			metodoPago = request.POST["metodoPago"]
+			tarifaEstablecida = request.POST["tarifaEstablecida"]
+			tarifaAplicada = request.POST["tarifaAplicada"]
+			fechaAlquiler = request.POST["fechaAlquiler"]
+			fechaDevolucion = request.POST["fechaDevolucion"]
+			totalDias = request.POST["totalDias"]
+			kmInicial = request.POST["kmInicial"]
+
+			if request.POST["idReserva"]: 
+				idReserva = request.POST["idReserva"]
+			else:
+				idReserva = None
+
+			try:
+				contrato = Contrato.objects.get(idContrato=idContrato)
+			except:
+				pass
+			try:
+				if idReserva == None:
+					reserva = None
+				else:
+					reserva = Reserva.objects.get(idReserva=idReserva)
+			except:
+				pass
+
+			errorFechas = (fechaDevolucion < fechaAlquiler) or (datetime.now() > fechaAlquiler)
+			errorFechaAlquiler = not fechaCorrecta(fechaAlquiler)
+			errorFechaDevolucion = not fechaCorrecta(fechaDevolucion)
+			errorKmInicial = not re.match("^([0-9]{1,6})$",kmInicial)
+			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
+			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
+
+			if (errorFechas or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago):
+				return render_to_response('cierreDatosAlquiler.html', locals(), context_instance = RequestContext(request))
+			
+			datosAlquiler = DatosAlquiler(idDatosAlquiler=idDatosAlquiler, idContrato=contrato, idReserva=reserva, metodoPago=metodoPago, tarifaEstablecida=tarifaEstablecida, tarifaAplicada=tarifaAplicada, fechaAlquiler=fechaAlquiler, fechaDevolucion=fechaDevolucion, totalDias=totalDias, kmInicial=kmInicial, kmFinal=kmFinal, valorAlquiler=valorAlquiler)
+			datosAlquiler.save()
+			request.method = 'GET'
+			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=True)
+		else:
+			try:
+				idDatosAlquiler=request.GET["idDatosAlquiler"]
+				datosAlquiler=DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
+			except:
+				pass
+			metodosPago = parametros["metodosPago"]
+			fechaAlquiler=formatearFecha(datosAlquiler.fechaAlquiler)
+			fechaDevolucion=formatearFecha(datosAlquiler.fechaDevolucion)
+			return render_to_response('cierreDatosAlquiler.html', locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
