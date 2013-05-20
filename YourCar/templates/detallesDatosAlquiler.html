@@ -111,6 +111,11 @@
         	<p>
         		<a class="btn" href="/alquiler">Regresar a Datos de Alquiler</a>
         	</p>
+            <form method="GET" action="/alquiler/cierre/" name="cierreAlquiler">
+                    {% csrf_token %}
+                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
+                    <input type="submit" value="Cerrar Datos de Alquiler" name="cierreAlquiler"/>
+                </form>
         	<form method="POST" action="/alquiler/eliminar/" name="eliminarAlquiler">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">

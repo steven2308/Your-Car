@@ -44,6 +44,7 @@ urlpatterns = patterns('YourCar.alquiler.views',
     url(r'^alquiler/detalles/(?P<idDatosAlquiler>[0-9]{1,9})/$$', 'detallesDatosAlquilerControl', name='vistaDatosAlquiler'),
     url(r'^alquiler/agregar/$', 'agregarDatosAlquilerControl', name='vistaAgregarDatosAlquiler'),
     url(r'^alquiler/eliminar/$', 'eliminarDatosAlquilerControl', name='vistaEliminarDatosAlquiler'),
+    url(r'^alquiler/cierre/$', 'cierreDatosAlquilerControl', name='vistaCierreDatosAlquiler'),
 )
 
 if settings.DEBUG:
