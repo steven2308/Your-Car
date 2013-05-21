@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block titulo %}Agregar una Factura{% endblock %}
+{% block contenido %}
+	{%if errorDatosAlquiler%}
+		<div class="container">
+		<h4>Corrige los siguientes errores para continuar:</h4>
+		<p class="text-error">
+			{% if errorDatosAlquiler %}
+				No se encuentran los datos de alquiler con ese identificador.<br>
+			{% endif %}
+		</p>
+	{% endif %}
+	</div>
+	<div class="container">
+		<form method="POST" action="/facturas/agregar/" name="agregarFacturas">
+				{% csrf_token %}
+				<h3>Ingrese los datos de la factura.</h3>
+				<table class="table-bordered table-striped table-hover">
+					<p>
+						<a class="btn" href="/alquiler/">Ver alquileres</a>
+					</p>
+					<tbody>
+					    <tr>
+					        <td><label>Id Datos Alquiler:</label></td>
+					        <td><input type="text" name="idDatosAlquiler" value="{{idDatosAlquiler}}" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Fecha de factura:</label></td>
+					        <td><input type="date" name="fecha" value="{{fecha}}" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					    	<td><input type="submit" value="Agregar Factura" name="agregarFactura"/></td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>
+		</form>
+	</div>
+{% endblock %}

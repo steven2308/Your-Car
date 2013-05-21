@@ -9,7 +9,7 @@
                 <p class="text-success">Cambios guardados exitosamente.</p>
             {% endif %}
             <p class="text-info">En cada casilla deben ir los posibles parámetros separados por comas, las opciones en listas de elección múltiple deben estar entre comillas simples y separadas por comas ",". Las listas inician y cierran con paréntesis.</p>
-            <p class="text-warning">Solo debes usar tíldes en los textos, nunca en las listas de elección múltiple. Gracias</p>
+            <p class="text-warning">Solo debes usar tíldes en los textos, nunca en las listas de elección múltiple. Nunca cambiar el formato de cada casilla. Gracias</p>
             <table class="table-bordered table-striped table-hover">
                 <tbody>
                    <tr>
@@ -75,6 +75,26 @@
                    <tr>
                        <td><label>Lugares: Costos</label></td>
                        <td><input name="lugaresCostos" value="{{param.lugaresCostos}}" type="text" required="true"></td>
+                   </tr>
+                   <tr>
+                       <td><label>Nombre empresa</label></td>
+                       <td><input name="nombreEmpresa" value="{{param.nombreEmpresa}}" type="text" required="true"></td>
+                   </tr>
+                   <tr>
+                       <td><label>NIT empresa</label></td>
+                       <td><input name="nitEmpresa" value="{{param.nitEmpresa}}" type="text" required="true"></td>
+                   </tr>
+                   <tr>
+                       <td><label>% IVA</label></td>
+                       <td><input name="IVA" value="{{param.IVA}}" type="text" required="true"></td>
+                   </tr>
+                   <tr>
+                       <td><label>Galón de gasolina</label></td>
+                       <td><input name="galonGasolina" value="{{param.galonGasolina}}" type="text" required="true"></td>
+                   </tr>
+                   <tr>
+                       <td><label>Tamaño auto: Valor lavada</label></td>
+                       <td><input name="lavada" value="{{param.lavada}}" type="text" required="true"></td>
                    </tr>
                     <tr>
                           <td><input type="submit" value="Guardar" name="guardarParametros"/>

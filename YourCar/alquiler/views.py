@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
-from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado, DatosAlquiler
+from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado, DatosAlquiler, Factura
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator,EmptyPage,InvalidPage
@@ -839,30 +839,38 @@ def paginar(lista,pagina):
 def parametrizarControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
-			parametros["misionInicio"] = request.POST["misionInicio"]
-			parametros["visionInicio"] = request.POST["visionInicio"]
-			parametros["quienesSomosInicio"] = request.POST["quienesSomosInicio"]
-			parametros["generos"] = request.POST["generos"]
-			parametros["tipoPersonas"] = request.POST["tipoPersonas"]
-			parametros["tipoDocumentos"] = request.POST["tipoDocumentos"]
-			parametros["cajasDeCambios"] = request.POST["cajasDeCambios"]
-			parametros["tipoDeDirecciones"] = request.POST["tipoDeDirecciones"]
-			parametros["estadosVehiculo"] = request.POST["estadosVehiculo"]
-			parametros["tiposTraccion"] = request.POST["tiposTraccion"]
-			parametros["gamas"] = request.POST["gamas"]
-			parametros["tiposMantenimiento"] = request.POST["tiposMantenimiento"]
-			parametros["tiposDeFrenos"] = request.POST["tiposDeFrenos"]
-			parametros["estadosPago"] = request.POST["estadosPago"]
-			parametros["numElementosPorPagina"] = request.POST["numElementosPorPagina"]
-			parametros["lugaresCostos"] = ast.literal_eval(request.POST["lugaresCostos"])
-			exito=True
-			param=parametros
-			newInfo = "parametros = "+str(parametros).replace(': u"',': "').replace('"(','(').replace(')",','),\n').replace(')"}',')}')
-			paramFile=open('YourCar\\alquiler\parametros2.py','a')
-			paramFile.write(newInfo)
-			paramFile.close()
-			os.remove("YourCar\\alquiler\parametros.py")
-			os.rename("YourCar\\alquiler\parametros2.py","YourCar\\alquiler\parametros.py")
+			try:
+				parametros["misionInicio"] = request.POST["misionInicio"]
+				parametros["visionInicio"] = request.POST["visionInicio"]
+				parametros["quienesSomosInicio"] = request.POST["quienesSomosInicio"]
+				parametros["generos"] = request.POST["generos"]
+				parametros["tipoPersonas"] = request.POST["tipoPersonas"]
+				parametros["tipoDocumentos"] = request.POST["tipoDocumentos"]
+				parametros["cajasDeCambios"] = request.POST["cajasDeCambios"]
+				parametros["tipoDeDirecciones"] = request.POST["tipoDeDirecciones"]
+				parametros["estadosVehiculo"] = request.POST["estadosVehiculo"]
+				parametros["tiposTraccion"] = request.POST["tiposTraccion"]
+				parametros["gamas"] = request.POST["gamas"]
+				parametros["tiposMantenimiento"] = request.POST["tiposMantenimiento"]
+				parametros["tiposDeFrenos"] = request.POST["tiposDeFrenos"]
+				parametros["estadosPago"] = request.POST["estadosPago"]
+				parametros["numElementosPorPagina"] = request.POST["numElementosPorPagina"]
+				parametros["lugaresCostos"] = ast.literal_eval(request.POST["lugaresCostos"])
+				parametros["nombreEmpresa"] = request.POST["nombreEmpresa"]
+				parametros["nitEmpresa"] = request.POST["nitEmpresa"]
+				parametros["IVA"] = request.POST["IVA"]
+				parametros["galonGasolina"] = request.POST["galonGasolina"]
+				parametros["lavada"] = ast.literal_eval(request.POST["lavada"])
+				exito=True
+				param=parametros
+				newInfo = "parametros = "+str(parametros).replace(': u"',': "').replace('"(','(').replace(')",','),\n').replace(')"}',')}')
+				paramFile=open('YourCar\\alquiler\parametros2.py','a')
+				paramFile.write(newInfo)
+				paramFile.close()
+				os.remove("YourCar\\alquiler\parametros.py")
+				os.rename("YourCar\\alquiler\parametros2.py","YourCar\\alquiler\parametros.py")
+			except:
+				pass
 			return render_to_response('parametrizar.html', locals(), context_instance = RequestContext(request))
 		else:
 			param=parametros
@@ -902,7 +910,8 @@ def formatearHora(fecha):
 	except:
 		return fecha
 
-def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,vehiculo):
+def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,vehiculo,totalCobrosAdicionales=0):
+	PorcentajeIVA= int(parametros["IVA"])
 	diferencia =  dtFin-dtIni
 	diasReal = diferencia.days
 	dias = diasReal
@@ -923,7 +932,9 @@ def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,vehiculo):
 	limiteKilometraje = vehiculo.limiteKilometraje
 	kmPorHora = math.floor(limiteKilometraje/24)
 	maxKms = limiteKilometraje*dias+kmPorHora*horas
-	total=totalPorDias+totalPorHoras+costoEntrega+costoRecogida
+	total=totalPorDias+totalPorHoras+costoEntrega+costoRecogida+totalCobrosAdicionales
+	iva = total/(1+(PorcentajeIVA/100))
+	subtotal = total-iva
 
 	#formateo resultados
 	costoRecogida = intWithCommas(costoRecogida)
@@ -933,6 +944,8 @@ def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,vehiculo):
 	totalPorDias = intWithCommas(totalPorDias)
 	totalPorHoras = intWithCommas(totalPorHoras)
 	total= intWithCommas(total)
+	iva = intWithCommas(iva)
+	subtotal = intWithCommas(subtotal)
 
 	#guardo todo en un diccionario y lo retorno
 	cotizacion = {}
@@ -1043,8 +1056,6 @@ def agregarContratosControl(request):
 		else:
 			try:
 				idVoucher = request.GET["idVoucher"]
-				voucher = Voucher.objects.get(idVoucher=idVoucher)
-				idCliente = voucher.idCliente
 			except:
 				pass
 			return render_to_response('agregarContrato.html',locals(), context_instance = RequestContext(request))
@@ -1131,7 +1142,7 @@ def mayor21(fecha):
 	diferencia = datetime.now()-fecha
 	return diferencia.days/365 >= 21
 
-def alquileresControl (request,pagina=1,addSuccess=False):
+def alquileresControl (request,pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
 			query = {}
@@ -1265,3 +1276,92 @@ def eliminarDatosAlquilerControl(request):
 		return HttpResponseRedirect('/alquiler')
 	else:
 		return HttpResponseRedirect('/404')
+
+def facturasControl(request,pagina=1):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method=="POST":
+			query = {}
+			if request.POST["ascDesc"]=="True":
+				order = request.POST["orderBy"]
+			else:
+				order = "-"+request.POST["orderBy"]
+			#Tomo los datos
+			idContrato=request.POST["idFactura"]
+			#Los datos que no son vacios los agrego al query
+			if idFactura:
+				query["idFactura"]=idFactura
+			#Si la consulta no es vacia la hago
+			if query:
+				listaFacturas= Factura.objects.filter(**query).order_by(order)
+				filtrados=True
+			else:
+				listaFacturas = Factura.objects.all().order_by(order)
+			contratos=paginar(listaFacturas,pagina)
+			return render_to_response('contratos.html',locals(), context_instance = RequestContext(request))
+		#sino es un post cargo todos
+		listaFacturas = Factura.objects.all()
+		facturas=paginar(listaFacturas,pagina)
+		return render_to_response('facturas.html',locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
+
+def detallesFacturaControl(request,idFactura, addSuccess=False):
+	if request.user.is_authenticated() and request.user.is_staff:
+		return render_to_response('detallesFactura.html',locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
+
+def agregarFacturaControl(request):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			idDatosAlquiler = request.POST["idDatosAlquiler"]
+			fecha = request.POST["fecha"]
+
+			errorDatosAlquiler = False
+			errorContrato = False
+			errorVehiculo = False
+			errorVoucher = False
+			errorCliente = False
+			errorFecha= not fechaCorrecta(fecha)
+			try:
+				datosAlquiler = DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
+			except:
+				errorDatosAlquiler = True
+			try:
+				contrato= datosAlquiler.idContrato
+			except:
+				errorContrato = True
+			try:
+				vehiculo=contrato.idVehiculo
+			except:
+				errorVehiculo = True
+			try:
+				voucher=contrato.idVoucher
+			except:
+				errorVoucher = True
+			try:
+				cliente= voucher.idCliente
+			except:
+				errorCliente = True
+
+
+			#Si hay errores retorno a la pagina
+			if (errorDatosAlquiler or errorContrato or errorVehiculo or errorVoucher or errorCliente or errorFecha):
+				return render_to_response('agregarFactura.html', locals(), context_instance = RequestContext(request))
+
+			#Si no, guardo la factura
+			factura = Factura(idDatosAlquiler = idDatosAlquiler, fecha = fecha)
+			factura.save()
+			request.method="GET"
+			return detallesFacturaControl(request,idDatosAlquiler=factura.idFactura,addSuccess=True)
+		else:
+			try:
+				idVoucher = request.GET["idDatosAlquiler"]
+			except:
+				pass
+			return render_to_response('agregarFactura.html', locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
+
+def agregarCobroControl(request):
+	if request.user.is_authenticated() and request.user.is_staff:
+		pass
+	return HttpResponseRedirect('/404')
+

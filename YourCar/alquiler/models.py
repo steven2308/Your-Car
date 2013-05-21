@@ -147,29 +147,10 @@ class Factura(models.Model):
 	iva = models.IntegerField()
 	total = models.IntegerField()
 
-class Danyo(models.Model):
+class CobroAdicional(models.Model):
 	idFactura = models.ForeignKey(Factura)
-	desripcion = models.CharField(max_length=200)
-	costo = models.IntegerField()
-
-class BaseEncuesta(models.Model):
-	idBaseEncuesta = models.AutoField(primary_key=True)
-	nombreEncuesta = models.CharField(max_length=20)
-
-class BasePregunta(models.Model):
-	idBasePregunta = models.AutoField(primary_key=True)
-	idBaseEncuesta = models.ForeignKey(BaseEncuesta)
-	numPregunta = models.IntegerField()
-	tipo = models.CharField(max_length=10) #Si-No o Rango
-
-class EncuestaResuelta(models.Model):
-	idEncuestaResuelta = models.AutoField(primary_key=True)
-	idBaseEncuesta = models.ForeignKey(BaseEncuesta)
-	fecha = models.DateField()
-	observaciones = models.TextField(blank=True)
-
-class PreguntaResuelta(models.Model):
-	idPreguntaResuelta = models.AutoField(primary_key=True)
-	idEncuestaResuelta = models.ForeignKey(EncuestaResuelta)
-	rptaBool = models.BooleanField()
-	rptaRango = models.IntegerField() #Rango 1 a 5
+	tipo = models.CharField(max_length=20)
+	descripcion = models.CharField(max_length=200)
+	costoUnidad = models.IntegerField()
+	cantidad = models.IntegerField()
+	total = models.IntegerField()

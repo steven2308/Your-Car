@@ -1,0 +1,102 @@
+{%extends "base.html"%}
+{% block titulo %}Facturas{% endblock %}
+{% block contenido %}
+    <div class="container">
+        {% if addSuccess %}
+            <p class="text-info">La factura se agregó exitosamente!</p>
+        {% endif %}
+        {% if filtrados %}
+            <h4>Estás viendo las facturas filtradas y ordenadas:</h4>
+        {% else %}
+    	   <h4>Estás viendo todas las facturas:</h4>
+        {% endif %}
+            <div class="span12">
+                <div class="span4">
+                    <p>Hay en total {{ facturas|length }} factura{{facturas|pluralize}}.</p>
+                </div>
+                <div class="span2">
+                        <a class="btn" href="/facturas/agregar/">Agregar Factura</a>
+                </div>
+            </div>
+        {% if facturas %}
+            <form method="POST" action="/facturas/" name="filtrarFacturas">
+                {% csrf_token %}
+                <h4>Filtrar Por:</h4>
+                <table class="table-bordered table-striped table-hover">
+                    <thead>
+                        <th>Num Factura</th>
+                    </thead>
+                    <tbody>
+                        <td><input type="text" name="idFactura"></td>
+                    </tbody>
+                </table>
+                <div class="span12">
+                    <div class="span4">
+                        <h4>Ordenar por:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Num. Factura</label>
+                                <input id="btnIdFactura" name="orderBy" type="radio" value="idFactura" checked="checked">
+                            </li>
+                            <li>
+                                <label>Fecha</label>
+                                <input id="btnFecha" name="orderBy" type="radio" value="fecha">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4">
+                        <h4>Sentido:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Ascendente</label>
+                                <input id="btnAsc" name="ascDesc" type="radio" value="True" checked="checked">
+                            </li>
+                            <li>
+                                <label>Descendente</label>
+                                <input id="btnDsc" name="ascDesc" type="radio" value="False">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4"></div>
+                </div>
+                <input type="submit" value="Filtrar" name="filtrar"/>
+            </form>
+            <table class="table-bordered table-striped table-hover">
+                <thead>
+                    <th>Num Factura</th>
+                    <th>Id Datos Alquiler</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Vehiculo</th>
+                </thead>
+                <tbody>
+                    {% for f in facturas %}
+                        <tr>
+                            <td><a href="/facturas/detalles/{{f.numFactura}}/">{{c.idFactura}}</a></td>
+                            <td>{{f.datosAlquiler.idDatosAlquiler}}</td>
+                            <td>{{f.fecha}}</td>
+                            <td>{{f.datosAlquiler.contrato.idVoucher.idCliente}}</td>
+                            <td>{{f.datosAlquiler.contrato.idVehiculo}}</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="paginas">
+                <a href="/facturas/pag/1/"> Primera </a>
+                {% if facturas.has_previous %}
+                    <a href="/facturas/pag/{{facturas.previous_page_number}}/"> Anterior </a>
+                {% endif %}
+                {% if facturas.has_next %}
+                    <a href="/facturas/pag/{{facturas.next_page_number}}/"> Siguiente </a>
+                {% endif %}
+                <a href="/facturas/pag/{{facturas.paginator.num_pages}}"> Última </a>
+                <br>
+                <strong>Página {{facturas.number}} de {{facturas.paginator.num_pages}}</strong>
+            </div>
+    	{% elif filtrados%}
+    	    <p>No hay ningún factura con las características que buscas, intenta menos parámetros.</p>
+            <a class="btn" href="/facturas/">Ver todos</a>
+        {% else %}
+            <p>No hay ningún factura.</p>
+    	{% endif %}
+    </div>
+{% endblock %}

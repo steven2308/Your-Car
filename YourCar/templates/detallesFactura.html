@@ -1,0 +1,106 @@
+{%extends "base.html"%}
+{% block titulo %}Detalles de Contrato {{contrato.idContrato}}{% endblock %}
+{% block contenido %}
+    <div class="container">
+        <div class="span12">
+            <div class="span8">
+                <table class="table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Factura No: {{factura.idFactura}}</th>
+                            <th>{{nombreEmpresa}}</th>
+                            <th>Nit: {{parametros.nit}}</th>
+                        </tr>
+                        <tr>
+                            <th>Cliente:</th>
+                            <th>{{user.first_name}} {{user.last_name}}</th>
+                            <th>Identificación: {{cliente.numIdentificacion}}</th>
+                        </tr>
+                        <tr>
+                            <th>Item</th>
+                            <th>Descripción</th>
+                            <th>Precio Unidad</th>
+                            <th>Unidades</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Días</td>
+                            <td></td>
+                            <td>{{cotizacion.dias}}</td>
+                            <td>{{cotizacion.tarifaDia}}</td>
+                            <td>{{cotizacion.totalPorDias}}</td>
+                        </tr>
+                        <tr>
+                            <td>Horas</td>
+                            <td></td>
+                            <td>{{cotizacion.horas}}</td>
+                            <td>{{cotizacion.tarifaHora}}</td>
+                            <td>{{cotizacion.totalPorHoras}}</td>
+                        </tr>
+                        {% if costoRecogida %}
+                            <tr>
+                                <td>Recogida</td>
+                                <td>{{lugarRecogida}}</td>
+                                <td></td>
+                                <td></td>
+                                <td>{{costoRecogida}}</td>
+                            </tr>
+                        {% endif %}
+                        {% if costoEntrega %}
+                            <tr>
+                                <td>Entrega</td>
+                                <td>{{lugarEntrega}}</td>
+                                <td></td>
+                                <td></td>
+                                <td>{{costoEntrega}}</td>
+                            </tr>
+                        {% endif %}
+                        {% for c in cobrosAdicionales %}
+                            <tr>
+                                <td>{{c.tipo}}</td>
+                                <td>{{c.descripcion}}</td>
+                                <td>{{c.costoUnidad}}</td>
+                                <td>{{c.cantidad}}</td>
+                                <td>{{c.total}}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Subtotal</td>
+                            <td>{{cotizacion.subtotal}}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>IVA ({{parametros.IVA}}%)</td>
+                            <td>{{cotizacion.iva}}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Total</td>
+                            <td>{{cotizacion.total}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            </div>
+            <div class="span2">
+                <p>
+                    <a class="btn" href="/facturas">Regresar a Facturas</a>
+                </p>
+                <form method="GET" action="/facturas/agregarCobro/" name="agregarCobro">
+                    {% csrf_token %}
+                    <input name="idFactura" value="{{idFactura}}" type="hidden">
+                    <input class="btn" type="submit" value="Agregar Cobro" name="agregarCobro"/>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
