@@ -2,6 +2,11 @@
 {% block titulo %}Detalles de Contrato {{contrato.idContrato}}{% endblock %}
 {% block contenido %}
     <div class="container">
+        <p class="text-success">
+            {% if addSuccess %}
+                Los datos de alquiler se agregaron exitosamente. <br>
+            {% endif %}
+        </p>
         <div class="span4">
         	<table class="table-bordered table-striped table-hover">
                     <tbody>
@@ -104,17 +109,52 @@
                             <td>Tarifa</td>
                             <td>{{vehiculo.tarifa}}</td>
                         </tr>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+                {%if cierre %}
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <h4>Registro Cambios.</h4>
+                        <tr>
+                            <td>Metodo de pago:</td>
+                            <td>{{registroCierre.metodoPago}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tarifa aplicada:</td>
+                            <td>{{registroCierre.tarifaAplicada}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha alquiler:</td>
+                            <td>{{registroCierre.fechaAlquiler}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha devolucion:</td>
+                            <td>{{registroCierre.fechaDevolucion}}</td>
+                        </tr>
+                        <tr>
+                            <td>Kilometraje final:</td>
+                            <td>{{registroCierre.kmFinal}}</td>
+                        </tr>
+                        <tr>
+                            <td>Total dias:</td>
+                            <td>{{registroCierre.totalDias}}</td>
+                        </tr>
+                        <tr>
+                            <td>Valor alquiler:</td>
+                            <td>{{registroCierre.valorAlquiler}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% endif %}
         </div>
         <div class="span5">
         	<p>
         		<a class="btn" href="/alquiler">Regresar a Datos de Alquiler</a>
         	</p>
-        	<form method="POST" action="/alquiler/eliminar/" name="eliminarAlquiler">
+            <form method="GET" action="/alquiler/cierre/" name="cierreAlquiler">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
-                    <input class="btn btn-danger" type="submit" value="Eliminar estos Datos de Alquiler" name="eliminarDatosAlquiler" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
+                    <input type="submit" value="Cerrar Datos de Alquiler" name="cierreAlquiler"/>
                 </form>
         </div>
     </div>

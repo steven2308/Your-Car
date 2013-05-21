@@ -86,6 +86,7 @@ class Voucher(models.Model):
 	fechaVencTarjeta = models.DateField()
 	codigoVerifTarjeta = models.CharField(max_length=5)
 	nombreBanco = models.CharField(max_length=20)
+	franquicia = models.CharField(max_length=20)
 	def __unicode__(self):
 		return "Voucher codigo: %s" %(self.codigoAutorizacion)
 
@@ -93,7 +94,8 @@ class Contrato(models.Model):
 	idContrato = models.AutoField(primary_key=True)
 	idVehiculo = models.ForeignKey(Vehiculo)
 	idVoucher = models.ForeignKey(Voucher)
-	fecha = models.DateField()
+	fechaInicio = models.DateTimeField()
+	fechaFin = models.DateTimeField()
 	def __unicode__(self):
 		return "Contrato de %s Vehiculo:  %s" %((self.idVoucher),unicode(self.idVehiculo))
 
@@ -135,21 +137,19 @@ class Factura(models.Model):
 	numFactura = models.AutoField(primary_key=True)
 	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
 	fecha = models.DateField()
-	referenciaServicio = models.CharField(max_length=20)
-	#Tabla de servicios? Yo creo que si
-	descripcionServicio = models.CharField(max_length=40)
-	valorServicio = models.IntegerField()
-	horasAdicionales = models.IntegerField()
-	valorUnitario = models.IntegerField()
+	tarifa = models.IntegerField()
+	limiteKilometraje = models.IntegerField()
 	galonesGasolina = models.IntegerField()
-	costoTotalgasolina = models.IntegerField()
-	subtotal = models.IntegerField()
-	iva = models.IntegerField()
-	total = models.IntegerField()
+	costoGalon = models.IntegerField()
+	costoLavada = models.IntegerField()
+	porcentajeIVA = models.IntegerField()
+	# subtotal = models.IntegerField()
+	# iva = models.IntegerField()
+	# total = models.IntegerField()
 
 class CobroAdicional(models.Model):
 	idFactura = models.ForeignKey(Factura)
-	tipo = models.CharField(max_length=20)
+	servicio = models.CharField(max_length=20)
 	descripcion = models.CharField(max_length=200)
 	costoUnidad = models.IntegerField()
 	cantidad = models.IntegerField()

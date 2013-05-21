@@ -43,6 +43,7 @@
 				<th>Fecha Vencimiento Tarjeta</th>
                 <th>Código Verificación Tarjeta</th>
                 <th>Nombre Banco</th>
+                <th>Franquicia</th>
     		</thead>
     		<tbody>
     			{% for v in vouchers%}
@@ -54,6 +55,7 @@
     					<td>{{v.fechaVencTarjeta}}</td>
                         <td>{{v.codigoVerifTarjeta}}</td>
                         <td>{{v.nombreBanco}}</td>
+                        <td>{{v.franquicia}}</td>
     				</tr>
     			{% endfor %}
     		</tbody>

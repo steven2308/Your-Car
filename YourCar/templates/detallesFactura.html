@@ -2,6 +2,11 @@
 {% block titulo %}Detalles de Contrato {{contrato.idContrato}}{% endblock %}
 {% block contenido %}
     <div class="container">
+        <p class="text-success">
+            {% if addSuccess %}
+                La factura se agregó exitosamente. <br>
+            {% endif %}
+        </p>
         <div class="span12">
             <div class="span8">
                 <table class="table-bordered table-striped table-hover">
@@ -17,6 +22,7 @@
                             <th>Identificación: {{cliente.numIdentificacion}}</th>
                         </tr>
                         <tr>
+                            <th>ID servicio</th>
                             <th>Item</th>
                             <th>Descripción</th>
                             <th>Precio Unidad</th>
@@ -26,6 +32,7 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>servicios.Alquiler</td>
                             <td>Días</td>
                             <td></td>
                             <td>{{cotizacion.dias}}</td>
@@ -33,32 +40,56 @@
                             <td>{{cotizacion.totalPorDias}}</td>
                         </tr>
                         <tr>
+                            <td>servicios.Alquiler</td>
                             <td>Horas</td>
                             <td></td>
                             <td>{{cotizacion.horas}}</td>
                             <td>{{cotizacion.tarifaHora}}</td>
                             <td>{{cotizacion.totalPorHoras}}</td>
                         </tr>
-                        {% if costoRecogida %}
+                        {% if cobrarRecogida %}
                             <tr>
+                                <td>servicios.Recogida</td>
                                 <td>Recogida</td>
                                 <td>{{lugarRecogida}}</td>
                                 <td></td>
                                 <td></td>
-                                <td>{{costoRecogida}}</td>
+                                <td>{{cotizacion.costoRecogida}}</td>
                             </tr>
                         {% endif %}
-                        {% if costoEntrega %}
+                        {% if cobrarEntrega %}
                             <tr>
+                                <td>servicios.Entrega</td>
                                 <td>Entrega</td>
                                 <td>{{lugarEntrega}}</td>
                                 <td></td>
                                 <td></td>
-                                <td>{{costoEntrega}}</td>
+                                <td>{{cotizacion.costoEntrega}}</td>
+                            </tr>
+                        {% endif %}
+                        {% if cobrarGasolina %}
+                             <tr>
+                                <td>servicios.Gasolina</td>
+                                <td>Gasolina</td>
+                                 <td></td>
+                                <td>{{factura.galonesGasolina}}</td>
+                                <td>{{cotizacion.costoGalon}}</td>
+                                <td>{{cotizacion.totalPorGasolina}}</td>
+                            </tr>
+                        {% endif %}
+                        {% if cobrarLavada %}
+                             <tr>
+                                <td>servicios.Lavada</td>
+                                <td>Lavada</td>
+                                 <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{cotizacion.costoLavada}}</td>
                             </tr>
                         {% endif %}
                         {% for c in cobrosAdicionales %}
                             <tr>
+                                <td>{{c.servicio}}</td>
                                 <td>{{c.tipo}}</td>
                                 <td>{{c.descripcion}}</td>
                                 <td>{{c.costoUnidad}}</td>
@@ -77,7 +108,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td>IVA ({{parametros.IVA}}%)</td>
+                            <td>IVA ({{factura.porcentajeIVA}}%)</td>
                             <td>{{cotizacion.iva}}</td>
                         </tr>
                         <tr>

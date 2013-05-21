@@ -2,9 +2,6 @@
 {% block titulo %}Datos Alquiler{% endblock %}
 {% block contenido %}
     <div class="container">
-        {% if addSuccess %}
-            <p class="text-info">Datos de Alquiler agregados exitosamente</p>
-        {% endif %}
         {% if filtrados %}
             <h4>Estás viendo los contratos filtrados y ordenados:</h4>
         {% else %}
@@ -13,9 +10,6 @@
             <div class="span12">
                 <div class="span4">
                     <p>Hay en total {{ listadatosalquiler|length }} datos de alquiler{{listadatosalquiler|pluralize}}.</p>
-                </div>
-                <div class="span2">
-                        <a class="btn" href="/alquiler/agregar/">Agregar Datos de Alquiler</a>
                 </div>
             </div>
         {% if listadatosalquiler %}

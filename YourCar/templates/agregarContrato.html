@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar Contrato{% endblock %}
 {% block contenido %}
-	{%if errorIdCliente or errorIdVoucher or errorIdVehiculo or errorFecha%}
+	{%if errorIdCliente or errorIdVoucher or errorIdVehiculo or errorFechas or errorFormatoFechas or errorHoras%}
 		<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -14,8 +14,14 @@
 			{% if errorIdVehiculo %}
 				No tenemos en nuestro inventario este vehículo.<br>
 			{% endif %}
-			{% if errorFecha %}
-				El formato de fecha no es correcto, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
+			{% if errorFechas %}
+				La fecha de inicio debe ser menor a la de fin y debe ser mayor a la fecha actual.<br>
+            {% endif %}
+            {% if errorFormatoFechas %}
+				Una o mas fechas no son correctas, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
+			{% endif %}
+			{% if errorHoras %}
+                La hora no es correcta, si tu navegador no muestra el formato de hora por favor ingresalo de esta forma: hh:mm:x.m.<br>
             {% endif %}
 		</p>
 	</div>
@@ -39,9 +45,21 @@
 					        <td><input type="text" name="idVoucher" value="{{idVoucher}}" required="true" pattern="[0-9]{1,9}"/>*</td>
 					    </tr>
 					    <tr>
-					        <td><label>Fecha del contrato:</label></td>
-					        <td><input type="date" name="fecha" value="{{fecha}}" required="true"/>*</td>
+					        <td><label>Fecha de Inicio:</label></td>
+					        <td><input type="date" name="fechaInicio" value="{{fechaInicio}}" required="true"/>*</td>
 					    </tr>
+					    <tr>
+					    	<td><label>Hora Inicio:</label></td>
+							<td><input type="time" name="horaInicio" value="{{horaInicio}}" required="true"/>*</td>
+						</tr>
+					    <tr>
+					        <td><label>Fecha Fin:</label></td>
+					        <td><input type="date" name="fechaFin" value="{{fechaFin}}" required="true"/>*</td>
+					    </tr>
+						<tr>
+							<td><label>Hora Fin:</label></td>
+							<td><input type="time" name="horaFin" value="{{horaFin}}" required="true"/>*</td>
+						</tr>
 					    <tr>
 					    	<td><input type="submit" value="Crear contrato" name="agregarReserva"/></td>
 						</tr>

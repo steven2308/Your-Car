@@ -26,55 +26,56 @@
                    </tr>
                    <tr>
                        <td><label>Géneros (Registro cliente)</label></td>
-                       <td><input name="generos" value="{{param.generos}}" type="text" required="true"></td>
+                       <td><input name="generos" value="{{param.generos}}" type="text" required="true" 
+                        pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Tipos de Persona (Registro cliente)</label></td>
-                       <td><input name="tipoPersonas" value="{{param.tipoPersonas}}" type="text" required="true"></td>
+                       <td><input name="tipoPersonas" value="{{param.tipoPersonas}}" type="text" required="true" pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Tipos de Documento (Registro cliente)</label></td>
-                       <td><input name="tipoDocumentos" value="{{param.tipoDocumentos}}" type="text" required="true"></td>
+                       <td><input name="tipoDocumentos" value="{{param.tipoDocumentos}}" type="text" required="true" pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Cajas de cambio (Vehículos)</label></td>
-                       <td><input name="cajasDeCambios" value="{{param.cajasDeCambios}}" type="text" required="true"></td>
+                       <td><input name="cajasDeCambios" value="{{param.cajasDeCambios}}" type="text" required="true" pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Tipos de Dirección (Vehículos)</label></td>
-                       <td><input name="tipoDeDirecciones" value="{{param.tipoDeDirecciones}}" type="text" required="true"></td>
+                       <td><input name="tipoDeDirecciones" value="{{param.tipoDeDirecciones}}" type="text" required="true" pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Estados (Vehículos)</label></td>
-                       <td><input name="estadosVehiculo" value="{{param.estadosVehiculo}}" type="text" required="true"></td>
+                       <td><input name="estadosVehiculo" value="{{param.estadosVehiculo}}" type="text" required="true" pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Tipos de Tracción (Vehículos)</label></td>
-                       <td><input name="tiposTraccion" value="{{param.tiposTraccion}}" type="text" required="true"></td>
+                       <td><input name="tiposTraccion" value="{{param.tiposTraccion}}" type="text" required="true" pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Gamas (Vehículos)</label></td>
-                       <td><input name="gamas" value="{{param.gamas}}" type="text" required="true"></td>
+                       <td><input name="gamas" value="{{param.gamas}}" type="text" required="true" pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Tipos de Mantenimento (Historial de Mantenimiento)</label></td>
-                       <td><input name="tiposMantenimiento" value="{{param.tiposMantenimiento}}" type="text" required="true"></td>
+                       <td><input name="tiposMantenimiento" value="{{param.tiposMantenimiento}}" type="text" required="true" pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Tipos de Frenos (Vehículos)</label></td>
-                       <td><input name="tiposDeFrenos" value="{{param.tiposDeFrenos}}" type="text" required="true"></td>
+                       <td><input name="tiposDeFrenos" value="{{param.tiposDeFrenos}}" type="text" required="true" pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Estados de pago (Reservas)</label></td>
-                       <td><input name="estadosPago" value="{{param.estadosPago}}" type="text" required="true"></td>
+                       <td><input name="estadosPago" value="{{param.estadosPago}}" type="text" required="true" pattern="\(('(\w| |\.)*')(, '(\w| |\.)*')*\)"></td>
                    </tr>
                    <tr>
                        <td><label>Número de elementos Listados por página</label></td>
-                       <td><input name="numElementosPorPagina" value="{{param.numElementosPorPagina}}" type="text" required="true"></td>
+                       <td><input name="numElementosPorPagina" value="{{param.numElementosPorPagina}}" type="text" required="true" pattern="\d+"></td>
                    </tr>
                    <tr>
                        <td><label>Lugares: Costos</label></td>
-                       <td><input name="lugaresCostos" value="{{param.lugaresCostos}}" type="text" required="true"></td>
+                       <td><input name="lugaresCostos" value="{{param.lugaresCostos}}" type="text" required="true" pattern="\{('\w+': \d+)(, '\w+': \d+)*\}"></td>
                    </tr>
                    <tr>
                        <td><label>Nombre empresa</label></td>
@@ -86,15 +87,19 @@
                    </tr>
                    <tr>
                        <td><label>% IVA</label></td>
-                       <td><input name="IVA" value="{{param.IVA}}" type="text" required="true"></td>
+                       <td><input name="IVA" value="{{param.IVA}}" type="text" required="true" pattern="\d+"></td>
                    </tr>
                    <tr>
                        <td><label>Galón de gasolina</label></td>
-                       <td><input name="galonGasolina" value="{{param.galonGasolina}}" type="text" required="true"></td>
+                       <td><input name="galonGasolina" value="{{param.galonGasolina}}" type="text" required="true" pattern="\d+"></td>
                    </tr>
                    <tr>
                        <td><label>Tamaño auto: Valor lavada</label></td>
-                       <td><input name="lavada" value="{{param.lavada}}" type="text" required="true"></td>
+                       <td><input name="lavada" value="{{param.lavada}}" type="text" required="true" pattern="\{('\w+': \d+)(, '\w+': \d+)*\}"></td>
+                   </tr>
+                   <tr>
+                       <td><label>Servicios: Id</label></td>
+                       <td><input name="servicios" value="{{param.servicios}}" type="text" required="true", pattern="\{('\w+': \d+)(, '\w+': \d+)*\}"></td>
                    </tr>
                     <tr>
                           <td><input type="submit" value="Guardar" name="guardarParametros"/>
