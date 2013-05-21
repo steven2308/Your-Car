@@ -1131,6 +1131,10 @@ def mayor21(fecha):
 	diferencia = datetime.now()-fecha
 	return diferencia.days/365 >= 21
 
+#km inicial no es un dato obligatorio, se asume por defecto que es 0 si no esta presente como dato en el auto?
+#cual es la diferencia entre valorAlquiler y total dias?
+#si se actualiza de nuevo la pagina despues del cierre, se borran los cambios
+#si ocurre un error en el formulario de cierre, no se cargan de nuevo ningun dato ya ingresado
 def alquileresControl (request,pagina=1,addSuccess=False):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
@@ -1169,17 +1173,10 @@ def agregarDatosAlquilerControl(request):
 		if request.method == 'POST':
 			idContrato = request.POST["idContrato"]
 			metodoPago = request.POST["metodoPago"]
-			tarifaEstablecida = request.POST["tarifaEstablecida"]
 			tarifaAplicada = request.POST["tarifaAplicada"]
 			fechaAlquiler = request.POST["fechaAlquiler"]
-			fechaDevolucion = request.POST["fechaDevolucion"] #que pasa si en el cierre la fecha de devolucion es distinta?
-			totalDias = request.POST["totalDias"] #revisar cotizacion
-			kmInicial = request.POST["kmInicial"]
-			#kmFinal = 10
-			#cierre=False
-			#if cierre: 
+			fechaDevolucion = request.POST["fechaDevolucion"]
 			kmFinal = request.POST["kmFinal"]
-			valorAlquiler = request.POST["valorAlquiler"]
 
 			if request.POST["idReserva"]: 
 				idReserva = request.POST["idReserva"]
@@ -1195,6 +1192,10 @@ def agregarDatosAlquilerControl(request):
 				contrato = Contrato.objects.get(idContrato=idContrato)
 			except:
 				errorIdContrato=True
+
+			kmInicial = contrato.idVehiculo.kilometraje
+			tarifaEstablecida = contrato.idVehiculo.tarifa
+
 			try:
 				if idReserva == None:
 					reserva = None
@@ -1214,12 +1215,21 @@ def agregarDatosAlquilerControl(request):
 			except:
 				pass
 
-			errorFechas = (fechaDevolucion < fechaAlquiler) or (datetime.now() > fechaAlquiler)
+			errorFechas = (fechaDevolucion < fechaAlquiler) #or (datetime.now() > fechaAlquiler)
 			errorFechaAlquiler = not fechaCorrecta(fechaAlquiler)
 			errorFechaDevolucion = not fechaCorrecta(fechaDevolucion)
-			errorKmInicial = not re.match("^([0-9]{1,6})$",kmInicial)
+			#errorKmInicial = not re.match("^([0-9]{1,6})$",kmInicial)
+			errorKmInicial = False
 			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
 			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
+
+			fechaAlq = datetime.strptime(fechaAlquiler+" "+"00:00", '%Y-%m-%d %H:%M')
+			fechaDev = datetime.strptime(fechaDevolucion+" "+"00:00", '%Y-%m-%d %H:%M')
+			diferencia = fechaDev-fechaAlq
+			diasReal = diferencia.days
+			dias = diasReal
+			totalDias=dias
+			valorAlquiler=dias*tarifaAplicada
 
 			if (errorIdContrato or errorIdContratoExists or errorIdReserva or errorFechas or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago):
 				return render_to_response('agregarDatosAlquiler.html', locals(), context_instance = RequestContext(request))
@@ -1232,6 +1242,8 @@ def agregarDatosAlquilerControl(request):
 			try:
 				idContrato =  request.GET["idContrato"]
 				contrato = Contrato.objects.get(idContrato=idContrato)
+				tarifaEstablecida = contrato.idVehiculo.tarifa
+				kmInicial = contrato.idVehiculo.kilometraje
 			except:
 				pass
 			metodosPago = parametros["metodosPago"]
@@ -1239,7 +1251,7 @@ def agregarDatosAlquilerControl(request):
 	else:
 		return HttpResponseRedirect('/404')
 
-def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
+def detallesDatosAlquilerControl(request, idDatosAlquiler, datosAlquilerOriginal=None, addSuccess=False):
 	if request.user.is_authenticated() and request.user.is_staff:
 		try:
 			datosAlquiler = DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
@@ -1247,6 +1259,32 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 			vehiculo = contrato.idVehiculo
 		except:
 			return HttpResponseRedirect('/alquiler')
+		registroCierre={}
+		registroCierre["metodoPago"]="Ningun cambio"
+		registroCierre["tarifaAplicada"]="Ningun cambio"
+		registroCierre["fechaAlquiler"]="Ningun cambio"
+		registroCierre["fechaDevolucion"]="Ningun cambio"
+		registroCierre["kmFinal"]="Ningun cambio"
+		registroCierre["totalDias"]="Ningun cambio"
+		registroCierre["valorAlquiler"]="Ningun cambio"
+
+		if datosAlquilerOriginal:
+			cierre=True
+			if datosAlquilerOriginal.metodoPago != datosAlquiler.metodoPago:
+				registroCierre["metodoPago"]="cambio de "+datosAlquilerOriginal.metodoPago+" a "+datosAlquiler.metodoPago
+			if datosAlquilerOriginal.tarifaAplicada != datosAlquiler.tarifaAplicada:
+				registroCierre["tarifaAplicada"]="cambio de %i a %i" % (datosAlquilerOriginal.tarifaAplicada, datosAlquiler.tarifaAplicada)
+			if datosAlquilerOriginal.fechaAlquiler != datosAlquiler.fechaAlquiler:
+				registroCierre["fechaAlquiler"]="cambio de "+datosAlquilerOriginal.fechaAlquiler.strftime("%Y-%m-%d %H:%M")+" a "+datosAlquiler.fechaAlquiler.strftime("%Y-%m-%d %H:%M")
+			if datosAlquilerOriginal.fechaDevolucion != datosAlquiler.fechaDevolucion:
+				registroCierre["fechaDevolucion"]="cambio de "+datosAlquilerOriginal.fechaDevolucion+" a "+datosAlquiler.fechaDevolucion
+			if datosAlquilerOriginal.kmFinal != datosAlquiler.kmFinal:
+				registroCierre["kmFinal"]="cambio de %i a %i" % (datosAlquilerOriginal.kmFinal, datosAlquiler.kmFinal)
+			if datosAlquilerOriginal.totalDias != datosAlquiler.totalDias:
+				registroCierre["totalDias"]="cambio de %i a %i" % (datosAlquilerOriginal.totalDias, datosAlquiler.totalDias)
+			if datosAlquilerOriginal.valorAlquiler != datosAlquiler.valorAlquiler:
+				registroCierre["valorAlquiler"]="cambio de %i a %i" % (datosAlquilerOriginal.valorAlquiler, datosAlquiler.valorAlquiler)
+
 		return render_to_response('detallesDatosAlquiler.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
 
@@ -1267,13 +1305,13 @@ def cierreDatosAlquilerControl(request):
 		if request.method == 'POST':
 			idDatosAlquiler = request.POST["idDatosAlquiler"]
 			idContrato = request.POST["idContrato"]
-			metodoPago = request.POST["metodoPago"]
+			metodoPago = request.POST["metodoPago"] #c
 			tarifaEstablecida = request.POST["tarifaEstablecida"]
-			tarifaAplicada = request.POST["tarifaAplicada"]
-			fechaAlquiler = request.POST["fechaAlquiler"]
-			fechaDevolucion = request.POST["fechaDevolucion"]
-			totalDias = request.POST["totalDias"]
+			tarifaAplicada = request.POST["tarifaAplicada"] #c
+			fechaAlquiler = request.POST["fechaAlquiler"] #c
+			fechaDevolucion = request.POST["fechaDevolucion"] #c
 			kmInicial = request.POST["kmInicial"]
+			kmFinal = request.POST["kmFinal"] #c
 
 			if request.POST["idReserva"]: 
 				idReserva = request.POST["idReserva"]
@@ -1292,20 +1330,30 @@ def cierreDatosAlquilerControl(request):
 			except:
 				pass
 
-			errorFechas = (fechaDevolucion < fechaAlquiler) or (datetime.now() > fechaAlquiler)
+			errorFechas = (fechaDevolucion < fechaAlquiler) #or (datetime.now() > fechaAlquiler)
 			errorFechaAlquiler = not fechaCorrecta(fechaAlquiler)
 			errorFechaDevolucion = not fechaCorrecta(fechaDevolucion)
 			errorKmInicial = not re.match("^([0-9]{1,6})$",kmInicial)
 			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
 			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
 
+			fechaAlq = datetime.strptime(fechaAlquiler+" "+"00:00", '%Y-%m-%d %H:%M') #revisar, siempre es a media noche
+			fechaDev = datetime.strptime(fechaDevolucion+" "+"00:00", '%Y-%m-%d %H:%M')
+			diferencia = fechaDev-fechaAlq
+			diasReal = diferencia.days
+			dias = diasReal
+			totalDias=dias #c
+			valorAlquiler=dias*tarifaAplicada #c
+
 			if (errorFechas or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago):
 				return render_to_response('cierreDatosAlquiler.html', locals(), context_instance = RequestContext(request))
 			
+			datosAlquilerOriginal = DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
+
 			datosAlquiler = DatosAlquiler(idDatosAlquiler=idDatosAlquiler, idContrato=contrato, idReserva=reserva, metodoPago=metodoPago, tarifaEstablecida=tarifaEstablecida, tarifaAplicada=tarifaAplicada, fechaAlquiler=fechaAlquiler, fechaDevolucion=fechaDevolucion, totalDias=totalDias, kmInicial=kmInicial, kmFinal=kmFinal, valorAlquiler=valorAlquiler)
 			datosAlquiler.save()
 			request.method = 'GET'
-			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=True)
+			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, datosAlquilerOriginal=datosAlquilerOriginal, addSuccess=True)
 		else:
 			try:
 				idDatosAlquiler=request.GET["idDatosAlquiler"]

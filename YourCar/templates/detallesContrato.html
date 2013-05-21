@@ -135,6 +135,11 @@
                     <input name="idContrato" value="{{contrato.idContrato}}" type="hidden">
                     <input class="btn" type="submit" value="Agregar Cliente como Conductor" name="agregarClienteConductor"/>
                 </form>
+                <form method="GET" action="/alquiler/agregar/" name="agregarDatosAlquiler">
+                    {% csrf_token %}
+                    <input name="idContrato" value="{{contrato.idContrato}}" type="hidden">
+                    <input class="btn" type="submit" value="Agregar Datos Alquiler" name="agregarDatosAlquiler"/>
+                </form>
                 <form method="POST" action="/contratos/eliminar/" name="eliminarVehiculo">
                     {% csrf_token %}
                     <input name="idContrato" value="{{contrato.idContrato}}" type="hidden">

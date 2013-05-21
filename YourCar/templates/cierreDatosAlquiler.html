@@ -34,11 +34,17 @@
 					<tbody>
 						<tr>
 					        <td><label>ID Contrato:</label></td>
-					        <td><input type="text" name="idContrato" value="{{datosAlquiler.idContrato.idContrato}}" required="true" pattern="[1-9]{1,5}" disabled=True/>*</td>
+					        <td>{{datosAlquiler.idContrato.idContrato}}</td>
+					        <td><input type="hidden" name="idContrato" value="{{datosAlquiler.idContrato.idContrato}}" required="true" pattern="[1-9]{1,5}"/></td>
 					    </tr>
 					    <tr>
 					        <td><label>ID Reserva:</label></td>
-					        <td><input type="text" name="idReserva" {% if datosAlquiler.idReserva != None %} value="{{datosAlquiler.idReserva.idReserva}}" {% endif %} disabled=True/></td>
+					        {%if datosAlquiler.idReserva != None %}
+					        <td>{{datosAlquiler.idReserva}}</td>
+					        {% else %}
+					        <td></td>
+					        {% endif %}
+					        <td><input type="hidden" name="idReserva" {% if datosAlquiler.idReserva != None %} value="{{datosAlquiler.idReserva.idReserva}}" {% endif %}/></td>
 					    </tr>
 					    <tr>
 					        <td><label>Metodo de pago:</label></td>
@@ -55,7 +61,8 @@
 					    </tr>
 					    <tr>
 					        <td><label>Tarifa Establecida:</label></td>
-					        <td><input type="text" name="tarifaEstablecida" required="true" value="{{datosAlquiler.tarifaEstablecida}}"/>*</td>
+					        <td>{{datosAlquiler.tarifaEstablecida}}</td>
+					        <td><input type="hidden" name="tarifaEstablecida" required="true" value="{{datosAlquiler.tarifaEstablecida}}"/></td>
 					    </tr>
 					    <tr>
 					        <td><label>Tarifa Aplicada:</label></td>
@@ -70,20 +77,13 @@
 					        <td><input type="date" name="fechaDevolucion" required="true" value="{{fechaDevolucion}}"/>*</td>
 					    </tr>
 					    <tr>
-					        <td><label>Total Dias:</label></td>
-					        <td><input type="text" name="totalDias" required="true" value="{{datosAlquiler.totalDias}}"/>*</td>
-					    </tr>
-					    <tr>
 					        <td><label>Kilometraje Inicial:</label></td>
-					        <td><input type="text" name="kmInicial" required="true" value="{{datosAlquiler.kmInicial}}" pattern="[0-9]{1,6}"/>*</td>
+					        <td>{{datosAlquiler.kmInicial}}</td>
+					        <td><input type="hidden" name="kmInicial" required="true" value="{{datosAlquiler.kmInicial}}" pattern="[0-9]{1,6}"/></td>
 					    </tr>
 					    <tr>
 					        <td><label>Kilometraje Final:</label></td>
 					        <td><input type="text" name="kmFinal"  required="true" value="{{datosAlquiler.kmFinal}}" pattern="[0-9]{1,6}"/>*</td>
-					    </tr>
-					    <tr>
-					        <td><label>Valor Alquiler:</label></td>
-					        <td><input type="text" name="valorAlquiler" value="{{datosAlquiler.valorAlquiler}}" required="true"/>*</td>
 					    </tr>
 					    <tr>
 					    	<td><input type="hidden" name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" required="true"/>*</td>

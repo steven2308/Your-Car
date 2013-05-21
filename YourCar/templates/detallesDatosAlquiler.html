@@ -104,8 +104,43 @@
                             <td>Tarifa</td>
                             <td>{{vehiculo.tarifa}}</td>
                         </tr>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+                {%if cierre %}
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <h4>Registro Cambios.</h4>
+                        <tr>
+                            <td>Metodo de pago:</td>
+                            <td>{{registroCierre.metodoPago}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tarifa aplicada:</td>
+                            <td>{{registroCierre.tarifaAplicada}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha alquiler:</td>
+                            <td>{{registroCierre.fechaAlquiler}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha devolucion:</td>
+                            <td>{{registroCierre.fechaDevolucion}}</td>
+                        </tr>
+                        <tr>
+                            <td>Kilometraje final:</td>
+                            <td>{{registroCierre.kmFinal}}</td>
+                        </tr>
+                        <tr>
+                            <td>Total dias:</td>
+                            <td>{{registroCierre.totalDias}}</td>
+                        </tr>
+                        <tr>
+                            <td>Valor alquiler:</td>
+                            <td>{{registroCierre.valorAlquiler}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% endif %}
         </div>
         <div class="span5">
         	<p>
