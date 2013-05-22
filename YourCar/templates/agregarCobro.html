@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block titulo %}Agregar Cobro{% endblock %}
+{% block contenido %}
+	{%if errorNumFactura or errorServicio or errorNumeros or errorDescripcion%}
+		<div class="container">
+		<h4>Corrige los siguientes errores para continuar:</h4>
+		<p class="text-error">
+			{% if errorNumFactura %}
+				No se encuentra el número de factura solicitado. <br>
+			{% endif %}
+			{% if errorServicio %}
+				El servicio debe seleccionarse de la lista.<br>
+			{% endif %}
+			{% if errorNumeros %}
+				El costo por unidad o la cantidad tienen un formato incorrecto o son demasiado largos.<br>
+			{% endif %}
+			{% if errorDescripcion %}
+				La descripción no debe exceder los 200 caracteres.<br>
+			{% endif %}
+		</p>
+	</div>
+	{%endif %}
+	<div class="container">
+		<form method="POST" action="/facturas/agregarCobro/" name="agregarCobro">
+				{% csrf_token %}
+				<h3>Ingrese los datos del cobro adicional.</h3>
+				<table class="table-bordered table-striped table-hover">
+					<tbody>
+						<input type="hidden" name="numFactura" value="{{numFactura}}" required="true"/>
+						<tr>
+					        <td><label>Servicio:</label></td>
+					        <td>
+					        	<select name="servicio" required="true">
+					        		<option selected> {{servicio}} </option>
+					        		{% for s in  servicios%}
+					        		 {% if s != servicio%}
+					        			<option>{{s}}</option>
+					        		{% endif %}
+					        		{% endfor %}
+					        	</select>*
+					    	</td>
+					    </tr>
+					    <tr>
+					        <td><label>Descripción:</label></td>
+					        <td><input type="text" name="descripcion" value="{{descripcion}}"/></td>
+					    </tr>
+					   <tr>
+					        <td><label>Costo por unidad:</label></td>
+					        <td><input type="text" name="costoUnidad" required="true" pattern="[0-9]{1,9}" value="{{costoUnidad}}"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Cantidad:</label></td>
+					        <td><input type="text" name="cantidad" required="true" pattern="[0-9]{1,9}" value="{{cantidad}}"/>*</td>
+					    </tr>
+					    <tr>
+					    	<td><input type="submit" value="Agregar Cobro" name="agregarCobro"/></td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>
+		</form>
+	</div>
+{% endblock %}

@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
-from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado, DatosAlquiler, Factura
+from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado, DatosAlquiler, Factura, CobroAdicional
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator,EmptyPage,InvalidPage
@@ -911,7 +911,7 @@ def formatearHora(fecha):
 	except:
 		return fecha
 
-def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,tarifaDia,limiteKilometraje,galonesGasolina=0,costoGalon=0,costoLavada=0,porcentajeIVA=0):
+def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,tarifaDia,limiteKilometraje,galonesGasolina=0,costoGalon=0,costoLavada=0,porcentajeIVA=0,totalOtrosCobros=0):
 	if not costoGalon:
 		costoGalon=int(parametros["costoGalon"])
 	if not porcentajeIVA:
@@ -934,7 +934,7 @@ def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,tarifaDia,limiteKilometraje,
 	kmPorHora = math.floor(limiteKilometraje/24)
 	maxKms = limiteKilometraje*dias+kmPorHora*horas
 	totalPorGasolina = galonesGasolina*costoGalon
-	total=totalPorDias+totalPorHoras+costoEntrega+costoRecogida+totalPorGasolina+costoLavada
+	total=totalPorDias+totalPorHoras+costoEntrega+costoRecogida+totalPorGasolina+costoLavada+totalOtrosCobros
 	iva = total/(1+(porcentajeIVA/100))
 	subtotal = total-iva
 
@@ -1388,11 +1388,11 @@ def facturasControl(request,pagina=1):
 		return render_to_response('facturas.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
 
-def detallesFacturaControl(request,numFactura, addSuccess=False):
-	nit = parametros["nitEmpresa"]
+def detallesFacturaControl(request,numFactura, addSuccess=False,addCobroSuccess=True):
 	if request.user.is_authenticated() and request.user.is_staff:
 		errorIdContrato=False
 		try:
+			nit = parametros["nitEmpresa"]
 			servicios=parametros["servicios"]
 			factura = Factura.objects.get(numFactura=numFactura)
 			datosAlquiler = factura.idDatosAlquiler
@@ -1402,7 +1402,11 @@ def detallesFacturaControl(request,numFactura, addSuccess=False):
 			user = cliente.user
 			vehiculo = contrato.idVehiculo
 			conductores = ConductorAutorizado.objects.filter(idContrato=contrato)
-			cotizacion = cotizar(datosAlquiler.fechaAlquiler,datosAlquiler.fechaDevolucion,factura.costoRecogida, factura.costoEntrega, factura.tarifa, factura.limiteKilometraje,factura.galonesGasolina,factura.costoGalon,factura.costoLavada,factura.porcentajeIVA)
+			cobrosAdicionales =CobroAdicional.objects.filter(numFactura=numFactura)
+			totalOtrosCobros = 0
+			for c in cobrosAdicionales:
+				totalOtrosCobros+= int(c.total)
+			cotizacion = cotizar(datosAlquiler.fechaAlquiler,datosAlquiler.fechaDevolucion,factura.costoRecogida, factura.costoEntrega, factura.tarifa, factura.limiteKilometraje,factura.galonesGasolina,factura.costoGalon,factura.costoLavada,factura.porcentajeIVA,totalOtrosCobros)
 			if factura.galonesGasolina and factura.costoGalon:
 				cobrarGasolina = True
 			if factura.costoLavada:
@@ -1517,5 +1521,43 @@ def agregarFacturaControl(request):
 
 def agregarCobroControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:
-		pass
+		servicios=parametros["servicios"]
+		if request.method == 'POST':
+			numFactura = request.POST["numFactura"]
+			servicio = request.POST["servicio"]
+			descripcion = request.POST["descripcion"]
+			costoUnidad = request.POST["costoUnidad"]
+			cantidad = request.POST["cantidad"]
+
+			#Posibles errores
+			errorNumFactura = False
+			errorServicio = False
+			errorNumeros = not re.match("^([0-9]{1,9})$",costoUnidad) or not re.match("^([0-9]{1,9})$",cantidad)
+			errorDescripcion = len(descripcion)>200
+			try:
+				servicios[servicio]
+			except:
+				errorServicio = True
+			try:
+				factura = Factura.objects.get(numFactura = numFactura)
+			except:
+				errorNumFactura = True
+			#Si hay errores retorno a la pagina
+			if (errorNumFactura or errorServicio or errorNumeros or errorDescripcion):
+				return render_to_response('agregarCobro.html', locals(), context_instance = RequestContext(request))
+
+			#Si no, guardo el cobro
+			total = int(costoUnidad)*int(cantidad)
+			idServicio = int(servicios[servicio])
+			cobroAdicional = CobroAdicional(numFactura = factura, idServicio = idServicio, servicio = servicio, descripcion = descripcion, costoUnidad = costoUnidad, cantidad = cantidad, total = total)
+			cobroAdicional.save()
+			request.method="GET"
+			return detallesFacturaControl(request,numFactura=numFactura,addCobroSuccess=True)
+		else:
+			errorNumFactura = False
+			try:
+				numFactura = request.GET["numFactura"]
+			except:
+				errorNumFactura = True
+			return render_to_response('agregarCobro.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')

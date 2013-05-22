@@ -6,6 +6,9 @@
             {% if addSuccess %}
                 La factura se agregó exitosamente. <br>
             {% endif %}
+            {% if addCobroSuccess %}
+                El cobro se agregó exitosamente. <br>
+            {% endif %}
         </p>
         <div class="span12">
             <div class="span8">
@@ -31,22 +34,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>{{servicios.Alquiler}}</td>
-                            <td>Días</td>
-                            <td>Servicio de alquiler</td>
-                            <td>{{cotizacion.dias}}</td>
-                            <td>{{cotizacion.tarifaDia}}</td>
-                            <td>{{cotizacion.totalPorDias}}</td>
-                        </tr>
-                        <tr>
-                            <td>{{servicios.Alquiler}}</td>
-                            <td>Horas</td>
-                            <td>Servicio de alquiler</td>
-                            <td>{{cotizacion.horas}}</td>
-                            <td>{{cotizacion.tarifaHora}}</td>
-                            <td>{{cotizacion.totalPorHoras}}</td>
-                        </tr>
+                        {% if cotizacion.dias %}
+                            <tr>
+                                <td>{{servicios.Alquiler}}</td>
+                                <td>Días</td>
+                                <td>Servicio de alquiler</td>
+                                <td>{{cotizacion.dias}}</td>
+                                <td>{{cotizacion.tarifaDia}}</td>
+                                <td>{{cotizacion.totalPorDias}}</td>
+                            </tr>
+                        {% endif %}
+                        {% if cotizacion.horas %}
+                            <tr>
+                                <td>{{servicios.Alquiler}}</td>
+                                <td>Horas</td>
+                                <td>Servicio de alquiler</td>
+                                <td>{{cotizacion.horas}}</td>
+                                <td>{{cotizacion.tarifaHora}}</td>
+                                <td>{{cotizacion.totalPorHoras}}</td>
+                            </tr>
+                        {% endif %}
                         {% if cobrarRecogida %}
                             <tr>
                                 <td>{{servicios.Recogida}}</td>
@@ -79,7 +86,7 @@
                         {% endif %}
                         {% if cobrarLavada %}
                              <tr>
-                                <td>servicios.Lavada</td>
+                                <td>{{servicios.Lavada}}</td>
                                 <td>Lavada</td>
                                  <td></td>
                                 <td></td>
@@ -89,8 +96,8 @@
                         {% endif %}
                         {% for c in cobrosAdicionales %}
                             <tr>
+                                <td>{{c.idServicio}}</td>
                                 <td>{{c.servicio}}</td>
-                                <td>{{c.tipo}}</td>
                                 <td>{{c.descripcion}}</td>
                                 <td>{{c.costoUnidad}}</td>
                                 <td>{{c.cantidad}}</td>

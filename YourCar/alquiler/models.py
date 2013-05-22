@@ -154,11 +154,15 @@ class Factura(models.Model):
 		return "Factura num: %s " %(self.numFactura)
 
 class CobroAdicional(models.Model):
-	idFactura = models.ForeignKey(Factura)
+	idCobroAdicional = models.AutoField(primary_key=True)
+	numFactura = models.ForeignKey(Factura)
+	idServicio = models.IntegerField()
 	servicio = models.CharField(max_length=20)
 	descripcion = models.CharField(max_length=200)
 	costoUnidad = models.IntegerField()
 	cantidad = models.IntegerField()
 	total = models.IntegerField()
+	def __unicode__(self):
+		return "Cobro Adicional num: %s %s " %(self.idCobroAdicional,self.numFactura)
 	class Meta:
 		verbose_name_plural=u'Cobros Adicionales'
