@@ -151,6 +151,11 @@
         	<p>
         		<a class="btn" href="/alquiler">Regresar a Datos de Alquiler</a>
         	</p>
+            <form method="GET" action="/facturas/agregar/" name="agregarFactura">
+                    {% csrf_token %}
+                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
+                    <input class="btn" type="submit" value="Agregar Factura" name="agregarFactura"/>
+                </form>
             <form method="GET" action="/alquiler/cierre/" name="cierreAlquiler">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">

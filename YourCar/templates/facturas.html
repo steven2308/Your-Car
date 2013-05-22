@@ -24,7 +24,7 @@
                         <th>Num Factura</th>
                     </thead>
                     <tbody>
-                        <td><input type="text" name="idFactura"></td>
+                        <td><input type="text" name="numFactura"></td>
                     </tbody>
                 </table>
                 <div class="span12">
@@ -33,7 +33,7 @@
                         <ul class="inline">
                             <li>
                                 <label>Num. Factura</label>
-                                <input id="btnIdFactura" name="orderBy" type="radio" value="idFactura" checked="checked">
+                                <input id="btnNumFactura" name="orderBy" type="radio" value="numFactura" checked="checked">
                             </li>
                             <li>
                                 <label>Fecha</label>
@@ -69,11 +69,11 @@
                 <tbody>
                     {% for f in facturas %}
                         <tr>
-                            <td><a href="/facturas/detalles/{{f.numFactura}}/">{{c.idFactura}}</a></td>
-                            <td>{{f.datosAlquiler.idDatosAlquiler}}</td>
+                            <td><a href="/facturas/detalles/{{f.numFactura}}/">{{f.numFactura}}</a></td>
+                            <td>{{f.idDatosAlquiler.idDatosAlquiler}}</td>
                             <td>{{f.fecha}}</td>
-                            <td>{{f.datosAlquiler.contrato.idVoucher.idCliente}}</td>
-                            <td>{{f.datosAlquiler.contrato.idVehiculo}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVehiculo}}</td>
                     {% endfor %}
                 </tbody>
             </table>

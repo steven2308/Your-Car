@@ -125,6 +125,8 @@ class DatosAlquiler(models.Model):
 	kmInicial = models.IntegerField()
 	kmFinal = models.IntegerField()
 	valorAlquiler = models.IntegerField()
+	def __unicode__(self):
+		return "Datos de alquiler id: %s " %(self.idDatosAlquiler)
 	class Meta:
 		verbose_name_plural=u'Datos Alquiler'
 
@@ -141,11 +143,15 @@ class Factura(models.Model):
 	limiteKilometraje = models.IntegerField()
 	galonesGasolina = models.IntegerField()
 	costoGalon = models.IntegerField()
+	costoRecogida = models.IntegerField()
+	costoEntrega = models.IntegerField()
 	costoLavada = models.IntegerField()
 	porcentajeIVA = models.IntegerField()
 	# subtotal = models.IntegerField()
 	# iva = models.IntegerField()
 	# total = models.IntegerField()
+	def __unicode__(self):
+		return "Factura num: %s " %(self.numFactura)
 
 class CobroAdicional(models.Model):
 	idFactura = models.ForeignKey(Factura)
@@ -154,3 +160,5 @@ class CobroAdicional(models.Model):
 	costoUnidad = models.IntegerField()
 	cantidad = models.IntegerField()
 	total = models.IntegerField()
+	class Meta:
+		verbose_name_plural=u'Cobros Adicionales'

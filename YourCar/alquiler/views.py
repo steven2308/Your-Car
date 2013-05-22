@@ -859,7 +859,7 @@ def parametrizarControl(request):
 				parametros["nombreEmpresa"] = request.POST["nombreEmpresa"]
 				parametros["nitEmpresa"] = request.POST["nitEmpresa"]
 				parametros["IVA"] = request.POST["IVA"]
-				parametros["galonGasolina"] = request.POST["galonGasolina"]
+				parametros["costoGalon"] = request.POST["costoGalon"]
 				parametros["lavada"] = ast.literal_eval(request.POST["lavada"])
 				parametros["servicios"] = ast.literal_eval(request.POST["servicios"])
 				exito=True
@@ -913,7 +913,7 @@ def formatearHora(fecha):
 
 def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,tarifaDia,limiteKilometraje,galonesGasolina=0,costoGalon=0,costoLavada=0,porcentajeIVA=0):
 	if not costoGalon:
-		costoGalon=int(parametros["galonGasolina"])
+		costoGalon=int(parametros["costoGalon"])
 	if not porcentajeIVA:
 		porcentajeIVA=int(parametros["IVA"])
 	diferencia =  dtFin-dtIni
@@ -921,7 +921,7 @@ def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,tarifaDia,limiteKilometraje,
 	dias = diasReal
 	segs  = diferencia.seconds
 	horasReal = math.floor(segs/3600)
-	horas=horasReal
+	horas=int(horasReal)
 	mins = (segs%3600)/60
 	if mins>=30:
 		horas+=1
@@ -950,9 +950,11 @@ def cotizar(dtIni, dtFin,costoRecogida,costoEntrega,tarifaDia,limiteKilometraje,
 	cotizacion["maxKms"]=maxKms
 	cotizacion["costoRecogida"] = intWithCommas(costoRecogida)
 	cotizacion["costoEntrega"] = intWithCommas(costoEntrega)
-	cotizacion["tarifaHora"] = intWithCommas(tarifaDia)
-	cotizacion["totalPorDias"] = intWithCommas(tarifaHora)
-	cotizacion["totalPorHoras"] = intWithCommas(totalPorDias)
+	cotizacion["tarifaHora"] = intWithCommas(tarifaHora)
+	cotizacion["tarifaDia"] = intWithCommas(tarifaDia)
+	cotizacion["totalPorHoras"] = intWithCommas(totalPorHoras)
+	cotizacion["totalPorDias"] = intWithCommas(totalPorDias)
+	cotizacion["costoGalon"] = intWithCommas(costoGalon)
 	cotizacion["totalPorGasolina"] = intWithCommas(totalPorGasolina)
 	cotizacion["costoLavada"] = intWithCommas(costoLavada)
 	cotizacion["total"] = intWithCommas(total)
@@ -1368,30 +1370,31 @@ def facturasControl(request,pagina=1):
 			else:
 				order = "-"+request.POST["orderBy"]
 			#Tomo los datos
-			idContrato=request.POST["idFactura"]
+			numFactura=request.POST["numFactura"]
 			#Los datos que no son vacios los agrego al query
-			if idFactura:
-				query["idFactura"]=idFactura
+			if numFactura:
+				query["numFactura"]=numFactura
 			#Si la consulta no es vacia la hago
 			if query:
 				listaFacturas= Factura.objects.filter(**query).order_by(order)
 				filtrados=True
 			else:
 				listaFacturas = Factura.objects.all().order_by(order)
-			contratos=paginar(listaFacturas,pagina)
-			return render_to_response('contratos.html',locals(), context_instance = RequestContext(request))
+			facturas=paginar(listaFacturas,pagina)
+			return render_to_response('facturas.html',locals(), context_instance = RequestContext(request))
 		#sino es un post cargo todos
 		listaFacturas = Factura.objects.all()
 		facturas=paginar(listaFacturas,pagina)
 		return render_to_response('facturas.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
 
-def detallesFacturaControl(request,idFactura, addSuccess=False):
+def detallesFacturaControl(request,numFactura, addSuccess=False):
+	nit = parametros["nitEmpresa"]
 	if request.user.is_authenticated() and request.user.is_staff:
 		errorIdContrato=False
 		try:
 			servicios=parametros["servicios"]
-			factura = Factura.objects.get(idFactura=idFactura)
+			factura = Factura.objects.get(numFactura=numFactura)
 			datosAlquiler = factura.idDatosAlquiler
 			contrato = datosAlquiler.idContrato
 			voucher = contrato.idVoucher
@@ -1399,6 +1402,15 @@ def detallesFacturaControl(request,idFactura, addSuccess=False):
 			user = cliente.user
 			vehiculo = contrato.idVehiculo
 			conductores = ConductorAutorizado.objects.filter(idContrato=contrato)
+			cotizacion = cotizar(datosAlquiler.fechaAlquiler,datosAlquiler.fechaDevolucion,factura.costoRecogida, factura.costoEntrega, factura.tarifa, factura.limiteKilometraje,factura.galonesGasolina,factura.costoGalon,factura.costoLavada,factura.porcentajeIVA)
+			if factura.galonesGasolina and factura.costoGalon:
+				cobrarGasolina = True
+			if factura.costoLavada:
+				cobrarLavada = True
+			if factura.costoRecogida:
+				cobrarRecogida = True
+			if factura.costoEntrega:
+				cobrarEntrega = True
 			return render_to_response('detallesFactura.html',locals(), context_instance = RequestContext(request))
 		except:
 			errorIdContrato=True
@@ -1407,15 +1419,43 @@ def detallesFacturaControl(request,idFactura, addSuccess=False):
 
 def agregarFacturaControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:
+		lavada = parametros["lavada"]
+		costoGalon = parametros["costoGalon"]
+		lugaresCostos = parametros["lugaresCostos"]
+		lugares = lugaresCostos.keys
 		if request.method == 'POST':
 			idDatosAlquiler = request.POST["idDatosAlquiler"]
 			fecha = request.POST["fecha"]
+			tarifa = request.POST["tarifa"]
+			limiteKilometraje = request.POST["limiteKilometraje"]
+			galonesGasolina = request.POST["galonesGasolina"]
+			costoGalon = request.POST["costoGalon"]
+			tamanyoLavada = request.POST["tamanyoLavada"]
+			lugarRecogida = request.POST["lugarRecogida"]
+			lugarEntrega = request.POST["lugarEntrega"]
+			costoLavada = 0
+			porcentajeIVA = parametros["IVA"]
 			errorDatosAlquiler = False
+			errorTamanyoLavada = False
+			errorLugares = False
 			errorContrato = False
 			errorVehiculo = False
 			errorVoucher = False
 			errorCliente = False
-			errorFecha= not fechaCorrecta(fecha)
+			errorFecha = not fechaCorrecta(fecha)
+			errorNumeros = not re.match("^([0-9]{1,9})$",tarifa) or not re.match("^([0-9]{1,9})$",limiteKilometraje) or not re.match("^([0-9]{1,9})$",galonesGasolina) or not re.match("^([0-9]{1,9})$",costoGalon)
+			try:
+				costoLavada = int(lavada[tamanyoLavada])
+			except:
+				errorTamanyoLavada = True
+			try:
+				costoRecogida = int(lugaresCostos[lugarRecogida])
+			except:
+				errorLugares = True
+			try:
+				costoEntrega = int(lugaresCostos[lugarEntrega])
+			except:
+				errorLugares = True
 			try:
 				datosAlquiler = DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
 			except:
@@ -1436,22 +1476,42 @@ def agregarFacturaControl(request):
 				cliente= voucher.idCliente
 			except:
 				errorCliente = True
-
-
 			#Si hay errores retorno a la pagina
-			if (errorDatosAlquiler or errorContrato or errorVehiculo or errorVoucher or errorCliente or errorFecha):
+			if (errorDatosAlquiler or errorContrato or errorVehiculo or errorVoucher or errorCliente or errorFecha or errorNumeros or errorTamanyoLavada or errorLugares):
 				return render_to_response('agregarFactura.html', locals(), context_instance = RequestContext(request))
 
 			#Si no, guardo la factura
-			factura = Factura(idDatosAlquiler = idDatosAlquiler, fecha = fecha)
+			factura = Factura(idDatosAlquiler = datosAlquiler, fecha = fecha, tarifa = tarifa, limiteKilometraje = limiteKilometraje, galonesGasolina = galonesGasolina, costoGalon = costoGalon, costoRecogida = costoRecogida, costoEntrega = costoEntrega, costoLavada = costoLavada, porcentajeIVA = porcentajeIVA)
 			factura.save()
 			request.method="GET"
-			return detallesFacturaControl(request,idDatosAlquiler=factura.idFactura,addSuccess=True)
+			return detallesFacturaControl(request,numFactura=factura.numFactura,addSuccess=True)
 		else:
 			try:
-				idVoucher = request.GET["idDatosAlquiler"]
+				idDatosAlquiler = request.GET["idDatosAlquiler"]
 			except:
 				pass
+			try:
+				datosAlquiler = DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
+				tarifa = datosAlquiler.tarifaAplicada
+			except:
+				errorDatosAlquiler = True
+			try:
+				contrato= datosAlquiler.idContrato
+			except:
+				errorContrato = True
+			try:
+				vehiculo=contrato.idVehiculo
+				limiteKilometraje = vehiculo.limiteKilometraje
+			except:
+				errorVehiculo = True
+			try:
+				voucher=contrato.idVoucher
+			except:
+				errorVoucher = True
+			try:
+				cliente= voucher.idCliente
+			except:
+				errorCliente = True
 			return render_to_response('agregarFactura.html', locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
 

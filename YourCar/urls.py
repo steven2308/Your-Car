@@ -36,7 +36,7 @@ urlpatterns = patterns('YourCar.alquiler.views',
     url(r'^alquiler/agregar/$', 'agregarDatosAlquilerControl', name='vistaAgregarDatosAlquiler'),
     url(r'^alquiler/cierre/$', 'cierreDatosAlquilerControl', name='vistaCierreDatosAlquiler'),
     url(r'^facturas/(pag/(?P<pagina>\d{1,5})/)?$', 'facturasControl', name='vistaFactura'),
-    url(r'^facturas/detalles/(?P<idFactura>[0-9]{1,9})/$$', 'detallesFacturaControl', name='vistaDetallesFactura'),
+    url(r'^facturas/detalles/(?P<numFactura>[0-9]{1,9})/$$', 'detallesFacturaControl', name='vistaDetallesFactura'),
     url(r'^facturas/agregar/$', 'agregarFacturaControl', name='vistaAgregarFactura'),
     url(r'^facturas/agregarCobro/$', 'agregarCobroControl', name='vistaAgregarCobro'),
     #Links para usuarios conectados:
