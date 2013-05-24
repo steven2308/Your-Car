@@ -1135,6 +1135,7 @@ def mayor21(fecha):
 #cual es la diferencia entre valorAlquiler y total dias?
 #si se actualiza de nuevo la pagina despues del cierre, se borran los cambios
 #si ocurre un error en el formulario de cierre, no se cargan de nuevo ningun dato ya ingresado
+#<th><a href="#4"><img src="images/lupa.png" title="Visualizar" class="visuUsuario1" width="20px"></a></th>
 def alquileresControl (request,pagina=1,addSuccess=False):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
