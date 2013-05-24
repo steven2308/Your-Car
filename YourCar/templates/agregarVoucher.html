@@ -2,7 +2,7 @@
 {% block titulo %}Agregar Voucher{% endblock %}
 {% block contenido %}
 	<div class="container">
-	{%if errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorFecha or errorCamposVacios or errorNombreBanco%}
+	{%if errorcodigoAutorizacion or erroridCliente or errormontoVoucher or errornumTarjetaCredito or errorcodigoVerifTarjeta or errorFecha or errorCamposVacios or errorCamposLargos%}
 		<h3>Corrige los siguientes errores para continuar:</h3>
 		<p class="text-error">
 			{% if errorcodigoAutorizacion %}
@@ -26,8 +26,8 @@
 			{% if errorCamposVacios %}
 				Por favor complete todos los campos obligatorios.<br>
 			{% endif %}
-			{% if errorNombreBanco %}
-				El nombre del banco no debe exceder los 20 caracteres.
+			{% if errorCamposLargos %}
+				El nombre del banco y de la franquicia no debe exceder los 20 caracteres.
 			{% endif %}
 		</p>
 	{% endif %}
@@ -70,6 +70,10 @@
 				    <tr>
 				        <td><label>Nombre de banco:</label></td>
 				        <td><input type="text" name="nombreBanco" required="true" value="{{nombreBanco}}"/>*</td>
+				    </tr>
+				    <tr>
+				        <td><label>Franquicia:</label></td>
+				        <td><input type="text" name="franquicia" required="true" value="{{franquicia}}"/>*</td>
 				    </tr>
 				    <tr>
 				        <td><input type="submit" value="Guardar información" name="guardarVoucher"/>

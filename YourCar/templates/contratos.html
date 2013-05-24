@@ -2,9 +2,6 @@
 {% block titulo %}Contratos{% endblock %}
 {% block contenido %}
     <div class="container">
-        {% if addSuccess %}
-            <p class="text-info">El contrato se agregó exitosamente!</p>
-        {% endif %}
         {% if filtrados %}
             <h4>Estás viendo los contratos filtrados y ordenados:</h4>
         {% else %}
@@ -75,7 +72,8 @@
                     <th>Vehículo</th>
                     <th>Voucher</th>
                     <th>Cliente</th>
-                    <th>Fecha</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
                 </thead>
                 <tbody>
                     {% for c in contratos %}
@@ -84,7 +82,8 @@
                             <td>{{c.idVehiculo}}</td>
                             <td>{{c.idVoucher}}</td>
                             <td>{{c.idVoucher.idCliente}}</td>
-                            <td>{{c.fecha}}</td>
+                            <td>{{c.fechaInicio}}</td>
+                            <td>{{c.fechaFin}}</td>
                     {% endfor %}
                 </tbody>
             </table>

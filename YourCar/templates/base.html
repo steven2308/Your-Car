@@ -3,7 +3,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Your Car - {% block titulo %}Inicio{% endblock %}</title>
+		<title>{{nombreEmpresa}} - {% block titulo %}Inicio{% endblock %}</title>
 		{%block css%}
 		<link rel="stylesheet" type="text/css" href="/media/css/estilos.css"/>
 		{% endblock%}
@@ -15,7 +15,7 @@
 		{% endblock%}
 
 	</head>
-		<center><h1>Your Car</h1></center><br>	
+		<center><h1>{{nombreEmpresa}}</h1></center><br>	
 	<body>
 		<div class="container">
 			<nav class="navbar navbar-inverse">
@@ -27,6 +27,7 @@
 					<li><a class="btn btn-info" href="/voucher">Voucher</a></li>
 					<li><a class="btn btn-info" href="/contratos">Contratos</a></li>
 					<li><a class="btn btn-info" href="/alquiler">Alquileres</a></li>
+					<li><a class="btn btn-info" href="/facturas">Facturas</a></li>
 					<li><a class="btn btn-info" href="/parametrizar">Parámetros</a></li>
 				{% endif %}
 				{% if request.user.is_authenticated %}

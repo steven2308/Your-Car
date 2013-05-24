@@ -65,7 +65,7 @@
 					    </tr>
 					    <tr>
 					        <td><label>Tarifa Establecida:</label></td>
-					        <td><input type="text" name="tarifaEstablecida" required="true" value="{{tarifaEstablecida}}"/>*</td>
+					        <td><input type="text" name="tarifaEstablecida" required="true" value="{{tarifaEstablecida}}" disabled="True"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Tarifa Aplicada:</label></td>
@@ -80,20 +80,12 @@
 					        <td><input type="date" name="fechaDevolucion" required="true" value="{{fechaDevolucion}}"/>*</td>
 					    </tr>
 					    <tr>
-					        <td><label>Total Dias:</label></td>
-					        <td><input type="text" name="totalDias" required="true" value="{{totalDias}}"/>*</td>
-					    </tr>
-					    <tr>
 					        <td><label>Kilometraje Inicial:</label></td>
-					        <td><input type="text" name="kmInicial" required="true" value="{{kmInicial}}" pattern="[0-9]{1,6}"/>*</td>
+					        <td><input type="text" name="kmInicial" required="true" value="{{kmInicial}}" pattern="[0-9]{1,6}" disabled="True"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Kilometraje Final:</label></td>
 					        <td><input type="text" name="kmFinal"  required="true" value="{{kmFinal}}" pattern="[0-9]{1,6}"/>*</td>
-					    </tr>
-					    <tr>
-					        <td><label>Valor Alquiler:</label></td>
-					        <td><input type="text" name="valorAlquiler" value="{{valorAlquiler}}" required="true"/>*</td>
 					    </tr>
 					    <tr>
 					    	<td><input type="submit" value="Agregar Datos de Alquiler" name="agregarDatosAlquiler"/></td>
