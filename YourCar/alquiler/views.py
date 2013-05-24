@@ -1180,8 +1180,10 @@ def agregarDatosAlquilerControl(request):
 			idContrato = request.POST["idContrato"]
 			metodoPago = request.POST["metodoPago"]
 			tarifaAplicada = request.POST["tarifaAplicada"]
-			fechaAlquiler = request.POST["fechaAlquiler"]
+			fechaAlquiler = request.POST["fechaAlquiler"] 
+			horaAlquiler = request.POST["horaAlquiler"]
 			fechaDevolucion = request.POST["fechaDevolucion"]
+			horaDevolucion = request.POST["horaDevolucion"]
 			kmFinal = request.POST["kmFinal"]
 
 			if request.POST["idReserva"]: 
@@ -1229,8 +1231,8 @@ def agregarDatosAlquilerControl(request):
 			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
 			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
 
-			fechaAlq = datetime.strptime(fechaAlquiler+" "+"00:00", '%Y-%m-%d %H:%M')
-			fechaDev = datetime.strptime(fechaDevolucion+" "+"00:00", '%Y-%m-%d %H:%M')
+			fechaAlq = datetime.strptime(fechaAlquiler+" "+horaAlquiler, '%Y-%m-%d %H:%M')
+			fechaDev = datetime.strptime(fechaDevolucion+" "+horaDevolucion, '%Y-%m-%d %H:%M')
 			diferencia = fechaDev-fechaAlq
 			diasReal = diferencia.days
 			dias = diasReal
@@ -1240,7 +1242,7 @@ def agregarDatosAlquilerControl(request):
 			if (errorIdContrato or errorIdContratoExists or errorIdReserva or errorFechas or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago):
 				return render_to_response('agregarDatosAlquiler.html', locals(), context_instance = RequestContext(request))
 
-			datosAlquiler = DatosAlquiler(idContrato=contrato, idReserva=reserva, metodoPago=metodoPago, tarifaEstablecida=tarifaEstablecida, tarifaAplicada=tarifaAplicada, fechaAlquiler=fechaAlquiler, fechaDevolucion=fechaDevolucion, totalDias=totalDias, kmInicial=kmInicial, kmFinal=kmFinal, valorAlquiler=valorAlquiler)
+			datosAlquiler = DatosAlquiler(idContrato=contrato, idReserva=reserva, metodoPago=metodoPago, tarifaEstablecida=tarifaEstablecida, tarifaAplicada=tarifaAplicada, fechaAlquiler=fechaAlq, fechaDevolucion=fechaDev, totalDias=totalDias, kmInicial=kmInicial, kmFinal=kmFinal, valorAlquiler=valorAlquiler)
 			datosAlquiler.save()
 			request.method = 'GET'
 			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=True)
