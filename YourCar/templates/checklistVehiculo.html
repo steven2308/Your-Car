@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block titulo %}Inventario Vehiculo.{% endblock %}
+{% block contenido %}
+	{%if errorores %}
+	<div class="container">
+		<h4>Corrige los siguientes errores para continuar:</h4>
+		<p class="text-error">
+			{% if errorFechas %}
+				La fecha de devolucion tiene que ser despues de la fecha de alquiler y de la fecha actual.<br>
+			{%endif %}
+	</div>
+	{%endif %}
+	<div class="container">
+		<form method="POST" action="/alquiler/checklist/" name="checklistVehiculo">
+				{% csrf_token %}
+				{%if not datosAlquiler.cierre%}
+				<h3>Ingresa los datos de salida del inventario de vehiculo.</h3>
+				{%else%}
+				<h3>Ingresa los datos de retorno del inventario de vehiculo.</h3>
+				{%endif%}
+				<table class="table-bordered table-striped table-hover">
+					<tbody>
+						<td></td>
+						<td>Si</td>
+							<td>No</td>
+                        <tr>
+					        <td>Documentos del Auto: </td>
+					        <td><input type="radio" name="docsDelAuto"  required="true" value=True/></td>
+					        <td><input type="radio" name="docsDelAuto"  required="true" value=False/></td>
+					    </tr>
+					    <tr>
+					    	<input name="idDatosAlquiler" value="{{idDatosAlquiler}}" type="hidden">
+					    	<input class='btn' type="submit" value="Guardar" name="guardarChecklist"/>
+						</tr>
+					</tbody>
+				</table>
+				<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>
+		</form>
+	</div>
+{% endblock %}

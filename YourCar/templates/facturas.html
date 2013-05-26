@@ -11,9 +11,6 @@
                 <div class="span4">
                     <p>Hay en total {{ facturas|length }} factura{{facturas|pluralize}}.</p>
                 </div>
-                <div class="span2">
-                        <a class="btn" href="/facturas/agregar/">Agregar Factura</a>
-                </div>
             </div>
         {% if facturas %}
             <form method="POST" action="/facturas/" name="filtrarFacturas">

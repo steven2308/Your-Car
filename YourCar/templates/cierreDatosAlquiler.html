@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar Datos de Cierre de Alquiler{% endblock %}
 {% block contenido %}
-	{%if errorFechas or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago%}
+	{%if errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago%}
 	<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
 			{% if errorFechas %}
 				La fecha de devolucion tiene que ser despues de la fecha de alquiler y de la fecha actual.<br>
 			{% endif %}
-			{% if errorFechaAlquiler %}
-				La fecha de alquiler es invalida.<br>
+			{% if errorFormatoFechas %}
+				Las fechas tienen un formato incorrecto.<br>
 			{% endif %}
-			{% if errorFechaDevolucion %}
-				La fecha de devolucion es invalida.<br>
+			{% if errorHoras %}
+				Las horas tienen un formato incorrecto.<br>
 			{% endif %}
 			{% if errorKmInicial %}
 				El kilometraje inicial es invalido.<br>
@@ -34,23 +34,17 @@
 					<tbody>
 						<tr>
 					        <td><label>ID Contrato:</label></td>
-					        <td>{{datosAlquiler.idContrato.idContrato}}</td>
-					        <td><input type="hidden" name="idContrato" value="{{datosAlquiler.idContrato.idContrato}}" required="true" pattern="[1-9]{1,5}"/></td>
+					        <td><input type="text" name="idContrato" value="{{idContrato}}" required="true" pattern="[1-9]{1,5}" readonly="readonly"/></td>
 					    </tr>
 					    <tr>
 					        <td><label>ID Reserva:</label></td>
-					        {%if datosAlquiler.idReserva != None %}
-					        <td>{{datosAlquiler.idReserva}}</td>
-					        {% else %}
-					        <td></td>
-					        {% endif %}
-					        <td><input type="hidden" name="idReserva" {% if datosAlquiler.idReserva != None %} value="{{datosAlquiler.idReserva.idReserva}}" {% endif %}/></td>
+					        <td><input type="text" name="idReserva" {% if datosAlquiler.idReserva != None %} value="{{idReserva}}" {% endif %} readonly="readonly"/></td>
 					    </tr>
 					    <tr>
 					        <td><label>Metodo de pago:</label></td>
 					        <td>
 					        	<select name="metodoPago" required="true">
-					        		<option selected>{{datosAlquiler.metodoPago}}</option>
+					        		<option selected>{{metodoPago}}</option>
 					        		{% for mp in  metodosPago%}
 					        		{% if mp != datosAlquiler.metodoPago %}
 					        		<option>{{mp}}</option>
@@ -61,33 +55,39 @@
 					    </tr>
 					    <tr>
 					        <td><label>Tarifa Establecida:</label></td>
-					        <td>{{datosAlquiler.tarifaEstablecida}}</td>
-					        <td><input type="hidden" name="tarifaEstablecida" required="true" value="{{datosAlquiler.tarifaEstablecida}}"/></td>
+					        <td><input type="text" name="tarifaEstablecida" required="true" value="{{tarifaEstablecida}}" readonly="readonly"/></td>
 					    </tr>
 					    <tr>
 					        <td><label>Tarifa Aplicada:</label></td>
-					        <td><input type="text" name="tarifaAplicada" required="true" value="{{datosAlquiler.tarifaAplicada}}"/>*</td>
+					        <td><input type="text" name="tarifaAplicada" required="true" value="{{tarifaAplicada}}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Fecha Alquiler:</label></td>
 					        <td><input type="date" name="fechaAlquiler" required="true" value="{{fechaAlquiler}}"/>*</td>
 					    </tr>
 					    <tr>
+					    	<td><label>Hora Alquiler:</label></td>
+							<td><input type="time" name="horaAlquiler" required="true" value="{{horaAlquiler}}"/>*</td>
+						</tr>
+					    <tr>
 					        <td><label>Fecha Devolucion:</label></td>
 					        <td><input type="date" name="fechaDevolucion" required="true" value="{{fechaDevolucion}}"/>*</td>
 					    </tr>
 					    <tr>
+					    	<td><label>Hora Devolucion:</label></td>
+							<td><input type="time" name="horaDevolucion" required="true" value="{{horaDevolucion}}"/>*</td>
+						</tr>
+					    <tr>
 					        <td><label>Kilometraje Inicial:</label></td>
-					        <td>{{datosAlquiler.kmInicial}}</td>
-					        <td><input type="hidden" name="kmInicial" required="true" value="{{datosAlquiler.kmInicial}}" pattern="[0-9]{1,6}"/></td>
+					        <td><input type="text" name="kmInicial" required="true" value="{{kmInicial}}" pattern="[0-9]{1,6}" readonly="readonly"/></td>
 					    </tr>
 					    <tr>
 					        <td><label>Kilometraje Final:</label></td>
-					        <td><input type="text" name="kmFinal"  required="true" value="{{datosAlquiler.kmFinal}}" pattern="[0-9]{1,6}"/>*</td>
+					        <td><input type="text" name="kmFinal"  required="true" value="{{kmFinal}}" pattern="[0-9]{1,6}"/>*</td>
 					    </tr>
 					    <tr>
-					    	<td><input type="hidden" name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" required="true"/>*</td>
-					    	<td><input type="submit" value="Cerrar Datos de Alquiler" name="cierreDatosAlquiler"/></td>
+					    	<td><input type="hidden" name="idDatosAlquiler" value="{{idDatosAlquiler}}" required="true"/>*</td>
+					    	<td><input class='btn' type="submit" value="Cerrar Datos de Alquiler" name="cierreDatosAlquiler"/></td>
 						</tr>
 					</tbody>
 				</table>
