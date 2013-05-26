@@ -135,7 +135,7 @@ class ChecklistVehiculo(models.Model):
 	idChecklistVehiculo = models.AutoField(primary_key=True)
 	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
 	cierre = models.BooleanField(default=False)
-	docsDelAuto = models.BooleanField()
+	docsDelAuto = models.IntegerField(max_length=1) #0 True, 1 False
 
 class Factura(models.Model):
 	numFactura = models.AutoField(primary_key=True)

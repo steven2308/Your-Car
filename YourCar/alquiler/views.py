@@ -1273,12 +1273,12 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 		except:
 			return HttpResponseRedirect('/alquiler')
 		try:
-			checklistVehiculo = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler)
+			checklistVehiculo = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre)
 			checklistExists=True
 		except:
 			checklistExists=False
-		
-		registroCierre={}
+
+		"""registroCierre={}
 		registroCierre["metodoPago"]="Ningun cambio"
 		registroCierre["tarifaAplicada"]="Ningun cambio"
 		registroCierre["fechaAlquiler"]="Ningun cambio"
@@ -1287,7 +1287,7 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 		registroCierre["totalDias"]="Ningun cambio"
 		registroCierre["valorAlquiler"]="Ningun cambio"
 
-		"""if datosAlquilerOriginal:
+		if datosAlquilerOriginal:
 			cierre=True
 			if datosAlquilerOriginal.metodoPago != datosAlquiler.metodoPago:
 				registroCierre["metodoPago"]="cambio de "+datosAlquilerOriginal.metodoPago+" a "+datosAlquiler.metodoPago
@@ -1302,8 +1302,8 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 			if datosAlquilerOriginal.totalDias != datosAlquiler.totalDias:
 				registroCierre["totalDias"]="cambio de %i a %i" % (datosAlquilerOriginal.totalDias, datosAlquiler.totalDias)
 			if datosAlquilerOriginal.valorAlquiler != datosAlquiler.valorAlquiler:
-				registroCierre["valorAlquiler"]="cambio de %i a %i" % (datosAlquilerOriginal.valorAlquiler, datosAlquiler.valorAlquiler)
-"""
+				registroCierre["valorAlquiler"]="cambio de %i a %i" % (datosAlquilerOriginal.valorAlquiler, datosAlquiler.valorAlquiler)"""
+
 		return render_to_response('detallesDatosAlquiler.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
 
@@ -1360,7 +1360,7 @@ def cierreDatosAlquilerControl(request):
 			datosAlquiler = DatosAlquiler(idDatosAlquiler=idDatosAlquiler, idContrato=contrato, idReserva=reserva, metodoPago=metodoPago, tarifaEstablecida=tarifaEstablecida, tarifaAplicada=tarifaAplicada, fechaAlquiler=fechaAlq, fechaDevolucion=fechaDev, totalDias=totalDias, kmInicial=kmInicial, kmFinal=kmFinal, cierre=True)
 			datosAlquiler.save()
 			request.method = 'GET'
-			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, cierre=True, addSuccess=True)
+			return checklistVehiculoControl(request, idDatosAlquilerCerrando=idDatosAlquiler)
 		else:
 			try:
 				idDatosAlquiler=request.GET["idDatosAlquiler"]
@@ -1387,13 +1387,21 @@ def cierreDatosAlquilerControl(request):
 	else:
 		return HttpResponseRedirect('/404')
 
-def checklistVehiculoControl(request):
+def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 	if request.user.is_authenticated and request.user.is_staff:
 		if request.method == 'POST':
 			idDatosAlquiler = request.POST["idDatosAlquiler"]
 			docsDelAuto = request.POST["docsDelAuto"]
 
 			#manejo errores
+			errorChecklistExists=False
+			try:
+				checklist1 = ChecklistVehiculo.objects.get(idDatosAlquiler=idDatosAlquiler, cierre=False)
+				checklist2 = ChecklistVehiculo.objects.get(idDatosAlquiler=idDatosAlquiler, cierre=True)
+				if checklist1 and checklist2:
+					errorChecklistExists=True
+			except:
+				pass
 
 			try:
 				datosAlquiler=DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
@@ -1402,23 +1410,32 @@ def checklistVehiculoControl(request):
 
 			checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, docsDelAuto=docsDelAuto)
 			checklistVehiculo.save()
-			if datosAlquiler.cierre:
-				request.method = 'GET'
-				return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, cierre=True, addSuccess=True)
-			else:
-				request.method = 'GET'
-				return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=True)
+			request.method = 'GET'
+			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=True)
 		else:
-			idDatosAlquiler=request.GET["idDatosAlquiler"]
+			if idDatosAlquilerCerrando != 0:
+				idDatosAlquiler=idDatosAlquilerCerrando
+				cierre=True
+			else:
+				idDatosAlquiler=request.GET["idDatosAlquiler"]
+				cierre=False
 			try:
 				datosAlquiler=DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
 			except:
 				pass
 
-			if datosAlquiler.cierre:
-				checklistVehiculo=ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler)
-				docsDelAuto=checklistVehiculo.docsDelAuto
-			#checklistVehiculo=ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler)
+			errorCierre=False
+
+			if cierre != datosAlquiler.cierre:
+				errorCierre=True
+
+			if cierre:
+				try:
+					checklistVehiculo=ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler)
+					docsDelAuto=checklistVehiculo.docsDelAuto
+				except:
+					pass
+
 
 			return render_to_response('ChecklistVehiculo.html', locals(), context_instance = RequestContext(request))
 	else:

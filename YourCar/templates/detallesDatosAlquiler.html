@@ -109,10 +109,6 @@
                             <td>Tarifa</td>
                             <td>{{vehiculo.tarifa}}</td>
                         </tr>
-                        <tr>
-                            <td>checklistExists</td>
-                            <td>{{checklistExists}}</td>
-                        </tr>
                     </tbody>
                 </table>
                 {%if checklistExists %}
@@ -125,7 +121,11 @@
                         </tr>
                         <tr>
                             <td>Docs del Auto</td>
-                            <td>{{checklistVehiculo.docsDelAuto}}</td>
+                            {%if checklistVehiculo.docsDelAuto == 0 %}
+                            <td>Si</td>
+                            {%else %}
+                            <td>No</td>
+                            {%endif%}
                         </tr>
                     </tbody>
                 </table>
@@ -135,25 +135,21 @@
         	<p>
         		<a class="btn" href="/alquiler">Regresar a Datos de Alquiler</a>
         	</p>
-            {%if datosAlquiler.cierre%}
             <form method="GET" action="/facturas/agregar/" name="agregarFactura">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
-                    <input class="btn" type="submit" value="Agregar Factura" name="agregarFactura"/>
+                    <input class="btn" type="submit" value="Agregar Factura" name="agregarFactura" {%if not datosAlquiler.cierre %} disabled="disabled" {% endif %}/>
                 </form>
-            {%endif%}
-            {%if not datosAlquier.cierre %}
             <form method="GET" action="/alquiler/cierre/" name="cierreAlquiler">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
-                    <input class="btn" type="submit" value="Cerrar Datos de Alquiler" name="cierreAlquiler"/>
+                    <input class="btn" type="submit" value="Cerrar Datos de Alquiler" name="cierreAlquiler" {%if datosAlquiler.cierre or not checklistExists %} disabled="disabled" {% endif %}/>
                 </form>
             <form method="GET" action="/alquiler/checklist/" name="agregarChecklistVehiculo">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
-                    <input class="btn" type="submit" value="Agregar Checklist del Vehiculo" name="agregarChecklistVehiculo"/>
+                    <input class="btn" type="submit" value="Agregar Checklist del Vehiculo" name="agregarChecklistVehiculo" {%if checklistExists %} disabled="disabled" {% endif %} />
                 </form>
-            {% endif %}
         </div>
     </div>
 {% endblock %}

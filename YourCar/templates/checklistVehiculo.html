@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block titulo %}Inventario Vehiculo.{% endblock %}
 {% block contenido %}
-	{%if errorores %}
+	{%if errorChecklistExists %}
 	<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
-			{% if errorFechas %}
-				La fecha de devolucion tiene que ser despues de la fecha de alquiler y de la fecha actual.<br>
+			{% if errorChecklistExists %}
+				Checklist ya existente.<br>
 			{%endif %}
 	</div>
 	{%endif %}
@@ -22,15 +22,15 @@
 					<tbody>
 						<td></td>
 						<td>Si</td>
-							<td>No</td>
+						<td>No</td>
                         <tr>
 					        <td>Documentos del Auto: </td>
-					        <td><input type="radio" name="docsDelAuto" value="True"></td>
-					        <td><input type="radio" name="docsDelAuto" value="False" checked="checked"></td>
+					        <td><input type="radio" name="docsDelAuto" value="0" {%if docsDelAuto == 0%} checked="checked" {%endif%}></td>
+					        <td><input type="radio" name="docsDelAuto" value="1" {%if docsDelAuto == 1%} checked="checked" {%endif%}></td>
 					    </tr>
 					    <tr>
 					    	<input name="idDatosAlquiler" value="{{idDatosAlquiler}}" type="hidden">
-					    	<input class='btn' type="submit" value="Guardar" name="guardarChecklist"/>
+					    	<td><input class='btn' type="submit" value="Guardar" name="guardarChecklist"/></td>
 						</tr>
 					</tbody>
 				</table>
