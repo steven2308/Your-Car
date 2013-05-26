@@ -1,0 +1,83 @@
+{%extends "base.html"%}
+{% block titulo %}Detalles de Proveedor {{proveedor.nombre}}{% endblock %}
+{% block contenido %}
+    <div class="container">
+        <p class="text-success">
+            {% if addSuccess %}
+                El proveedor se agregó exitosamente. <br>
+            {% endif %}
+            {% if addServicioSuccess %}
+                El servicio se agregó exitosamente. <br>
+            {% endif %}
+        </p>
+        <div class="span12">
+            <div class="span5">
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <tr>
+                            <th>Id Proveedor</th>
+                            <td>{{proveedor.idProveedor}}</td>
+                        </tr>
+                        <tr>
+                            <th>Nombre</th>
+                            <td>{{proveedor.nombre}}</td>
+                        </tr>
+                        <tr>
+                            <th>Descripción</th>
+                            <td>{{proveedor.descripcion}}</td>
+                        </tr>
+                        <tr>
+                            <th>Persona de Contacto</th>
+                            <td>{{proveedor.nombrePersonaContacto}}</td>
+                        </tr>
+                        <tr>
+                            <th>Tel. Celular</th>
+                            <td>{{proveedor.telCelular}}</td>
+                        </tr>
+                        <tr>
+                            <th>Tel. Fijo</th>
+                            <td>{{proveedor.telFijo}}</td>
+                        </tr>
+                        <tr>
+                            <th>Calificación</th>
+                            <td>{{proveedor.calificacion}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="span4">
+                <h4>Servicios de este proveedor</h4>
+                <table class="table-bordered table-striped table-hover">
+                    <thead>
+                        <th>Servicio</th>
+                        <th>Costo</th>
+                    </thead>
+                    <tbody>
+                        {% for s in servicios %}
+                            <tr>
+                                <td>{{s.servicio}}</td>
+                                <td>{{s.costo}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="span2">
+                <p>
+                    <a class="btn" href="/proveedores">Regresar a Proveedores</a>
+                </p>
+                <form method="GET" action="/proveedores/agregar/" name="modificarProveedor">
+                    {% csrf_token %}
+                    <input type="hidden" name="idProveedor" value="{{idProveedor}}">
+                    <input type="hidden" name="tipo" value="modificar">
+                    <input class="btn" type="submit" value="Modificar Proveedor" name="modificarProveedor"/>
+                </form>
+                <form method="GET" action="/proveedores/agregarServicio/" name="agregarServicio">
+                    {% csrf_token %}
+                    <input type="hidden" name="idProveedor" value="{{idProveedor}}">
+                    <input class="btn" type="submit" value="Agregar Servicio" name="agregarServicio"/>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

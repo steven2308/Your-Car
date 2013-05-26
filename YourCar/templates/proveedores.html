@@ -1,0 +1,110 @@
+{%extends "base.html"%}
+{% block titulo %}Proveedores{% endblock %}
+{% block contenido %}
+    <div class="container">
+        {% if errorIdProveedor %}
+            <p class="text-error">
+                No se encuentra un proveedor con ese identificador.
+            </p>
+        {% endif %}
+        {% if filtrados %}
+            <h4>Estás viendo los contratos filtrados y ordenados:</h4>
+        {% else %}
+    	   <h4>Estás viendo todos los proveedores:</h4>
+        {% endif %}
+        <div class="span12">
+            <div class="span4">
+                <p>Hay en total {{ proveedores|length }} proveedor(es).</p>
+            </div>
+            <div>
+                <a class="btn" href="/proveedores/agregar/">Agregar Provedores</a>
+            </div>
+        </div>
+        {% if proveedores %}
+            <form method="POST" action="/proveedores/" name="filtrarProveedores">
+                {% csrf_token %}
+                <h4>Filtrar Por:</h4>
+                <table class="table-bordered table-striped table-hover">
+                    <thead>
+                        <th>Id Proveedor</th>
+                        <th>Nombre</th>
+                    </thead>
+                    <tbody>
+                        <td><input type="text" name="idProveedor" pattern="[1-9]{1,5}"></td>
+                        <td><input type="text" name="nombre"></td>
+                    </tbody>
+                </table>
+                <div class="span12">
+                    <div class="span4">
+                        <h4>Ordenar por:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Id Proveedor</label>
+                                <input id="btnIdProveedor" name="orderBy" type="radio" value="idProveedor" checked="checked">
+                            </li>
+                            <li>
+                                <label>Nombre</label>
+                                <input id="btnNombre" name="orderBy" type="radio" value="nombre">
+                            </li>
+                            <li>
+                                <label>Descripción</label>
+                                <input id="btnDescripcion" name="orderBy" type="radio" value="descripcion">
+                            </li>
+                            <li>
+                                <label>Calificación</label>
+                                <input id="btnCalificacion" name="orderBy" type="radio" value="calificacion">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4">
+                        <h4>Sentido:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Ascendente</label>
+                                <input id="btnAsc" name="ascDesc" type="radio" value="True" checked="checked">
+                            </li>
+                            <li>
+                                <label>Descendente</label>
+                                <input id="btnDsc" name="ascDesc" type="radio" value="False">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4"></div>
+                </div>
+                <input type="submit" value="Filtrar" name="filtrar"/>
+            </form>
+            <table class="table-bordered table-striped table-hover">
+                <thead>
+                    <th>Id Proveedor</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Calificación</th>
+                </thead>
+                <tbody>
+                    {% for p in proveedores %}
+                        <tr>
+                            <td><a href="/proveedores/detalles/{{p.idProveedor}}/">{{p.idProveedor}}</a></td>
+                            <td>{{p.nombre}}</td>
+                            <td>{{p.descripcion}}</td>
+                            <td>{{p.calificacion}}</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="paginas">
+                <a href="/proveedores/pag/1/"> Primera </a>
+                {% if proveedores.has_previous %}
+                    <a href="/proveedores/pag/{{proveedores.previous_page_number}}/"> Anterior </a>
+                {% endif %}
+                {% if proveedores.has_next %}
+                    <a href="/proveedores/pag/{{proveedores.next_page_number}}/"> Siguiente </a>
+                {% endif %}
+                <a href="/proveedores/pag/{{proveedores.paginator.num_pages}}"> Última </a>
+                <br>
+                <strong>Página {{proveedores.number}} de {{proveedores.paginator.num_pages}}</strong>
+            </div>
+    	{% elif filtrados%}
+    	    <p>No hay proveedores con las características que buscas, intenta menos parámetros.</p>
+            <a class="btn" href="/proveedores/">Ver todos</a>
+    	{% endif %}
+    </div>
+{% endblock %}

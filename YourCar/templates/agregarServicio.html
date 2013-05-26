@@ -1,0 +1,44 @@
+	{% extends "base.html" %}
+{% block titulo %}Agregar Servicio{% endblock %}
+{% block contenido %}
+	{%if errorIdProveedor or errorServicio or errorCosto%}
+		<div class="container">
+		<h4>Corrige los siguientes errores para continuar:</h4>
+		<p class="text-error">
+			{% if errorIdProveedor %}
+				No se encuentra el proveedor. <br>
+			{% endif %}
+			{% if errorServicio %}
+				Debes ingresar un servicio y no debe tener mas de 20 caracteres. <br>
+			{% endif %}
+			{% if errorCosto %}
+				El costo tiene un formato incorrecto, debe ser un número.<br>
+			{% endif %}
+		</p>
+	</div>
+	{%endif %}
+	<div class="container">
+		<form method="POST" action="/proveedores/agregarServicio/" name="agregarServicio">
+				{% csrf_token %}
+				<h3>Ingrese los datos del servicio.</h3>
+				<table class="table-bordered table-striped table-hover">
+					<tbody>
+						<input type="hidden" name="idProveedor" value="{{idProveedor}}" required="true"/>
+					    <tr>
+					        <td><label>Servicio:</label></td>
+					        <td><input type="text" name="servicio" value="{{servicio}}" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Costo:</label></td>
+					        <td><input type="text" name="costo" value="{{costo}}" pattern="[0-9]{3,10}" required="true"/>*</td>
+					    </tr>
+
+					    <tr>
+					    	<td><input type="submit" value="Agregar Servicio" name="agregarServicio"/></td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>
+		</form>
+	</div>
+{% endblock %}
