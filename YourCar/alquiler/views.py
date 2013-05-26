@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
-from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva, Contrato, ConductorAutorizado, DatosAlquiler, ChecklistVehiculo, Factura, CobroAdicional
+from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado, DatosAlquiler, ChecklistVehiculo, Factura, CobroAdicional, Proveedor, Servicio
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator,EmptyPage,InvalidPage
@@ -1445,13 +1445,16 @@ def facturasControl(request,pagina=1):
 		return render_to_response('facturas.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
 
-def detallesFacturaControl(request,numFactura, addSuccess=False,addCobroSuccess=True):
+def detallesFacturaControl(request,numFactura, addSuccess=False,addCobroSuccess=False):
 	if request.user.is_authenticated() and request.user.is_staff:
-		errorIdContrato=False
+		nit = parametros["nitEmpresa"]
+		servicios=parametros["servicios"]
+		errorNumFactura=False
 		try:
-			nit = parametros["nitEmpresa"]
-			servicios=parametros["servicios"]
 			factura = Factura.objects.get(numFactura=numFactura)
+		except:
+			errorNumFactura=True
+		if not errorNumFactura:
 			datosAlquiler = factura.idDatosAlquiler
 			contrato = datosAlquiler.idContrato
 			voucher = contrato.idVoucher
@@ -1473,8 +1476,6 @@ def detallesFacturaControl(request,numFactura, addSuccess=False,addCobroSuccess=
 			if factura.costoEntrega:
 				cobrarEntrega = True
 			return render_to_response('detallesFactura.html',locals(), context_instance = RequestContext(request))
-		except:
-			errorIdContrato=True
 		return HttpResponseRedirect('/facturas')
 	return HttpResponseRedirect('/404')
 
@@ -1617,4 +1618,129 @@ def agregarCobroControl(request):
 			except:
 				errorNumFactura = True
 			return render_to_response('agregarCobro.html',locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
+
+def proveedoresControl(request,pagina=1):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method=="POST":
+			query = {}
+			if request.POST["ascDesc"]=="True":
+				order = request.POST["orderBy"]
+			else:
+				order = "-"+request.POST["orderBy"]
+			#Tomo los datos
+			idProveedor=request.POST["idProveedor"]
+			nombre=request.POST["nombre"]
+			#Los datos que no son vacios los agrego al query
+			if idProveedor:
+				query["idProveedor"]=idProveedor
+			if nombre:
+				query["nombre__icontains"]=nombre
+			#Si la consulta no es vacia la hago
+			if query:
+				listaProveedores= Proveedor.objects.filter(**query).order_by(order)
+				filtrados=True
+			else:
+				listaProveedores = Proveedor.objects.all().order_by(order)
+		else:
+			listaProveedores = Proveedor.objects.all()
+		proveedores=paginar(listaProveedores,pagina)
+		return render_to_response('proveedores.html',locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
+
+def detallesProveedorControl(request,idProveedor, addSuccess=False,addServicioSuccess=False):
+	if request.user.is_authenticated() and request.user.is_staff:
+		errorIdProveedor=False
+		try:
+			proveedor = Proveedor.objects.get(idProveedor=idProveedor)
+		except:
+			errorIdProveedor=True
+		if not errorIdProveedor:
+			servicios = Servicio.objects.filter(idProveedor=proveedor)
+			return render_to_response('detallesProveedor.html',locals(), context_instance = RequestContext(request))
+		return HttpResponseRedirect('/proveedores')
+	return HttpResponseRedirect('/404')
+
+def agregarProveedorControl(request):
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == 'POST':
+			nombre = request.POST["nombre"]
+			descripcion = request.POST["descripcion"]
+			nombrePersonaContacto = request.POST["nombrePersonaContacto"]
+			telCelular = request.POST["telCelular"]
+			telFijo = request.POST["telFijo"]
+			calificacion = request.POST["calificacion"]
+			tipo = request.POST["tipo"]
+			idProveedor=""
+			if tipo=="modificar":
+				modificar=True
+				idProveedor = request.POST["idProveedor"]
+
+			errorDatosVacios = len(nombre)==0 or len(descripcion)==0
+			errorDatosLargos = len(nombre)>20 or len(descripcion)>200 or len(nombrePersonaContacto)>20
+			errorTels = not re.match("^([0-9]{7,12})$",telFijo) or (len(telCelular)>1 and not re.match("^([0-9]{10,12})$",telCelular))
+			errorCalificacion = not re.match("^[0-5]$",calificacion)
+
+			if (errorDatosVacios or errorDatosLargos or errorTels or errorCalificacion):
+				return render_to_response('agregarProveedor.html', locals(), context_instance = RequestContext(request))
+			if tipo=="agregar":
+				proveedor = Proveedor(nombre = nombre,descripcion = descripcion,nombrePersonaContacto = nombrePersonaContacto,telCelular = telCelular,telFijo = telFijo,calificacion = calificacion)
+				proveedor.save()
+			elif tipo=="modificar":
+				proveedor = Proveedor(idProveedor = idProveedor, nombre = nombre,descripcion = descripcion,nombrePersonaContacto = nombrePersonaContacto,telCelular = telCelular,telFijo = telFijo,calificacion = calificacion)
+				proveedor.save()
+			return detallesProveedorControl(request,idProveedor=proveedor.idProveedor,addSuccess=True)
+
+		else:
+			errorIdProveedor = False
+			try:
+				tipo = request.GET["tipo"]
+			except:
+				tipo = ""
+			if tipo=="modificar":
+				modificar=True
+				idProveedor = request.GET["idProveedor"]
+				try:
+					proveedor = Proveedor.objects.get(idProveedor=idProveedor)
+				except:
+					errorIdProveedor=True
+				if not errorIdProveedor:
+					nombre = proveedor.nombre
+					descripcion = proveedor.descripcion
+					nombrePersonaContacto = proveedor.nombrePersonaContacto
+					telCelular = proveedor.telCelular
+					telFijo = proveedor.telFijo
+					calificacion = proveedor.calificacion
+			return render_to_response('agregarProveedor.html', locals(), context_instance = RequestContext(request))
+	return HttpResponseRedirect('/404')
+
+def agregarServicio(request):
+	if request.user.is_authenticated() and request.user.is_staff:
+		errorIdProveedor = False
+		if request.method == 'POST':
+			idProveedor = request.POST["idProveedor"]
+			servicio = request.POST["servicio"]
+			costo = request.POST["costo"]
+			#Posibles errores
+			errorServicio = len(servicio)==0 or len(servicio)>20
+			errorCosto = not re.match("^[0-9]{3,10}$",costo)
+			try:
+				proveedor = Proveedor.objects.get(idProveedor=idProveedor)
+			except:
+				errorIdProveedor = True
+			#Si hay errores retorno a la vista
+			if (errorServicio or errorCosto or errorIdProveedor):
+				return render_to_response('agregarServicio.html', locals(), context_instance = RequestContext(request))
+			#Si no, guardo el servicio
+			servicio = Servicio(idProveedor = proveedor, servicio = servicio, costo = costo)
+			servicio.save()
+			request.method="GET"
+			return detallesProveedorControl(request,idProveedor=idProveedor,addServicioSuccess=True)
+		else:
+			try:
+				idProveedor = request.GET["idProveedor"]
+				proveedor = Proveedor.objects.get(idProveedor=idProveedor)
+			except:
+				errorIdProveedor = True
+			return render_to_response('agregarServicio.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')

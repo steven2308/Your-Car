@@ -168,3 +168,23 @@ class CobroAdicional(models.Model):
 		return "Cobro Adicional num: %s %s " %(self.idCobroAdicional,self.numFactura)
 	class Meta:
 		verbose_name_plural=u'Cobros Adicionales'
+
+class Proveedor(models.Model):
+	idProveedor = models.AutoField(primary_key=True)
+	nombre = models.CharField(max_length=20)
+	descripcion = models.CharField(max_length=200)
+	nombrePersonaContacto = models.CharField(max_length=20,blank=True)
+	telCelular = models.CharField(max_length=20,blank=True)
+	telFijo = models.CharField(max_length=20)
+	calificacion = models.IntegerField()
+	def __unicode__(self):
+		return "Proveedor %s" %(self.nombre)
+	class Meta:
+		verbose_name_plural=u'Proveedores'
+
+class Servicio(models.Model):
+	idProveedor = models.ForeignKey(Proveedor)
+	servicio = models.CharField(max_length=20)
+	costo = models.IntegerField()
+	def __unicode__(self):
+		return "Servicio %s por %s" %(self.servicio, self.idProveedor)

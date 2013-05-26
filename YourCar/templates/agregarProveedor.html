@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block titulo %} {% if modificar %} Modificar {% else %}Agregar {% endif %}Proveedor{% endblock %}
+{% block contenido %}
+	{%if errorDatosVacios or errorDatosLargos or errorTels or errorCalificacion%}
+		<div class="container">
+			<h4>Corrige los siguientes errores para continuar:</h4>
+			<p class="text-error">
+				{% if errorDatosVacios %}
+					Algunos campos obligatorios están vacios. <br>
+				{% endif %}
+				{% if errorDatosLargos %}
+					La información ingresada en uno o mas campos es demasiado largo. El límite de caracteres para el nombre del proveedor y la persona de contacto es de 20, para la descripción es de 200.<br>
+				{% endif %}
+				{% if  errorTels %}
+					El formato de uno o más teléfonos es incorrecto. <br>
+				{% endif %}
+				{% if errorCalificacion %}
+					La calificación debe ser de 0 a 5. <br>
+				{% endif %}
+			</p>
+		</div>
+	{%endif %}
+	<div class="container">
+		{% if modificar %}
+			<form method="POST" action="/proveedores/agregar/" name="modificarContratos">
+				<input type="hidden" name="idProveedor" value="{{idProveedor}}">
+				<input type="hidden" name="tipo" value="modificar">
+		{% else %}
+			<form method="POST" action="/proveedores/agregar/" name="agregarContratos">
+			<input type="hidden" name="tipo" value="agregar">
+		{% endif %}
+				{% csrf_token %}
+				<h3>Ingrese los datos del proveedor.</h3>
+				<table class="table-bordered table-striped table-hover">
+					<tbody>
+						<tr>
+					        <td><label>Nombre del proveedor:</label></td>
+					        <td><input type="text" name="nombre" value="{{nombre}}" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Descripción:</label></td>
+					        <td><input type="text" name="descripcion" value="{{descripcion}}" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Nombre Persona de contacto:</label></td>
+					        <td><input type="text" name="nombrePersonaContacto" value="{{nombrePersonaContacto}}"/></td>
+					    </tr>
+					    <tr>
+					        <td><label>Teléfono celular:</label></td>
+					        <td><input type="text" name="telCelular" pattern="[0-9]{10,12}" value="{{telCelular}}"/></td>
+					    </tr>
+					    <tr>
+					        <td><label>Teléfono fijo:</label></td>
+					        <td><input type="text" name="telFijo" value="{{telFijo}}" pattern="[0-9]{7,12}" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Calificación:</label></td>
+					        <td><input type="text" name="calificacion" value="{{calificacion}}" pattern="[0-5]" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					    	<td><input type="submit" value="{% if modificar %} Modificar {% else %}Agregar {% endif %}Proveedor" name="agregarProveedor"/></td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>
+		</form>
+	</div>
+{% endblock %}
