@@ -2,38 +2,50 @@
 {% block titulo %}Detalles de Contrato {{contrato.idContrato}}{% endblock %}
 {% block contenido %}
     <div class="container">
+        <p class="text-success">
+            {% if addSuccess %}
+                El contrato se agregó exitosamente. <br>
+            {% endif %}
+            {% if addDriverSuccess %}
+                El conductor se agregó exitosamente. <br>
+            {% endif %}
+        </p>
         <div class="span12">
-            <div class="span3">
+            <div class="span4">
                 <table class="table-bordered table-striped table-hover">
                     <tbody>
-                        <h4>Información del Vehículo</h4>
+                        <h4>Información del Cliente</h4>
                         <tr>
-                            <td>Placa</td>
-                            <td>{{vehiculo.placa}}</td>
+                            <th>Nombres</th>
+                            <td>{{user.first_name}}</td>
                         </tr>
                         <tr>
-                            <td>Marca</td>
-                            <td>{{vehiculo.marca}}</td>
+                            <th>Apellidos</th>
+                            <td>{{user.last_name}}</td>
                         </tr>
                         <tr>
-                            <td>Referencia</td>
-                            <td>{{vehiculo.referencia}}</td>
+                            <th>Tipo de Persona</th>
+                            <td>{{cliente.tipoPersona}}</td>
                         </tr>
                         <tr>
-                            <td>Gama</td>
-                            <td>{{vehiculo.gama}}</td>
+                            <th>Tipo de Documento</th>
+                            <td>{{cliente.tipoDocumento}}</td>
                         </tr>
                         <tr>
-                            <td>Valor Garantia</td>
-                            <td>{{vehiculo.valorGarantia}}</td>
+                            <th>Documento</th>
+                            <td>{{cliente.numDocumento}}</td>
                         </tr>
                         <tr>
-                            <td>Limite Kilometraje</td>
-                            <td>{{vehiculo.limiteKilometraje}}</td>
+                            <th>Dirección</th>
+                            <td>{{cliente.dirResidencia}}</td>
                         </tr>
                         <tr>
-                            <td>Tarifa</td>
-                            <td>{{vehiculo.tarifa}}</td>
+                            <th>Teléfono Fijo</th>
+                            <td>{{cliente.telFijo}}</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono Celular</th>
+                            <td>{{cliente.telCelular}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -41,82 +53,73 @@
                     <tbody>
                         <h4>Información del Voucher</h4>
                         <tr>
-                            <td>Código Autorizacion</td>
+                            <th>Código Autorizacion</th>
                             <td>{{voucher.codigoAutorizacion}}</td>
                         </tr>
                         <tr>
-                            <td>Monto Voucher</td>
+                            <th>Monto Voucher</th>
                             <td>{{voucher.montoVoucher}}</td>
                         </tr>
                         <tr>
-                            <td>Tarjeta de Crédito</td>
+                            <th>Tarjeta de Crédito</th>
                             <td>{{voucher.numTarjetaCredito}}</td>
                         </tr>
                         <tr>
-                            <td>Nombre banco</td>
+                            <th>Nombre banco</th>
                             <td>{{voucher.nombreBanco}}</td>
                         </tr>
-
+                        <tr>
+                            <th>Franquicia</th>
+                            <td>{{voucher.franquicia}}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="span6">
+            <div class="span4">
                 <table class="table-bordered table-striped table-hover">
                     <tbody>
-                        <h4>Información del Cliente</h4>
+                        <h4>Información del Vehículo</h4>
                         <tr>
-                            <td>Nombres</td>
-                            <td>{{user.first_name}}</td>
+                            <th>Placa</th>
+                            <td>{{vehiculo.placa}}</td>
                         </tr>
                         <tr>
-                            <td>Apellidos</td>
-                            <td>{{user.last_name}}</td>
+                            <th>Marca</th>
+                            <td>{{vehiculo.marca}}</td>
                         </tr>
                         <tr>
-                            <td>Tipo de Persona</td>
-                            <td>{{cliente.tipoPersona}}</td>
+                            <th>Referencia</th>
+                            <td>{{vehiculo.referencia}}</td>
                         </tr>
                         <tr>
-                            <td>Tipo de Documento</td>
-                            <td>{{cliente.tipoDocumento}}</td>
+                            <th>Gama</th>
+                            <td>{{vehiculo.gama}}</td>
                         </tr>
                         <tr>
-                            <td>Documento</td>
-                            <td>{{cliente.numDocumento}}</td>
+                            <th>Valor Garantia</th>
+                            <td>{{vehiculo.valorGarantia}}</td>
                         </tr>
                         <tr>
-                            <td>Nombre banco</td>
-                            <td>{{voucher.nombreBanco}}</td>
+                            <th>Limite Kilometraje</th>
+                            <td>{{vehiculo.limiteKilometraje}}</td>
                         </tr>
-                    </tbody>
-                </table>
-                <table>
-                    <h4>Fecha del contrato</h4>
-                    <tbody>
                         <tr>
-                            <td>{{contrato.fecha}}</td>
+                            <th>Tarifa</th>
+                            <td>{{vehiculo.tarifa}}</td>
                         </tr>
                     </tbody>
                 </table>
                 <table class="table-bordered table-striped table-hover">
-                    <h4>Conductores Autorizados</h4>
-                    <th>Doc. de Identidad</th>
-                    <th>Nombres</th>
-                    <th>Apellidos</th>
-                    <th>Licencia</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Tipo de Sangre</th>
+                    <h4>Fechas del contrato</h4>
                     <tbody>
-                        {% for c in conductores %}
-                            <tr>
-                                <td>{{c.docIdentidad}}</td>
-                                <td>{{c.nombres}}</td>
-                                <td>{{c.apellidos}}</td>
-                                <td>{{c.licencia}}</td>
-                                <td>{{c.fechaNacimiento}}</td>
-                                <td>{{c.tipoSangre}}</td>
-                            </tr>
-                        {% endfor %}
+                        <tr>
+                            <th>Fecha de Inicio</th>
+                            <td>{{contrato.fechaInicio}}</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha de Fin</th>
+                            <td>{{contrato.fechaFin}}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -140,11 +143,41 @@
                     <input name="idContrato" value="{{contrato.idContrato}}" type="hidden">
                     <input class="btn" type="submit" value="Agregar Datos Alquiler" name="agregarDatosAlquiler"/>
                 </form>
-                <form method="POST" action="/contratos/eliminar/" name="eliminarVehiculo">
-                    {% csrf_token %}
-                    <input name="idContrato" value="{{contrato.idContrato}}" type="hidden">
-                    <input class="btn btn-danger" type="submit" value="Eliminar este contrato" name="eliminarContrato" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
-                </form>
+            </div>
+        </div>
+        <div class="span12">
+            <div class="span4">
+                <table class="table-bordered table-striped table-hover">
+                    <h4>Conductores Autorizados</h4>
+                    <th>Doc. de Identidad</th>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>Licencia</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>Tipo de Sangre</th>
+                    <tbody>
+                        {% for c in conductores %}
+                            <tr>
+                                <td>{{c.docIdentidad}}</td>
+                                <td>{{c.nombres}}</td>
+                                <td>{{c.apellidos}}</td>
+                                <td>{{c.licencia}}</td>
+                                <td>{{c.fechaNacimiento}}</td>
+                                <td>{{c.tipoSangre}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="span12">
+            <div class="span3">
+                <label><strong>Firma del cliente</strong></label>
+                <label>__________________</label>
+            </div>
+            <div class="span3">
+                <label><strong>Firma del administrador</strong></label>
+                <label>__________________</label>
             </div>
         </div>
     </div>

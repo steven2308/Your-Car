@@ -2,6 +2,11 @@
 {% block titulo %}Detalles de Contrato {{contrato.idContrato}}{% endblock %}
 {% block contenido %}
     <div class="container">
+        <p class="text-success">
+            {% if addSuccess %}
+                Los datos de alquiler se agregaron exitosamente. <br>
+            {% endif %}
+        </p>
         <div class="span4">
         	<table class="table-bordered table-striped table-hover">
                     <tbody>
@@ -146,15 +151,15 @@
         	<p>
         		<a class="btn" href="/alquiler">Regresar a Datos de Alquiler</a>
         	</p>
+            <form method="GET" action="/facturas/agregar/" name="agregarFactura">
+                    {% csrf_token %}
+                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
+                    <input class="btn" type="submit" value="Agregar Factura" name="agregarFactura"/>
+                </form>
             <form method="GET" action="/alquiler/cierre/" name="cierreAlquiler">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
                     <input type="submit" value="Cerrar Datos de Alquiler" name="cierreAlquiler"/>
-                </form>
-        	<form method="POST" action="/alquiler/eliminar/" name="eliminarAlquiler">
-                    {% csrf_token %}
-                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
-                    <input class="btn btn-danger" type="submit" value="Eliminar estos Datos de Alquiler" name="eliminarDatosAlquiler" onClick="if(confirm('Estás seguro?')) alert('El registro se eliminará!');else { return false; }"/>
                 </form>
         </div>
     </div>

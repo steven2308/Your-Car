@@ -1,0 +1,147 @@
+{%extends "base.html"%}
+{% block titulo %}Detalles de Contrato {{contrato.idContrato}}{% endblock %}
+{% block contenido %}
+    <div class="container">
+        <p class="text-success">
+            {% if addSuccess %}
+                La factura se agregó exitosamente. <br>
+            {% endif %}
+            {% if addCobroSuccess %}
+                El cobro se agregó exitosamente. <br>
+            {% endif %}
+        </p>
+        <div class="span12">
+            <div class="span8">
+                <table class="table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Factura No: {{factura.numFactura}}</th>
+                            <th>{{nombreEmpresa}}</th>
+                            <th>Nit:{{nit}}</th>
+                        </tr>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>{{user.first_name}} {{user.last_name}}</th>
+                            <th>Identificación: {{cliente.numDocumento}}</th>
+                        </tr>
+                        <tr>
+                            <th>ID servicio</th>
+                            <th>Item</th>
+                            <th>Descripción</th>
+                            <th>Unidades</th>
+                            <th>Precio Unidad</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if cotizacion.dias %}
+                            <tr>
+                                <td>{{servicios.Alquiler}}</td>
+                                <td>Días</td>
+                                <td>Servicio de alquiler</td>
+                                <td>{{cotizacion.dias}}</td>
+                                <td>{{cotizacion.tarifaDia}}</td>
+                                <td>{{cotizacion.totalPorDias}}</td>
+                            </tr>
+                        {% endif %}
+                        {% if cotizacion.horas %}
+                            <tr>
+                                <td>{{servicios.Alquiler}}</td>
+                                <td>Horas</td>
+                                <td>Servicio de alquiler</td>
+                                <td>{{cotizacion.horas}}</td>
+                                <td>{{cotizacion.tarifaHora}}</td>
+                                <td>{{cotizacion.totalPorHoras}}</td>
+                            </tr>
+                        {% endif %}
+                        {% if cobrarRecogida %}
+                            <tr>
+                                <td>{{servicios.Recogida}}</td>
+                                <td>Recogida</td>
+                                <td>{{lugarRecogida}}</td>
+                                <td></td>
+                                <td></td>
+                                <td>{{cotizacion.costoRecogida}}</td>
+                            </tr>
+                        {% endif %}
+                        {% if cobrarEntrega %}
+                            <tr>
+                                <td>{{servicios.Entrega}}</td>
+                                <td>Entrega</td>
+                                <td>{{lugarEntrega}}</td>
+                                <td></td>
+                                <td></td>
+                                <td>{{cotizacion.costoEntrega}}</td>
+                            </tr>
+                        {% endif %}
+                        {% if cobrarGasolina %}
+                             <tr>
+                                <td>{{servicios.Gasolina}}</td>
+                                <td>Gasolina</td>
+                                 <td></td>
+                                <td>{{factura.galonesGasolina}}</td>
+                                <td>{{cotizacion.costoGalon}}</td>
+                                <td>{{cotizacion.totalPorGasolina}}</td>
+                            </tr>
+                        {% endif %}
+                        {% if cobrarLavada %}
+                             <tr>
+                                <td>{{servicios.Lavada}}</td>
+                                <td>Lavada</td>
+                                 <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{cotizacion.costoLavada}}</td>
+                            </tr>
+                        {% endif %}
+                        {% for c in cobrosAdicionales %}
+                            <tr>
+                                <td>{{c.idServicio}}</td>
+                                <td>{{c.servicio}}</td>
+                                <td>{{c.descripcion}}</td>
+                                <td>{{c.costoUnidad}}</td>
+                                <td>{{c.cantidad}}</td>
+                                <td>{{c.total}}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <th>Subtotal</th>
+                            <td>{{cotizacion.subtotal}}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <th>IVA ({{factura.porcentajeIVA}}%)</th>
+                            <td>{{cotizacion.iva}}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <th>Total</th>
+                            <td>{{cotizacion.total}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            </div>
+            <div class="span2">
+                <p>
+                    <a class="btn" href="/facturas">Regresar a Facturas</a>
+                </p>
+                <form method="GET" action="/facturas/agregarCobro/" name="agregarCobro">
+                    {% csrf_token %}
+                    <input name="numFactura" value="{{numFactura}}" type="hidden">
+                    <input class="btn" type="submit" value="Agregar Cobro" name="agregarCobro"/>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block titulo %}Agregar una Factura{% endblock %}
+{% block contenido %}
+	{%if errorDatosAlquiler or errorContrato or errorVehiculo or errorVoucher or errorCliente or errorFecha or errorNumeros or errorTamanyoLavada or errorLugares%}
+		<div class="container">
+		<h4>Corrige los siguientes errores para continuar:</h4>
+		<p class="text-error">
+			{% if errorDatosAlquiler %}
+				No se encuentran los datos de alquiler con ese identificador.<br>
+			{% endif %}
+			{% if errorContrato %}
+				No se encuentran los datos del contrato.<br>
+			{% endif %}
+			{% if errorVehiculo %}
+				No se encuentran los datos del vehículo.<br>
+			{% endif %}
+			{% if errorVoucher %}
+				No se encuentran los datos del voucher.<br>
+			{% endif %}
+			{% if errorCliente %}
+				No se encuentran los datos del cliente.<br>
+			{% endif %}
+			{% if errorFecha %}
+				El formato de la fecha no es correcto, si tu navegador no muestra un campo de fecha intenta con el formato aaaa-mm-dd.<br>
+			{% endif %}
+			{% if errorNumeros %}
+				Los números no tienen un formato correcto o son demasiado largos.<br>
+			{% endif %}
+			{% if errorTamanyoLavada %}
+				El tamaño del vehículo no está entre las opciones.<br>
+			{% endif %}
+			{% if errorLugares %}
+				Los lugares de reocgida y entrega deben seleccionarse entre las opciones.<br>
+            {% endif %}
+		</p>
+	{% endif %}
+	</div>
+	<div class="container">
+		<form method="POST" action="/facturas/agregar/" name="agregarFacturas">
+				{% csrf_token %}
+				<h3>Ingrese los datos de la factura.</h3>
+				<table class="table-bordered table-striped table-hover">
+					<p>
+						<a class="btn" href="/alquiler/">Ver alquileres</a>
+					</p>
+					<tbody>
+					    <tr>
+					        <td><label>Id Datos Alquiler:</label></td>
+					        <td><input type="text" name="idDatosAlquiler" value="{{idDatosAlquiler}}" required="true" readonly="readonly"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Fecha de factura:</label></td>
+					        <td><input type="date" name="fecha" value="{{fecha}}" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Tarifa por día:</label></td>
+					        <td><input type="text" name="tarifa" value="{{tarifa}}" required="true" readonly="readonly"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Limite Kilometraje:</label></td>
+					        <td><input type="text" name="limiteKilometraje" value="{{limiteKilometraje}}" required="true" readonly="readonly"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Galones Gasolina:</label></td>
+					        <td><input type="text" name="galonesGasolina" value="{{galonesGasolina}}" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Costo Galon:</label></td>
+					        <td><input type="text" name="costoGalon" value="{{costoGalon}}" required="true"/>*</td>
+					    </tr>
+					    <tr>
+					        <td><label>Tamaño Lavada:</label></td>
+					        <td>
+					        	<select name="tamanyoLavada">
+					        		{% for l in  lavada%}
+					        		{%if l != lavada %}
+					        			<option>{{l}}</option>
+					        		{% endif %}
+					        		{% endfor %}
+					        	</select>
+					    	</td>
+					    </tr>
+					    <tr>
+					    	<td><label>Lugar de Recogida:</label></td>
+					    	<td>
+	                            <select name="lugarRecogida" required="true">
+	                                <option selected>{{lugarRecogida}}</option>
+	                                {% for l in  lugares%}
+	                                    {% if l != lugarRecogida %}
+                                            <option>{{l}}</option>
+                                        {% endif %}
+	                                {% endfor %}
+	                            </select>*
+                        	</td>
+					    </tr>
+					    <tr>
+					    	<td><label>Lugar de Entrega:</label></td>
+					    	<td>
+	                            <select name="lugarEntrega" required="true">
+	                                <option selected>{{lugarEntrega}}</option>
+	                                {% for l in  lugares%}
+	                                    {% if l != lugarEntrega %}
+                                            <option>{{l}}</option>
+                                        {% endif %}
+	                                {% endfor %}
+	                            </select>*
+                        	</td>
+					    </tr>
+					    <tr>
+					    	<td><input type="submit" value="Agregar Factura" name="agregarFactura"/></td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="text-info"><h4>Por favor ingrese todos los campos requeridos (*)</h4></p>
+		</form>
+	</div>
+{% endblock %}
