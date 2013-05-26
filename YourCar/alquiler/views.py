@@ -1272,6 +1272,12 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 			vehiculo = contrato.idVehiculo
 		except:
 			return HttpResponseRedirect('/alquiler')
+		try:
+			checklistVehiculo = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler)
+			checklistExists=True
+		except:
+			checklistExists=False
+		
 		registroCierre={}
 		registroCierre["metodoPago"]="Ningun cambio"
 		registroCierre["tarifaAplicada"]="Ningun cambio"

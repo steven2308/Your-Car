@@ -109,8 +109,27 @@
                             <td>Tarifa</td>
                             <td>{{vehiculo.tarifa}}</td>
                         </tr>
+                        <tr>
+                            <td>checklistExists</td>
+                            <td>{{checklistExists}}</td>
+                        </tr>
                     </tbody>
                 </table>
+                {%if checklistExists %}
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <h4>Checklist del Vehiculo.</h4>
+                        <tr>
+                            <td>Cierre?</td>
+                            <td>{{checklistVehiculo.cierre}}</td>
+                        </tr>
+                        <tr>
+                            <td>Docs del Auto</td>
+                            <td>{{checklistVehiculo.docsDelAuto}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% endif %}
         </div>
         <div class="span5">
         	<p>
