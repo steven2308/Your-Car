@@ -130,6 +130,17 @@
                     </tbody>
                 </table>
                 {% endif %}
+                {%if registro %}
+                <table class="table-bordered table-striped table-hover">
+                    <tbody>
+                        <h4>Cambios en el vehiculo</h4>
+                        <tr>
+                            <td>Docs del Auto</td>
+                            <td>{{registro.docsDelAuto}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% endif %}
         </div>
         <div class="span5">
         	<p>

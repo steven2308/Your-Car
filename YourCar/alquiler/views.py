@@ -1278,6 +1278,17 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 		except:
 			checklistExists=False
 
+		if datosAlquiler.cierre:
+			try:
+				checklist1 = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre)
+				checklist2 = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=not datosAlquiler.cierre)
+				if checklist1 and checklist2:
+					registroCierre=comparar(checklist1, checklist2) ##########
+					return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
+			except:
+				pass
+
+
 		"""registroCierre={}
 		registroCierre["metodoPago"]="Ningun cambio"
 		registroCierre["tarifaAplicada"]="Ningun cambio"
@@ -1306,6 +1317,20 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 
 		return render_to_response('detallesDatosAlquiler.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
+
+def comparar(checklist1, checklist2):
+	registroCierre={}
+
+	if checklist1.docsDelAuto == 0: docsDelAuto1 = "Si"
+	if checklist1.docsDelAuto == 1: docsDelAuto1 = "No"
+	if checklist2.docsDelAuto == 0: docsDelAuto2 = "Si"
+	if checklist2.docsDelAuto == 1: docsDelAuto2 = "No"
+	if checklist1.docsDelAuto != checklist2.docsDelAuto:
+		registroCierre["docsDelAuto"]="Salida: "+docsdelAuto1+" Entrada: "+docsDelAuto2
+
+	return registroCierre
+
+
 
 def cierreDatosAlquilerControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:
@@ -1393,20 +1418,21 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 			idDatosAlquiler = request.POST["idDatosAlquiler"]
 			docsDelAuto = request.POST["docsDelAuto"]
 
-			#manejo errores
-			errorChecklistExists=False
-			try:
-				checklist1 = ChecklistVehiculo.objects.get(idDatosAlquiler=idDatosAlquiler, cierre=False)
-				checklist2 = ChecklistVehiculo.objects.get(idDatosAlquiler=idDatosAlquiler, cierre=True)
-				if checklist1 and checklist2:
-					errorChecklistExists=True
-			except:
-				pass
 
 			try:
 				datosAlquiler=DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
 			except:
 				errorIdDatosAlquiler = True
+
+			#manejo errores
+			errorChecklistExists=False
+			try:
+				checklist1 = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=False)
+				checklist2 = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=True)
+				if checklist1 and checklist2:
+					errorChecklistExists=True
+			except:
+				pass
 
 			checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, docsDelAuto=docsDelAuto)
 			checklistVehiculo.save()
