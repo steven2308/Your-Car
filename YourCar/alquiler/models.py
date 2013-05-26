@@ -124,16 +124,18 @@ class DatosAlquiler(models.Model):
 	totalDias = models.IntegerField()
 	kmInicial = models.IntegerField()
 	kmFinal = models.IntegerField()
-	valorAlquiler = models.IntegerField()
+	cierre = models.BooleanField(default=False)
+	#valorAlquiler = models.IntegerField()
 	def __unicode__(self):
 		return "Datos de alquiler id: %s " %(self.idDatosAlquiler)
 	class Meta:
 		verbose_name_plural=u'Datos Alquiler'
 
-class InventarioVehiculo(models.Model):
-	idInventarioVehiculo = models.AutoField(primary_key=True)
+class ChecklistVehiculo(models.Model):
+	idChecklistVehiculo = models.AutoField(primary_key=True)
 	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
 	cierre = models.BooleanField(default=False)
+	docsDelAuto = models.BooleanField()
 
 class Factura(models.Model):
 	numFactura = models.AutoField(primary_key=True)

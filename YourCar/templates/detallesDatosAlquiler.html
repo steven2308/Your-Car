@@ -65,16 +65,16 @@
                             <td>{{contrato.idContrato}}</td>
                         </tr>
                         <tr>
-                            <td>ID Vehiculo (placa)</td>
-                            <td>{{contrato.idVehiculo.placa}}</td>
-                        </tr>
-                        <tr>
                             <td>ID Voucher</td>
                             <td>{{contrato.idVoucher.codigoAutorizacion}}</td>
                         </tr>
                         <tr>
-                            <td>Fecha</td>
-                            <td>{{contrato.fecha}}</td>
+                            <td>Fecha de Inicio</td>
+                            <td>{{contrato.fechaInicio}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha de Fin</td>
+                            <td>{{contrato.fechaFin}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -111,56 +111,30 @@
                         </tr>
                     </tbody>
                 </table>
-                {%if cierre %}
-                <table class="table-bordered table-striped table-hover">
-                    <tbody>
-                        <h4>Registro Cambios.</h4>
-                        <tr>
-                            <td>Metodo de pago:</td>
-                            <td>{{registroCierre.metodoPago}}</td>
-                        </tr>
-                        <tr>
-                            <td>Tarifa aplicada:</td>
-                            <td>{{registroCierre.tarifaAplicada}}</td>
-                        </tr>
-                        <tr>
-                            <td>Fecha alquiler:</td>
-                            <td>{{registroCierre.fechaAlquiler}}</td>
-                        </tr>
-                        <tr>
-                            <td>Fecha devolucion:</td>
-                            <td>{{registroCierre.fechaDevolucion}}</td>
-                        </tr>
-                        <tr>
-                            <td>Kilometraje final:</td>
-                            <td>{{registroCierre.kmFinal}}</td>
-                        </tr>
-                        <tr>
-                            <td>Total dias:</td>
-                            <td>{{registroCierre.totalDias}}</td>
-                        </tr>
-                        <tr>
-                            <td>Valor alquiler:</td>
-                            <td>{{registroCierre.valorAlquiler}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                {% endif %}
         </div>
         <div class="span5">
         	<p>
         		<a class="btn" href="/alquiler">Regresar a Datos de Alquiler</a>
         	</p>
+            {%if datosAlquiler.cierre%}
             <form method="GET" action="/facturas/agregar/" name="agregarFactura">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
                     <input class="btn" type="submit" value="Agregar Factura" name="agregarFactura"/>
                 </form>
+            {%endif%}
+            {%if not datosAlquier.cierre %}
             <form method="GET" action="/alquiler/cierre/" name="cierreAlquiler">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
-                    <input type="submit" value="Cerrar Datos de Alquiler" name="cierreAlquiler"/>
+                    <input class="btn" type="submit" value="Cerrar Datos de Alquiler" name="cierreAlquiler"/>
                 </form>
+            <form method="GET" action="/alquiler/checklist/" name="agregarChecklistVehiculo">
+                    {% csrf_token %}
+                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
+                    <input class="btn" type="submit" value="Agregar Checklist del Vehiculo" name="agregarChecklistVehiculo"/>
+                </form>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar Datos de Alquiler{% endblock %}
 {% block contenido %}
-	{%if errorIdContrato or errorIdContratoExists or errorIdReserva or errorFechas or errorFechaAlquiler or errorFechaDevolucion or errorKmInicial or errorKmFinal or errorMetodoPago%}
+	{%if errorIdContrato or errorIdContratoExists or errorIdReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago%}
 	<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -16,6 +16,12 @@
 			{% endif %}
 			{% if errorFechas %}
 				La fecha de devolucion tiene que ser despues de la fecha de alquiler y de la fecha actual.<br>
+			{% endif %}
+			{% if errorFormatoFechas %}
+				Las fechas tienen un formato incorrecto.<br>
+			{% endif %}
+			{% if errorHoras %}
+				Las horas tienen un formato incorrecto.<br>
 			{% endif %}
 			{% if errorFechaAlquiler %}
 				La fecha de alquiler es invalida.<br>
@@ -46,7 +52,7 @@
 					<tbody>
 						<tr>
 					        <td><label>ID Contrato:</label></td>
-					        <td><input type="text" name="idContrato" value="{{idContrato}}" required="true" pattern="[1-9]{1,5}"/>*</td>
+					        <td><input type="text" name="idContrato" value="{{idContrato}}" required="true" pattern="[1-9]{1,5}" readonly="readonly"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>ID Reserva:</label></td>
@@ -65,7 +71,7 @@
 					    </tr>
 					    <tr>
 					        <td><label>Tarifa Establecida:</label></td>
-					        <td><input type="text" name="tarifaEstablecida" required="true" value="{{tarifaEstablecida}}" disabled="True"/>*</td>
+					        <td><input type="text" name="tarifaEstablecida" required="true" value="{{tarifaEstablecida}}" readonly="readonly"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Tarifa Aplicada:</label></td>
@@ -76,12 +82,20 @@
 					        <td><input type="date" name="fechaAlquiler" required="true" value="{{fechaAlquiler}}"/>*</td>
 					    </tr>
 					    <tr>
+					    	<td><label>Hora Alquiler:</label></td>
+							<td><input type="time" name="horaAlquiler" required="true" value="{{horaAlquiler}}"/>*</td>
+						</tr>
+					    <tr>
 					        <td><label>Fecha Devolucion:</label></td>
 					        <td><input type="date" name="fechaDevolucion" required="true" value="{{fechaDevolucion}}"/>*</td>
 					    </tr>
 					    <tr>
+					    	<td><label>Hora Devolucion:</label></td>
+							<td><input type="time" name="horaDevolucion" required="true" value="{{horaDevolucion}}"/>*</td>
+						</tr>
+					    <tr>
 					        <td><label>Kilometraje Inicial:</label></td>
-					        <td><input type="text" name="kmInicial" required="true" value="{{kmInicial}}" pattern="[0-9]{1,6}" disabled="True"/>*</td>
+					        <td><input type="text" name="kmInicial" required="true" value="{{kmInicial}}" pattern="[0-9]{1,6}" readonly="readonly"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Kilometraje Final:</label></td>
