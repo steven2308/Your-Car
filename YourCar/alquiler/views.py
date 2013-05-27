@@ -1143,6 +1143,7 @@ def mayor21(fecha):
 #si ocurre un error en el formulario de cierre, no se cargan de nuevo ningun dato ya ingresado
 #<th><a href="#4"><img src="images/lupa.png" title="Visualizar" class="visuUsuario1" width="20px"></a></th>
 #si no hay vouchers, se muestra igual la lista
+#mensajes de exito al agregar checklists
 def alquileresControl (request,pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
@@ -1278,15 +1279,17 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 		except:
 			checklistExists=False
 
-		if datosAlquiler.cierre:
+		"""if datosAlquiler.cierre:
 			try:
-				checklist1 = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre)
-				checklist2 = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=not datosAlquiler.cierre)
-				if checklist1 and checklist2:
-					registroCierre=comparar(checklist1, checklist2) ##########
-					return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
+				checklist1 = ChecklistVehiculo.objects.filter(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre)
+				checklist2 = ChecklistVehiculo.objects.filter(idDatosAlquiler=datosAlquiler, cierre=not datosAlquiler.cierre)
 			except:
 				pass
+
+			for v in checklist1:
+				if checklist1[v] != checklist2[v]:
+					registroCierre[v]="Valor de Salida: "+checklist1+" Valor de Entrada: "+checklist2"""
+
 
 
 		"""registroCierre={}
@@ -1320,7 +1323,8 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 
 def comparar(checklist1, checklist2):
 	registroCierre={}
-
+	docsdelAuto1=""
+	docsdelAuto2=""
 	if checklist1.docsDelAuto == 0: docsDelAuto1 = "Si"
 	if checklist1.docsDelAuto == 1: docsDelAuto1 = "No"
 	if checklist2.docsDelAuto == 0: docsDelAuto2 = "Si"
@@ -1329,8 +1333,6 @@ def comparar(checklist1, checklist2):
 		registroCierre["docsDelAuto"]="Salida: "+docsdelAuto1+" Entrada: "+docsDelAuto2
 
 	return registroCierre
-
-
 
 def cierreDatosAlquilerControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:
@@ -1466,6 +1468,49 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 			return render_to_response('ChecklistVehiculo.html', locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
+
+def listadoClientesPasadosControl(request):
+	"""if request.user.is_authenticated() and request.user.is_staff:
+		if request.method=="POST":
+			query = {}
+			if request.POST["ascDesc"]=="True":
+				order = request.POST["orderBy"]
+			else:
+				order = "-"+request.POST["orderBy"]
+			#Tomo los datos
+			idContrato=request.POST["idContrato"]
+			idVoucher=request.POST["idVoucher"]
+			idVehiculo=request.POST["idVehiculo"].upper()
+
+			#Los datos que no son vacios los agrego al query
+			if idContrato:
+				query["idContrato"]=idContrato
+			if idVoucher:
+				query["idVoucher"]=idVoucher
+			if idVehiculo and re.match("^([A-Z]{3}[0-9]{3})$",idVehiculo):
+				query["idVehiculo"]=idVehiculo
+
+			#squery = str(query)
+			#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
+			#Si la consulta no es vacia la hago
+			if query:
+				listacontratos= Contrato.objects.filter(**query).order_by(order)
+				filtrados=True
+			else:
+				listacontratos = Contrato.objects.all().order_by(order)
+			contratos=paginar(listacontratos,pagina)
+			return render_to_response('contratos.html',locals(), context_instance = RequestContext(request))
+		#sino es un post cargo todos
+		listacontratos = Contrato.objects.all()
+		contratos=paginar(listacontratos,pagina)
+		return render_to_response('contratos.html',locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')"""
+	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method == "POST":
+
+		else:
+
 
 
 def facturasControl(request,pagina=1):
