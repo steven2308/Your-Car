@@ -53,6 +53,11 @@ class ClienteAlquiler(models.Model):
 	class Meta:
 		verbose_name_plural=u'Clientes de Alquiler'
 
+class ClientePotencial(models.Model):
+	email=models.EmailField()
+	def __unicode__(self):
+		return "Cliente Potencial "+self.email
+
 class Reserva(models.Model):
 	def url(self,filename):
 		return "fotos/pagos/%s"%(self.idReserva)
@@ -137,7 +142,42 @@ class ChecklistVehiculo(models.Model):
 	idChecklistVehiculo = models.AutoField(primary_key=True)
 	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
 	cierre = models.BooleanField(default=False)
-	docsDelAuto = models.IntegerField(max_length=1) #0 True, 1 False
+	documentosDelAuto = models.IntegerField(max_length=1) #0 True, 1 False
+	"""radio = models.IntegerField(max_length=1)
+	tapetes = models.IntegerField(max_length=1)
+	llantaDeRepuesto = models.IntegerField(max_length=1)
+	gato = models.IntegerField(max_length=1)
+	cruceta = models.IntegerField(max_length=1)
+	nivelAceiteDelMotorFrenos = models.IntegerField(max_length=1)
+	nivelRefrigerante = models.IntegerField(max_length=1)
+	latoneriaYPintura = models.IntegerField(max_length=1)
+	tapizado = models.IntegerField(max_length=1)
+	cinturonesDeSeguridad = models.IntegerField(max_length=1)
+	controlesInternos = models.IntegerField(max_length=1)
+	instrumentosDelPanel = models.IntegerField(max_length=1)
+	pito = models.IntegerField(max_length=1)
+	relojConHoraCorrecta = models.IntegerField(max_length=1)
+	limpiabrisas = models.IntegerField(max_length=1)
+	liquidoDeLimpiabrisas = models.IntegerField(max_length=1)
+	seguroCentral = models.IntegerField(max_length=1)
+	elevaVidrios = models.IntegerField(max_length=1)
+	aireAcondicionado = models.IntegerField(max_length=1)
+	cojineria = models.IntegerField(max_length=1)
+	lucesInternas = models.IntegerField(max_length=1)
+	lucesMediasDelanterasYTraseras = models.IntegerField(max_length=1)
+	lucesAltasYBajas = models.IntegerField(max_length=1)
+	direccionalesDelantesYTraseras = models.IntegerField(max_length=1)
+	luzDeFreno = models.IntegerField(max_length=1)
+	luzDeReversa = models.IntegerField(max_length=1)
+	antenaDeRadio = models.IntegerField(max_length=1)
+	rines = models.IntegerField(max_length=1)
+	farolasYStops = models.IntegerField(max_length=1)
+	exploradoras = models.IntegerField(max_length=1)
+	retrovisores = models.IntegerField(max_length=1)
+	cristalesVidrios = models.IntegerField(max_length=1)
+	chapas = models.IntegerField(max_length=1)
+	llaves = models.IntegerField(max_length=1)
+	kitCarretera = models.IntegerField(max_length=1)"""
 	def __unicode__(self):
 		return "Checklist con id: %s de %s" %((self.idChecklistVehiculo),unicode(self.idDatosAlquiler))
 

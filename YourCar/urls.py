@@ -46,6 +46,7 @@ urlpatterns = patterns('YourCar.alquiler.views',
     url(r'^proveedores/agregar/$', 'agregarProveedorControl', name='vistaAgregarProveedor'),
     url(r'^proveedores/agregarServicio/$', 'agregarServicio', name='vistaAgregarServicio'),
     url(r'^clientesPasados/(pag/(?P<pagina>\d{1,5})/)?$', 'listaClientesPasadosControl', name='vistaListaClientesPasados'),
+    url(r'^clientesPotenciales/(pag/(?P<pagina>\d{1,5})/)?$', 'listaClientesPotencialesControl', name='vistalistaClientesPotenciales'),
     #Links para usuarios conectados:
     url(r'^reservas/(pag/(?P<pagina>\d{1,5})/)?$', 'verReservasControl', name='vistaReservas'),
     url(r'^reservas/agregar/$', 'agregarReservaControl', name='vistaAgregarReservas'),

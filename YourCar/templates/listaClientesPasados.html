@@ -1,0 +1,96 @@
+{%extends "base.html"%}
+{% block titulo %}Clientes Pasados{% endblock %}
+{% block contenido %}
+    <div class="container">
+    	{% if filtrados %}
+            <h4>Estás viendo los clientes pasados filtrados:</h4>
+        {% else %}
+           <h4>Estás viendo todas las facturas:</h4>
+        {% endif %}
+            <div class="span12">
+                <div class="span4">
+                    <p>Hay en total {{ clientesPasados|length }} cliente Pasado{{clientesPasados|pluralize}}.</p>
+                </div>
+            </div>
+            {% if clientesPasados %}
+            <form method="POST" action="/clientesPasados/" name="filtrarClientesPasados">
+                {% csrf_token %}
+                <h4>Filtrar Por:</h4>
+                <table class="table-bordered table-striped table-hover">
+                    <thead>
+                        <th>Fecha</th>
+                    </thead>
+                    <tbody>
+                        <td><input type="date" name="fecha"></td>
+                    </tbody>
+                </table>
+                <div class="span12">
+                    <div class="span4">
+                        <h4>Ordenar por:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Fecha</label>
+                                <input id="btnFecha" name="orderBy" type="radio" value="fecha">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4">
+                        <h4>Sentido:</h4>
+                        <ul class="inline">
+                            <li>
+                                <label>Ascendente</label>
+                                <input id="btnAsc" name="ascDesc" type="radio" value="True" checked="checked">
+                            </li>
+                            <li>
+                                <label>Descendente</label>
+                                <input id="btnDsc" name="ascDesc" type="radio" value="False">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="span4"></div>
+                </div>
+                <input type="submit" value="Filtrar" name="filtrar"/>
+            </form>
+            <table class="table-bordered table-striped table-hover">
+                <thead>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Tel Celular</th>
+                    <th>Num de Documento</th>
+                    <th>Nombre de Usuario</th>
+                    <th>Fecha</th>
+                </thead>
+                <tbody>
+                    {% for f in clientesPasados %}
+                        <tr>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.user.first_name}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.user.last_name}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.user.email}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.telCelular}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.numDocumento}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.user}}</td>
+                            <td>{{f.fecha}}</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="paginas">
+                <a href="/clientesPasados/pag/1/"> Primera </a>
+                {% if clientesPasados.has_previous %}
+                    <a href="/clientesPasados/pag/{{clientesPasados.previous_page_number}}/"> Anterior </a>
+                {% endif %}
+                {% if clientesPasados.has_next %}
+                    <a href="/clientesPasados/pag/{{clientesPasados.next_page_number}}/"> Siguiente </a>
+                {% endif %}
+                <a href="/clientesPasados/pag/{{clientesPasados.paginator.num_pages}}"> Última </a>
+                <br>
+                <strong>Página {{clientesPasados.number}} de {{clientesPasados.paginator.num_pages}}</strong>
+            </div>
+        {% elif filtrados%}
+            <p>No hay ningún cliente con las características que buscas, intenta menos parámetros.</p>
+            <a class="btn" href="/clientesPasados/">Ver todos</a>
+        {% else %}
+            <p>No hay ningún cliente pasado.</p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{%extends "base.html"%}
+{% block titulo %}Clientes Potenciales{% endblock %}
+{% block contenido %}
+    <div class="container">
+    	   <h4>Estás viendo todos los clientes potenciales:</h4>
+           {% if clientesPotenciales %}
+            <div class="span12">
+                <div class="span4">
+                    <p>Hay en total {{ clientesPotenciales|length }} cliente Potencial{{clientesPotenciales|pluralize}}.</p>
+                </div>
+            </div>
+            <table class="table-bordered table-striped table-hover">
+                <thead>
+                    <th>Email</th>
+                </thead>
+                <tbody>
+                    {% for cp in clientesPotenciales %}
+                        <tr>
+                            <td>{{cp.email}}</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="paginas">
+                <a href="/clientesPotenciales/pag/1/"> Primera </a>
+                {% if clientesPotenciales.has_previous %}
+                    <a href="/clientesPotenciales/pag/{{clientesPotenciales.previous_page_number}}/"> Anterior </a>
+                {% endif %}
+                {% if clientesPotenciales.has_next %}
+                    <a href="/clientesPotenciales/pag/{{clientesPotenciales.next_page_number}}/"> Siguiente </a>
+                {% endif %}
+                <a href="/clientesPotenciales/pag/{{clientesPotenciales.paginator.num_pages}}"> Última </a>
+                <br>
+                <strong>Página {{clientesPotenciales.number}} de {{clientesPotenciales.paginator.num_pages}}</strong>
+            </div>
+        {% else %}
+            <p>No hay ningún Cliente Pasado.</p>
+    	{% endif %}
+    </div>
+{% endblock %}

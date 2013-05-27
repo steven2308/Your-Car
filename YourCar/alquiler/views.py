@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
-from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado, DatosAlquiler, ChecklistVehiculo, Factura, CobroAdicional, Proveedor, Servicio
+from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, ClientePotencial, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado, DatosAlquiler, ChecklistVehiculo, Factura, CobroAdicional, Proveedor, Servicio
 from YourCar.alquiler.parametros import parametros
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator,EmptyPage,InvalidPage
@@ -269,6 +269,13 @@ def cotizarControl(request):
 			horaFin = request.POST["horaFin"]
 			lugarRecogida = request.POST["lugarRecogida"]
 			lugarEntrega = request.POST["lugarEntrega"]
+
+			try:
+				email = request.POST["email"]
+				clientePotencial = ClientePotencial(email=email)
+				clientePotencial.save()
+			except:
+				pass
 
 			#Hago validaciones
 			errorLugares = False
@@ -1239,10 +1246,15 @@ def agregarDatosAlquilerControl(request):
 			except:
 				pass
 
-			errorKmInicial = not re.match("^([0-9]{1,6})$",kmInicial)
+			errorLugares=False
+			try:
+				costoRecogida=int(lugaresCostos[lugarRecogida])
+				costoEntrega=int(lugaresCostos[lugarEntrega])
+			except:
+				errorLugares = True
+			errorKmInicial = not (kmInicial >= 0 and kmInicial <= 999999)
 			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
 			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
-			errorLugares = (lugarRecogida not in lugares) or (lugarEntrega not in lugares)
 			errorFormatoFechas = not fechaCorrecta(fechaAlquiler) or not fechaCorrecta(fechaDevolucion)
 			errorHoras = not re.match('[0-9]{2}:[0-9]{2}',horaAlquiler) or  not re.match('[0-9]{2}:[0-9]{2}',horaDevolucion)
 			if not errorFormatoFechas and not errorHoras:
@@ -1324,6 +1336,10 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 			checklistExists=True
 		except:
 			checklistExists=False
+
+
+		registroCierre={}
+		registroCierre["docsDelAuto"]="Ningun cambio"
 
 		"""if datosAlquiler.cierre:
 			try:
@@ -1470,11 +1486,43 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 	if request.user.is_authenticated and request.user.is_staff:
 		if request.method == 'POST':
 			idDatosAlquiler = request.POST["idDatosAlquiler"]
-			docsDelAuto = request.POST["docsDelAuto"]
-			checklist1=None
-			checklist2=None
-
-
+			documentosDelAuto = request.POST["documentosDelAuto"]
+			"""radio = request.POST["radio"]
+			tapetes = request.POST["tapetes"]
+			llantaDeRepuesto = request.POST["llantaDeRepuesto"]
+			gato = request.POST["gato"]
+			cruceta = request.POST["cruceta"]
+			nivelAceiteDelMotorFrenos = request.POST["nivelAceiteDelMotorFrenos"]
+			nivelRefrigerante = request.POST["nivelRefrigerante"]
+			latoneriaYPintura = request.POST["latoneriaYPintura"]
+			tapizado = request.POST["tapizado"]
+			cinturonesDeSeguridad = request.POST["cinturonesDeSeguridad"]
+			controlesInternos = request.POST["controlesInternos"]
+			instrumentosDelPanel = request.POST["instrumentosDelPanel"]
+			pito = request.POST["pito"]
+			relojConHoraCorrecta = request.POST["relojConHoraCorrecta"]
+			limpiabrisas = request.POST["limpiabrisas"]
+			liquidoDeLimpiabrisas = request.POST["liquidoDeLimpiabrisas"]
+			seguroCentral = request.POST["seguroCentral"]
+			elevaVidrios = request.POST["elevaVidrios"]
+			aireAcondicionado = request.POST["aireAcondicionado"]
+			cojineria = request.POST["cojineria"]
+			lucesInternas = request.POST["lucesInternas"]
+			lucesMediasDelanterasYTraseras = request.POST["lucesMediasDelanterasYTraseras"]
+			lucesAltasYBajas = request.POST["lucesAltasYBajas"]
+			direccionalesDelantesYTraseras = request.POST["direccionalesDelantesYTraseras"]
+			luzDeFreno = request.POST["luzDeFreno"]
+			luzDeReversa = request.POST["luzDeReversa"]
+			antenaDeRadio = request.POST["antenaDeRadio"]
+			rines = request.POST["rines"]
+			farolasYStops = request.POST["farolasYStops"]
+			exploradoras = request.POST["exploradoras"]
+			retrovisores = request.POST["retrovisores"]
+			cristalesVidrios = request.POST["cristalesVidrios"]
+			chapas = request.POST["chapas"]
+			llaves = request.POST["llaves"]
+			kitCarretera = request.POST["kitCarretera"]"""
+			
 			try:
 				datosAlquiler=DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
 			except:
@@ -1482,6 +1530,8 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 
 			#manejo errores
 			errorChecklistExists=False
+			checklist1=None
+			checklist2=None
 			try:
 				checklist1 = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=False)
 				checklist2 = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=True)
@@ -1491,7 +1541,11 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 			if checklist1 and checklist2:
 					errorChecklistExists=True
 
-			checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, docsDelAuto=docsDelAuto)
+			if (errorChecklistExists):
+				return render_to_response('ChecklistVehiculo.html', locals(), context_instance = RequestContext(request))
+
+			checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, documentosDelAuto=documentosDelAuto)
+			#checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, documentosDelAuto=documentosDelAuto, radio=radio, tapetes=tapetes, llantaDeRepuesto=llantaDeRepuesto, gato=gato, cruceta=cruceta, nivelAceiteDelMotorFrenos=nivelAceiteDelMotorFrenos, nivelRefrigerante=nivelRefrigerante, latoneriaYPintura=latoneriaYPintura, tapizado=tapizado, cinturonesDeSeguridad=cinturonesDeSeguridad, controlesInternos=controlesInternos, instrumentosDelPanel=instrumentosDelPanel, pito=pito, relojConHoraCorrecta=relojConHoraCorrecta, limpiabrisas=limpiabrisas, liquidoDeLimpiabrisas=liquidoDeLimpiabrisas, seguroCentral=seguroCentral, elevaVidrios=elevaVidrios, aireAcondicionado=aireAcondicionado, cojineria=cojineria, lucesInternas=lucesInternas, lucesMediasDelanterasYTraseras=lucesMediasDelanterasYTraseras, lucesAltasYBajas=lucesAltasYBajas, direccionalesDelantesYTraseras=direccionalesDelantesYTraseras, luzDeFreno=luzDeFreno, luzDeReversa=luzDeReversa, antenaDeRadio=antenaDeRadio, rines=rines, farolasYStops=farolasYStops, exploradoras=exploradoras, retrovisores=retrovisores, cristalesVidrios=cristalesVidrios, chapas=chapas, llaves=llaves, kitCarretera=kitCarretera)
 			checklistVehiculo.save()
 			request.method = 'GET'
 			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=True)
@@ -1508,27 +1562,85 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 				pass
 
 			errorCierre=False
-
 			if cierre != datosAlquiler.cierre:
 				errorCierre=True
-
 			if cierre:
 				try:
 					checklistVehiculo=ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler)
-					docsDelAuto=checklistVehiculo.docsDelAuto
+					documentosDelAuto=checklistVehiculo.documentosDelAuto
+					"""radio=checklistVehiculo.radio
+					tapetes=checklistVehiculo.tapetes
+					llantaDeRepuesto=checklistVehiculo.llantaDeRepuesto
+					gato=checklistVehiculo.gato
+					cruceta=checklistVehiculo.cruceta
+					nivelAceiteDelMotorFrenos=checklistVehiculo.nivelAceiteDelMotorFrenos
+					nivelRefrigerante=checklistVehiculo.nivelRefrigerante
+					latoneriaYPintura=checklistVehiculo.latoneriaYPintura
+					tapizado=checklistVehiculo.tapizado
+					cinturonesDeSeguridad=checklistVehiculo.cinturonesDeSeguridad
+					controlesInternos=checklistVehiculo.controlesInternos
+					instrumentosDelPanel=checklistVehiculo.instrumentosDelPanel
+					pito=checklistVehiculo.pito
+					relojConHoraCorrecta=checklistVehiculo.relojConHoraCorrecta
+					limpiabrisas=checklistVehiculo.limpiabrisas
+					liquidoDeLimpiabrisas=checklistVehiculo.liquidoDeLimpiabrisas
+					seguroCentral=checklistVehiculo.seguroCentral
+					elevaVidrios=checklistVehiculo.elevaVidrios
+					aireAcondicionado=checklistVehiculo.aireAcondicionado
+					cojineria=checklistVehiculo.cojineria
+					lucesInternas=checklistVehiculo.lucesInternas
+					lucesMediasDelanterasYTraseras=checklistVehiculo.lucesMediasDelanterasYTraseras
+					lucesAltasYBajas=checklistVehiculo.lucesAltasYBajas
+					direccionalesDelantesYTraseras=checklistVehiculo.direccionalesDelantesYTraseras
+					luzDeFreno=checklistVehiculo.luzDeFreno
+					luzDeReversa=checklistVehiculo.luzDeReversa
+					antenaDeRadio=checklistVehiculo.antenaDeRadio
+					rines=checklistVehiculo.rines
+					farolasYStops=checklistVehiculo.farolasYStops
+					exploradoras=checklistVehiculo.exploradoras
+					retrovisores=checklistVehiculo.retrovisores
+					cristalesVidrios=checklistVehiculo.cristalesVidrios
+					chapas=checklistVehiculo.chapas
+					llaves=checklistVehiculo.llaves
+					kitCarretera=checklistVehiculo.kitCarretera"""
 				except:
 					pass
-
-
 			return render_to_response('ChecklistVehiculo.html', locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
 
 def listaClientesPasadosControl(request, pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
+		if request.method=="POST":
+			query = {}
+			if request.POST["ascDesc"]=="True":
+				order = request.POST["orderBy"]
+			else:
+				order = "-"+request.POST["orderBy"]
+			#Tomo los datos
+			fecha=request.POST["fecha"]
+			#Los datos que no son vacios los agrego al query
+			if fecha:
+				query["fecha"]=fecha
+			#Si la consulta no es vacia la hago
+			if query:
+				listaFacturas= Factura.objects.filter(**query).order_by(order)
+				filtrados=True
+			else:
+				listaFacturas = Factura.objects.all().order_by(order)
+			clientesPasados=paginar(listaFacturas,pagina)
+			return render_to_response('listaClientesPasados.html',locals(), context_instance = RequestContext(request))
 		listaFacturas = Factura.objects.all()
 		clientesPasados=paginar(listaFacturas,pagina)
-		return render_to_response('listaClientePasados.html',locals(), context_instance = RequestContext(request))
+		return render_to_response('listaClientesPasados.html',locals(), context_instance = RequestContext(request))
+	else:
+		return HttpResponseRedirect('/404')
+
+def listaClientesPotencialesControl(request, pagina=1):
+	if request.user.is_authenticated() and request.user.is_staff:
+		listaClientesPotenciales = ClientePotencial.objects.all()
+		clientesPotenciales=paginar(listaClientesPotenciales,pagina)
+		return render_to_response('listaClientesPotenciales.html',locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
 

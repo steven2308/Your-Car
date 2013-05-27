@@ -50,6 +50,7 @@
                 <thead>
                     <th>Lugar Recogida</th>
                     <th>Lugar Entrega</th>
+                    <th>Email</th>
                 </thead>
                 <tbody>
                         <td>
@@ -72,10 +73,11 @@
                                     {% endfor %}
                                 </select>
                             </td>
+                        <td><input type="email" name="email" value="{{email}}"></td>
 					</tr>
 				</tbody>
 			</table>
-			<input type="submit" value="Cotizar" name="cotizar"/>
+			<input class="btn" type="submit" value="Cotizar" name="cotizar"/>
         </form>
         <a class="btn" href="/vehiculos/">Ver vehículos</a>
         {% if cotizado %}
@@ -144,7 +146,7 @@
                         <input name="horaFin" type="hidden" value="{{horaFin}}">
                         <input name="lugarRecogida" type="hidden" value="{{lugarRecogida}}">
                         <input name="lugarEntrega" type="hidden" value="{{lugarEntrega}}">
-                        <input type="submit" value="Reservar" name="cotizarVehiculo"/>
+                        <input class="btn" type="submit" value="Reservar" name="cotizarVehiculo"/>
                     </form>
                 {% endif %}
             </p>

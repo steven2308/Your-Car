@@ -1,5 +1,5 @@
 from django.contrib import admin
-from YourCar.alquiler.models import Vehiculo,ClienteAlquiler,Reserva,Mantenimiento,Voucher,Contrato,ConductorAutorizado,DatosAlquiler,ChecklistVehiculo,Factura,CobroAdicional,Proveedor,Servicio
+from YourCar.alquiler.models import Vehiculo,ClienteAlquiler,ClientePotencial,Reserva,Mantenimiento,Voucher,Contrato,ConductorAutorizado,DatosAlquiler,ChecklistVehiculo,Factura,CobroAdicional,Proveedor,Servicio
 
 #class AdminMateria(admin.ModelAdmin):
 #	list_filter = ('nombre',)
@@ -8,6 +8,7 @@ from YourCar.alquiler.models import Vehiculo,ClienteAlquiler,Reserva,Mantenimien
 
 admin.site.register(Vehiculo)
 admin.site.register(ClienteAlquiler)
+admin.site.register(ClientePotencial)
 admin.site.register(Reserva)
 admin.site.register(Mantenimiento)
 admin.site.register(Voucher)
