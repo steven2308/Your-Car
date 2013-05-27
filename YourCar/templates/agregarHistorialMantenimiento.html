@@ -2,7 +2,7 @@
 {% block titulo %}Agregar Historial Mantenimiento{% endblock %}
 {% block contenido %}
     <div class="container">
-        {% if errorPlaca or errorFecha or errorTipo or errorCosto or errorDescripcion%}
+        {% if errorPlaca or errorFecha or errorTipo or errorCosto or errorDescripcion or errorServicio%}
             <p class="text-error">
                 {% if errorPlaca%}
                     La placa no es correcta o no se encuentra en el sistema.<br>
@@ -20,8 +20,11 @@
                 {% if  errorCosto%}
                     El costo debe ser un número entre 3 y 10 cifras. <br>
                 {% endif %}
-                {% if  errorCosto%}
-                    La descripción no debe exceder los 200 caracteres.
+                {% if  errorDescripcion%}
+                    La descripción no debe exceder los 200 caracteres. <br>
+                {% endif %}
+                {% if  errorServicio%}
+                    El servicio no se encuentra.
                 {% endif %}
             </p>
         {% endif %}
@@ -57,6 +60,16 @@
                             <select name="tipo" required="true" value="{{tipo}}">
                                 {% for t in  tipos%}
                                     <option>{{t}}</option>
+                                {% endfor %}
+                            </select>*
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>Servicio:</label></td>
+                        <td>
+                            <select name="servicio" required="true" value="{{servicio}}">
+                                {% for s in  servicios%}
+                                    <option>{{s}}</option>
                                 {% endfor %}
                             </select>*
                         </td>

@@ -22,10 +22,11 @@
     		<thead>
     			<th>IdMantenimiento</th>
 				<th>Fecha</th>
-				<th>Descripcion</th>
+				<th>Descripción</th>
                 <th>Costo</th>
 				<th>Tipo</th>
                 <th>Vehículo</th>
+                <th>Servicio</th>
     		</thead>
     		<tbody>
     			{% for m in mantenimientos %}
@@ -36,6 +37,7 @@
                         <td>{{m.costo}}</td>
     					<td>{{m.tipo}}</td>
                         <td>{{m.idVehiculo}}</td>
+                        <td>{{m.servicio}}</td>
     				</tr>
     			{% endfor %}
     		</tbody>

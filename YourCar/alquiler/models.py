@@ -74,15 +74,6 @@ class Reserva(models.Model):
 	def __unicode__(self):
 		return "Reserva de %s a %s" %(unicode(self.idCliente),unicode(self.idVehiculo))
 
-class Mantenimiento(models.Model):
-	idVehiculo = models.ForeignKey(Vehiculo)
-	fecha = models.DateField()
-	descripcion = models.CharField(max_length=200, blank =True)
-	costo = models.IntegerField()
-	tipo = models.CharField(max_length=15) #correctivo o preventivo
-	def __unicode__(self):
-		return "Mantenimiento %s de %s" %(self.tipo,unicode(self.idVehiculo))
-
 class Voucher(models.Model):
 	codigoAutorizacion = models.CharField(max_length=15,primary_key=True)
 	idCliente = models.ForeignKey(ClienteAlquiler)
@@ -227,8 +218,19 @@ class Proveedor(models.Model):
 		verbose_name_plural=u'Proveedores'
 
 class Servicio(models.Model):
+	idServicio = models.AutoField(primary_key=True)
 	idProveedor = models.ForeignKey(Proveedor)
 	servicio = models.CharField(max_length=20)
 	costo = models.IntegerField()
 	def __unicode__(self):
-		return "Servicio %s por %s" %(self.servicio, self.idProveedor)
+		return "%s. Servicio %s por %s" %(self.idServicio, self.servicio, self.idProveedor)
+
+class Mantenimiento(models.Model):
+	idVehiculo = models.ForeignKey(Vehiculo)
+	fecha = models.DateField()
+	descripcion = models.CharField(max_length=200, blank =True)
+	costo = models.IntegerField()
+	tipo = models.CharField(max_length=15) #correctivo o preventivo
+	servicio = models.ForeignKey(Servicio)
+	def __unicode__(self):
+		return "Mantenimiento %s de %s" %(self.tipo,unicode(self.idVehiculo))

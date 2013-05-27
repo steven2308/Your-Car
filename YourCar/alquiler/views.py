@@ -196,9 +196,10 @@ def historialMantenimientoControl(request, pagina=1):
 def agregarHistorialMantenimientoControl(request):
 	if request.user.is_authenticated() and request.user.is_staff:
 		tipos=parametros["tiposMantenimiento"]
+		servicios=Servicio.objects.all()
 		#Si me enviaron datos intento guardarlos
 		if request.method == 'POST':
-			try:
+			#try:
 				#Tomo datos
 				placa=request.POST["placa"].upper()
 				vehiculo = Vehiculo.objects.get(placa=placa)
@@ -206,6 +207,7 @@ def agregarHistorialMantenimientoControl(request):
 				descripcion = ""
 				costo = request.POST["costo"]
 				tipo = request.POST["tipo"]
+				servicio = request.POST["servicio"]
 
 				#Tomo dato opcional
 				if request.POST["descripcion"]:
@@ -217,18 +219,24 @@ def agregarHistorialMantenimientoControl(request):
 				errorTipo = tipo not in tipos
 				errorCosto = not re.match("^([0-9]{3,10})$",costo)
 				errorDescripcion = len(descripcion)>200
+				errorServicio = False
+				try:
+					idServicio = int(servicio.split(".")[0])
+					servicioEncontrado = Servicio.objects.get(idServicio=idServicio)
+				except:
+					errorServicio = True
 
 				#Si hay errores vuelvo al formulario y los informo
-				if (errorPlaca or errorFecha or errorTipo or errorCosto or errorDescripcion):
+				if (errorPlaca or errorFecha or errorTipo or errorCosto or errorDescripcion or errorServicio):
 					return render_to_response('agregarHistorialMantenimiento.html',locals(), context_instance = RequestContext(request))
 
 				#Si no hay errores guardo el mantenimiento y vuelvo al historial
-				mantenimiento = Mantenimiento(idVehiculo=vehiculo,fecha=fecha, descripcion=descripcion, costo=costo, tipo=tipo)
+				mantenimiento = Mantenimiento(idVehiculo=vehiculo,fecha=fecha, descripcion=descripcion, costo=costo, tipo=tipo, servicio=servicioEncontrado)
 				mantenimiento.save()
 				exito=True
-			except:
-				pass
-			return render_to_response('agregarHistorialMantenimiento.html',locals(), context_instance = RequestContext(request))
+			#except:
+				#pass
+				return render_to_response('agregarHistorialMantenimiento.html',locals(), context_instance = RequestContext(request))
 		#Sino es post cargo el formulario
 		else:
 			try:
