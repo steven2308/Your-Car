@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar Datos de Cierre de Alquiler{% endblock %}
 {% block contenido %}
-	{%if errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago%}
+	{%if errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago or errorLugares%}
 	<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -22,6 +22,9 @@
 			{% endif %}
 			{% if errorMetodoPago %}
 				El metodo de pago ingresado es invalido.<br>
+			{% endif %}
+			{% if errorLugares %}
+				Los lugares de recogida son invalidos.<br>
 			{% endif %}
 		</p>
 	</div>

@@ -124,6 +124,8 @@ class DatosAlquiler(models.Model):
 	totalDias = models.IntegerField()
 	kmInicial = models.IntegerField()
 	kmFinal = models.IntegerField()
+	lugarRecogida = models.CharField(max_length=15)
+	lugarEntrega = models.CharField(max_length=15)
 	cierre = models.BooleanField(default=False)
 	#valorAlquiler = models.IntegerField()
 	def __unicode__(self):
@@ -136,6 +138,8 @@ class ChecklistVehiculo(models.Model):
 	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
 	cierre = models.BooleanField(default=False)
 	docsDelAuto = models.IntegerField(max_length=1) #0 True, 1 False
+	def __unicode__(self):
+		return "Checklist con id: %s de %s" %((self.idChecklistVehiculo),unicode(self.idDatosAlquiler))
 
 class Factura(models.Model):
 	numFactura = models.AutoField(primary_key=True)

@@ -19,15 +19,18 @@
 				<h3>Ingresa los datos de retorno del inventario de vehiculo.</h3>
 				{%endif%}
 				<table class="table-bordered table-striped table-hover">
-					<tbody>
+					<thead>
 						<td></td>
 						<td>Si</td>
 						<td>No</td>
+					</thead>
+					<tbody>
                         <tr>
 					        <td>Documentos del Auto: </td>
 					        <td><input type="radio" name="docsDelAuto" value="0" {%if docsDelAuto == 0%} checked="checked" {%endif%}></td>
 					        <td><input type="radio" name="docsDelAuto" value="1" {%if docsDelAuto == 1%} checked="checked" {%endif%}></td>
 					    </tr>
+					 </tbody>
 					    <tr>
 					    	<input name="idDatosAlquiler" value="{{idDatosAlquiler}}" type="hidden">
 					    	<td><input class='btn' type="submit" value="Guardar" name="guardarChecklist"/></td>

@@ -1,0 +1,51 @@
+{%extends "base.html"%}
+{% block titulo %}Clientes Pasados{% endblock %}
+{% block contenido %}
+    <div class="container">
+    	   <h4>Estás viendo todos los clientes pasados:</h4>
+           {% if clientesPasados %}
+            <div class="span12">
+                <div class="span4">
+                    <p>Hay en total {{ clientesPasados|length }} cliente Pasado{{clientesPasados|pluralize}}.</p>
+                </div>
+            </div>
+            <table class="table-bordered table-striped table-hover">
+                <thead>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Tel Fijo</th>
+                    <th>Tel Celular</th>
+                    <th>Num de Documento</th>
+                    <th>Nombre de Usuario</th>
+                </thead>
+                <tbody>
+                    {% for f in clientesPasados %}
+                        <tr>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.user.first_name}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.user.last_name}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.user.email}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.telFijo}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.telCelular}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.numDocumento}}</td>
+                            <td>{{f.idDatosAlquiler.idContrato.idVoucher.idCliente.user}}</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="paginas">
+                <a href="/clientesPasados/pag/1/"> Primera </a>
+                {% if clientesPasados.has_previous %}
+                    <a href="/clientesPasados/pag/{{clientesPasados.previous_page_number}}/"> Anterior </a>
+                {% endif %}
+                {% if clientesPasados.has_next %}
+                    <a href="/clientesPasados/pag/{{clientesPasados.next_page_number}}/"> Siguiente </a>
+                {% endif %}
+                <a href="/clientesPasados/pag/{{clientesPasados.paginator.num_pages}}"> Última </a>
+                <br>
+                <strong>Página {{clientesPasados.number}} de {{clientesPasados.paginator.num_pages}}</strong>
+            </div>
+        {% else %}
+            <p>No hay ningún Cliente Pasado.</p>
+    	{% endif %}
+    </div>
+{% endblock %}

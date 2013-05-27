@@ -52,6 +52,14 @@
                             <td>{{datosAlquiler.kmFinal}}</td>
                         </tr>
                         <tr>
+                            <td>Lugar de Recogida</td>
+                            <td>{{datosAlquiler.lugarRecogida}}</td>
+                        </tr>
+                        <tr>
+                            <td>Lugar de Entrega</td>
+                            <td>{{datosAlquiler.lugarEntrega}}</td>
+                        </tr>
+                        <tr>
                             <td>Valor Alquiler</td>
                             <td>{{datosAlquiler.valorAlquiler}}</td>
                         </tr>
@@ -150,6 +158,11 @@
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
                     <input class="btn" type="submit" value="Agregar Factura" name="agregarFactura" {%if not datosAlquiler.cierre %} disabled="disabled" {% endif %}/>
+                </form>
+            <form method="GET" action="/alquiler/modificar/" name="modificarDatosAlquiler">
+                    {% csrf_token %}
+                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
+                    <input class="btn" type="submit" value="Modificar Datos Alquiler" name="modificarDatosAlquiler" {%if datosAlquiler.cierre %} disabled="disabled" {% endif %}/>
                 </form>
             <form method="GET" action="/alquiler/cierre/" name="cierreAlquiler">
                     {% csrf_token %}

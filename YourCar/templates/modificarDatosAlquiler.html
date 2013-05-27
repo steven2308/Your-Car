@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block titulo %}Agregar Datos de Alquiler{% endblock %}
+{% block titulo %}Modificar Datos de Alquiler{% endblock %}
 {% block contenido %}
-	{%if errorIdContrato or errorIdContratoExists or errorIdReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago or errorLugares%}
+	{%if errorIdContrato or errorIdContratoExists or errorIdReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago%}
 	<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -38,9 +38,6 @@
 			{% if errorMetodoPago %}
 				El metodo de pago ingresado es invalido.<br>
 			{% endif %}
-			{% if errorLugares %}
-				Los lugares de recogida son invalidos.<br>
-			{% endif %}
 		</p>
 	</div>
 	{%endif %}
@@ -59,7 +56,7 @@
 					    </tr>
 					    <tr>
 					        <td><label>ID Reserva:</label></td>
-					        <td><input type="text" name="idReserva" value="{{idReserva}}"/></td>
+					        <td><input type="text" name="idReserva" {%if idReserva != None %}value="{{idReserva}}" {% endif %}/></td>
 					    </tr>
 					    <tr>
 					        <td><label>Metodo de pago:</label></td>
@@ -67,7 +64,9 @@
 					        	<select name="metodoPago" required="true">
 					        		<option selected>{{metodoPago}}</option>
 					        		{% for mp in  metodosPago%}
+					        		{% if mp != datosAlquiler.metodoPago %}
 					        		<option>{{mp}}</option>
+					        		{% endif %}
 					        		{% endfor %}
 					        	</select>*
 					    	</td>
@@ -129,9 +128,10 @@
 	                                {% endfor %}
 	                            </select>*
                         	</td>
-					    </tr>					 
+					    </tr>
 					    <tr>
-					    	<td><input class='btn' type="submit" value="Agregar Datos de Alquiler" name="agregarDatosAlquiler"/></td>
+					    	<td><input type="hidden" name="idDatosAlquiler"  required="true" value="{{idDatosAlquiler}}" pattern="[0-9]{1,6}"/></td>
+					    	<td><input class='btn' type="submit" value="Modificar Datos de Alquiler" name="modificarDatosAlquiler"/></td>
 						</tr>
 					</tbody>
 				</table>
