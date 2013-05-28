@@ -1170,10 +1170,10 @@ def alquileresControl (request,pagina=1):
 
 			if idDatosAlquiler and re.match("^([1-9]{1,5})$",idDatosAlquiler):
 				query["idDatosAlquiler"]=idDatosAlquiler
-			if idContrato and re.math("^([1-9]{1,5})$",idContrato):
+			if idContrato and re.match("^([1-9]{1,5})$",idContrato):
 				query["idContrato"]=idContrato
 			if metodoPago:
-				query["metodoPago"]=metodoPago
+				query["metodoPago__icontains"]=metodoPago
 
 			if query:
 				listadodatosalquiler= DatosAlquiler.objects.filter(**query).order_by(order)
@@ -1251,7 +1251,7 @@ def agregarDatosAlquilerControl(request):
 			try:
 				r=DatosAlquiler.objects.get(idReserva=reserva)
 			except:
-				pass
+				r=None
 			if reserva != None and r: 
 				errorIdReservaExists=True
 
@@ -1787,6 +1787,8 @@ def agregarFacturaControl(request):
 			try:
 				datosAlquiler = DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
 				tarifa = datosAlquiler.tarifaAplicada
+				lugarRecogida = datosAlquiler.lugarRecogida
+				lugarEntrega = datosAlquiler.lugarEntrega
 			except:
 				errorDatosAlquiler = True
 			try:

@@ -83,27 +83,13 @@
 					    <tr>
 					    	<td><label>Lugar de Recogida:</label></td>
 					    	<td>
-	                            <select name="lugarRecogida" required="true">
-	                                <option selected>{{lugarRecogida}}</option>
-	                                {% for l in  lugares%}
-	                                    {% if l != lugarRecogida %}
-                                            <option>{{l}}</option>
-                                        {% endif %}
-	                                {% endfor %}
-	                            </select>*
+	                            <input type="text" name="lugarRecogida" value="{{lugarRecogida}}" required="true" readonly="readonly"/>*
                         	</td>
 					    </tr>
 					    <tr>
 					    	<td><label>Lugar de Entrega:</label></td>
 					    	<td>
-	                            <select name="lugarEntrega" required="true">
-	                                <option selected>{{lugarEntrega}}</option>
-	                                {% for l in  lugares%}
-	                                    {% if l != lugarEntrega %}
-                                            <option>{{l}}</option>
-                                        {% endif %}
-	                                {% endfor %}
-	                            </select>*
+	                            <input type="text" name="lugarEntrega" value="{{lugarEntrega}}" required="true" readonly="readonly"/>*
                         	</td>
 					    </tr>
 					    <tr>
