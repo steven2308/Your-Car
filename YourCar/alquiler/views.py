@@ -1238,7 +1238,7 @@ def agregarDatosAlquilerControl(request):
 					reserva = Reserva.objects.get(idReserva=idReserva)
 			except:
 				errorIdReserva=True
-			if reserva != None:
+			if not errorIdReserva and reserva != None:
 				if ((contrato.idVehiculo != reserva.idVehiculo) and (contrato.fechaInicio != reserva.fechaInicio) and (contrato.fechaFin != reserva.fechaFin)):
 					errorContratoReserva=True
 
@@ -1619,21 +1619,16 @@ def listaClientesPasadosControl(request, pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method=="POST":
 			query = {}
-			if request.POST["ascDesc"]=="True":
-				order = request.POST["orderBy"]
-			else:
-				order = "-"+request.POST["orderBy"]
-			#Tomo los datos
 			fecha=request.POST["fecha"]
 			#Los datos que no son vacios los agrego al query
 			if fecha:
 				query["fecha"]=fecha
 			#Si la consulta no es vacia la hago
 			if query:
-				listaFacturas= Factura.objects.filter(**query).order_by(order)
+				listaFacturas= Factura.objects.filter(**query)
 				filtrados=True
 			else:
-				listaFacturas = Factura.objects.all().order_by(order)
+				listaFacturas = Factura.objects.all()
 			clientesPasados=paginar(listaFacturas,pagina)
 			return render_to_response('listaClientesPasados.html',locals(), context_instance = RequestContext(request))
 		listaFacturas = Factura.objects.all()
