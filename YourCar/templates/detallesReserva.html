@@ -119,6 +119,11 @@
                     <input name="idReserva" type="hidden" value="{{reserva.idReserva}}" pattern="[1-9]{1,10}">
                     <input type="submit" value="Modificar Reserva" name="modificarReserva"/>
                 </form>
+                <form method="GET" action="/alquiler/agregar/" name="agregarDatosAlquiler">
+                    {% csrf_token %}
+                    <input name="idReserva" type="hidden" value="{{reserva.idReserva}}" pattern="[1-9]{1,10}">
+                    <input type="submit" value="Alquilar" name="agregarDatosAlquiler"/>
+                </form>
                 <form method="GET" action="/reservas/eliminar/" name="eliminarReserva">
                     {% csrf_token %}
                     <input name="idReserva" value="{{reserva.idReserva}}" type="hidden" pattern="[0-9]{1,10}">

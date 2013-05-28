@@ -7,173 +7,872 @@
                 Los datos de alquiler se agregaron exitosamente. <br>
             {% endif %}
         </p>
-        <div class="span4">
-        	<table class="table-bordered table-striped table-hover">
-                    <tbody>
-                        <h4>Datos de Alquiler.</h4>
-                        <tr>
-                            <td>Id Contrato</td>
-                            <td>{{datosAlquiler.idContrato.idContrato}}</td>
-                        </tr>
-                        <tr>
-                            <td>ID Reserva</td>
-                            <td>{{datosAlquiler.idReserva.idReserva}}</td>
-                        </tr>
-                        <tr>
-                            <td>Metodo de Pago</td>
-                            <td>{{datosAlquiler.metodoPago}}</td>
-                        </tr>
-                        <tr>
-                            <td>Tarifa Establecida</td>
-                            <td>{{datosAlquiler.tarifaEstablecida}}</td>
-                        </tr>
-                        <tr>
-                            <td>Tarifa Aplicada</td>
-                            <td>{{datosAlquiler.tarifaAplicada}}</td>
-                        </tr>
-                        <tr>
-                            <td>Fecha Alquiler</td>
-                            <td>{{datosAlquiler.fechaAlquiler}}</td>
-                        </tr>
-                        <tr>
-                            <td>Fecha de Devolucion</td>
-                            <td>{{datosAlquiler.fechaDevolucion}}</td>
-                        </tr>
-                        <tr>
-                            <td>Total Dias</td>
-                            <td>{{datosAlquiler.totalDias}}</td>
-                        </tr>
-                        <tr>
-                            <td>Kilometraje Inicial</td>
-                            <td>{{datosAlquiler.kmInicial}}</td>
-                        </tr>
-                        <tr>
-                            <td>Kilometraje Final</td>
-                            <td>{{datosAlquiler.kmFinal}}</td>
-                        </tr>
-                        <tr>
-                            <td>Lugar de Recogida</td>
-                            <td>{{datosAlquiler.lugarRecogida}}</td>
-                        </tr>
-                        <tr>
-                            <td>Lugar de Entrega</td>
-                            <td>{{datosAlquiler.lugarEntrega}}</td>
-                        </tr>
-                        <tr>
-                            <td>Valor Alquiler</td>
-                            <td>{{datosAlquiler.valorAlquiler}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="table-bordered table-striped table-hover">
-                    <tbody>
-                        <h4>Informacion Contrato.</h4>
-                        <tr>
-                            <td>ID Contrato </td>
-                            <td>{{contrato.idContrato}}</td>
-                        </tr>
-                        <tr>
-                            <td>ID Voucher</td>
-                            <td>{{contrato.idVoucher.codigoAutorizacion}}</td>
-                        </tr>
-                        <tr>
-                            <td>Fecha de Inicio</td>
-                            <td>{{contrato.fechaInicio}}</td>
-                        </tr>
-                        <tr>
-                            <td>Fecha de Fin</td>
-                            <td>{{contrato.fechaFin}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="table-bordered table-striped table-hover">
-                    <tbody>
-                        <h4>Informacion Vehiculo.</h4>
-                        <tr>
-                            <td>Placa</td>
-                            <td>{{vehiculo.placa}}</td>
-                        </tr>
-                        <tr>
-                            <td>Marca</td>
-                            <td>{{vehiculo.marca}}</td>
-                        </tr>
-                        <tr>
-                            <td>Referencia</td>
-                            <td>{{vehiculo.referencia}}</td>
-                        </tr>
-                        <tr>
-                            <td>Gama</td>
-                            <td>{{vehiculo.gama}}</td>
-                        </tr>
-                        <tr>
-                            <td>Valor Garantia</td>
-                            <td>{{vehiculo.valorGarantia}}</td>
-                        </tr>
-                        <tr>
-                            <td>Limite Kilometraje</td>
-                            <td>{{vehiculo.limiteKilometraje}}</td>
-                        </tr>
-                        <tr>
-                            <td>Tarifa</td>
-                            <td>{{vehiculo.tarifa}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                {%if checklistExists %}
-                <table class="table-bordered table-striped table-hover">
-                    <tbody>
-                        <h4>Checklist del Vehiculo.</h4>
-                        <tr>
-                            <td>Cierre?</td>
-                            <td>{{checklistVehiculo.cierre}}</td>
-                        </tr>
-                        <tr>
-                            <td>Docs del Auto</td>
-                            {%if checklistVehiculo.documentosDelAuto == 1 %}
-                            <td>Si</td>
-                            {%else %}
-                            <td>No</td>
-                            {%endif%}
-                        </tr>
-                    </tbody>
-                </table>
-                {% endif %}
-                {%if registroCierre %}
-                <table class="table-bordered table-striped table-hover">
-                    <tbody>
-                        <h4>Cambios en el vehiculo</h4>
-                        <tr>
-                            <td>Docs del Auto</td>
-                            <td>{{registroCierre.documentosDelAuto}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                {% endif %}
-        </div>
-        <div class="span5">
-        	<p>
-        		<a class="btn" href="/alquiler">Regresar a Datos de Alquiler</a>
-        	</p>
-            <form method="GET" action="/facturas/agregar/" name="agregarFactura">
-                    {% csrf_token %}
-                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
-                    <input class="btn" type="submit" value="Agregar Factura" name="agregarFactura" {%if not datosAlquiler.cierre %} disabled="disabled" {% endif %}/>
-                </form>
+        <div class="span12">
+            <div class="span4">
+            	<table class="table-bordered table-striped table-hover">
+                        <tbody>
+                            <h4>Datos de Alquiler.</h4>
+                            <tr>
+                                <td>Id Contrato</td>
+                                <td>{{datosAlquiler.idContrato.idContrato}}</td>
+                            </tr>
+                            <tr>
+                                <td>ID Reserva</td>
+                                <td>{{datosAlquiler.idReserva.idReserva}}</td>
+                            </tr>
+                            <tr>
+                                <td>Metodo de Pago</td>
+                                <td>{{datosAlquiler.metodoPago}}</td>
+                            </tr>
+                            <tr>
+                                <td>Tarifa Establecida</td>
+                                <td>{{datosAlquiler.tarifaEstablecida}}</td>
+                            </tr>
+                            <tr>
+                                <td>Tarifa Aplicada</td>
+                                <td>{{datosAlquiler.tarifaAplicada}}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha Alquiler</td>
+                                <td>{{datosAlquiler.fechaAlquiler}}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha de Devolucion</td>
+                                <td>{{datosAlquiler.fechaDevolucion}}</td>
+                            </tr>
+                            <tr>
+                                <td>Total Dias</td>
+                                <td>{{datosAlquiler.totalDias}}</td>
+                            </tr>
+                            <tr>
+                                <td>Kilometraje Inicial</td>
+                                <td>{{datosAlquiler.kmInicial}}</td>
+                            </tr>
+                            <tr>
+                                <td>Kilometraje Final</td>
+                                <td>{{datosAlquiler.kmFinal}}</td>
+                            </tr>
+                            <tr>
+                                <td>Lugar de Recogida</td>
+                                <td>{{datosAlquiler.lugarRecogida}}</td>
+                            </tr>
+                            <tr>
+                                <td>Lugar de Entrega</td>
+                                <td>{{datosAlquiler.lugarEntrega}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="span4">
+                    <table class="table-bordered table-striped table-hover">
+                        <tbody>
+                            <h4>Informacion Contrato.</h4>
+                            <tr>
+                                <td>ID Contrato </td>
+                                <td>{{contrato.idContrato}}</td>
+                            </tr>
+                            <tr>
+                                <td>ID Voucher</td>
+                                <td>{{contrato.idVoucher.codigoAutorizacion}}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha de Inicio</td>
+                                <td>{{contrato.fechaInicio}}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha de Fin</td>
+                                <td>{{contrato.fechaFin}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table-bordered table-striped table-hover">
+                        <tbody>
+                            <h4>Informacion Vehiculo.</h4>
+                            <tr>
+                                <td>Placa</td>
+                                <td>{{vehiculo.placa}}</td>
+                            </tr>
+                            <tr>
+                                <td>Marca</td>
+                                <td>{{vehiculo.marca}}</td>
+                            </tr>
+                            <tr>
+                                <td>Referencia</td>
+                                <td>{{vehiculo.referencia}}</td>
+                            </tr>
+                            <tr>
+                                <td>Gama</td>
+                                <td>{{vehiculo.gama}}</td>
+                            </tr>
+                            <tr>
+                                <td>Valor Garantia</td>
+                                <td>{{vehiculo.valorGarantia}}</td>
+                            </tr>
+                            <tr>
+                                <td>Limite Kilometraje</td>
+                                <td>{{vehiculo.limiteKilometraje}}</td>
+                            </tr>
+                            <tr>
+                                <td>Tarifa</td>
+                                <td>{{vehiculo.tarifa}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="span2">
+            <p>
+                <a class="btn" href="/alquiler">Regresar a Datos de Alquiler</a>
+            </p>
             <form method="GET" action="/alquiler/modificar/" name="modificarDatosAlquiler">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
                     <input class="btn" type="submit" value="Modificar Datos Alquiler" name="modificarDatosAlquiler" {%if datosAlquiler.cierre %} disabled="disabled" {% endif %}/>
                 </form>
-            <form method="GET" action="/alquiler/cierre/" name="cierreAlquiler">
-                    {% csrf_token %}
-                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
-                    <input class="btn" type="submit" value="Cerrar Datos de Alquiler" name="cierreAlquiler" {%if datosAlquiler.cierre or not checklistExists %} disabled="disabled" {% endif %}/>
-                </form>
             <form method="GET" action="/alquiler/checklist/" name="agregarChecklistVehiculo">
                     {% csrf_token %}
                     <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
-                    <input class="btn" type="submit" value="Agregar Checklist del Vehiculo" name="agregarChecklistVehiculo" {%if checklistExists %} disabled="disabled" {% endif %} />
+                    <input class="btn" type="submit" value="Agregar Checklist del Vehiculo" name="agregarChecklistVehiculo" {%if checklistSalidaExists %} disabled="disabled" {% endif %} />
                 </form>
+            <form method="GET" action="/alquiler/cierre/" name="cierreAlquiler">
+                    {% csrf_token %}
+                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
+                    <input class="btn" type="submit" value="Cerrar Datos de Alquiler" name="cierreAlquiler" {%if datosAlquiler.cierre or not checklistSalidaExists %} disabled="disabled" {% endif %}/>
+                </form>
+            <form method="GET" action="/facturas/agregar/" name="agregarFactura">
+                    {% csrf_token %}
+                    <input name="idDatosAlquiler" value="{{datosAlquiler.idDatosAlquiler}}" type="hidden">
+                    <input class="btn" type="submit" value="Agregar Factura" name="agregarFactura" {%if not datosAlquiler.cierre %} disabled="disabled" {% endif %}/>
+                </form>
+        </div>
+            </div>
+        <div class="span12">
+            <div class="span3">
+                {%if checklistSalidaExists %}
+                    <table class="table-bordered table-striped table-hover">
+                        <tbody>
+                            <h4>Checklist de Salida del Vehiculo.</h4>
+                            <tr>
+                                <td>Documentos del Auto: </td>
+                                {%if checklistSalidaVehiculo.documentosDelAuto == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Radio: </td>
+                                {%if checklistSalidaVehiculo.radio == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Tapetes: </td>
+                                {%if checklistSalidaVehiculo.tapetes == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Gato: </td>
+                                {%if checklistSalidaVehiculo.gato == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Cruceta: </td>
+                                {%if checklistSalidaVehiculo.cruceta == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Nivel de Aceite del Motor y Frenos: </td>
+                                {%if checklistSalidaVehiculo.nivelAceiteDelMotorFrenos == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Nivel de Refrigerante: </td>
+                                {%if checklistSalidaVehiculo.nivelRefrigerante == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Latoneria y Pintura: </td>
+                                {%if checklistSalidaVehiculo.latoneriaYPintura == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Tapizado: </td>
+                                {%if checklistSalidaVehiculo.tapizado == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Cinturones de Seguridad: </td>
+                                {%if checklistSalidaVehiculo.cinturonesDeSeguridad == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Controles Internos: </td>
+                                {%if checklistSalidaVehiculo.controlesInternos == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Instrumentos del Panel: </td>
+                                {%if checklistSalidaVehiculo.instrumentosDelPanel == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Pito: </td>
+                                {%if checklistSalidaVehiculo.pito == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Reloj con Hora Correcta: </td>
+                                {%if checklistSalidaVehiculo.relojConHoraCorrecta == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Limpiabrisas: </td>
+                                {%if checklistSalidaVehiculo.limpiabrisas == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Liquido de Limpiabrisas: </td>
+                                {%if checklistSalidaVehiculo.liquidoDeLimpiabrisas == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Seguro Central: </td>
+                                {%if checklistSalidaVehiculo.seguroCentral == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Eleva Vidrios: </td>
+                                {%if checklistSalidaVehiculo.elevaVidrios == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Aire Acondicionado: </td>
+                                {%if checklistSalidaVehiculo.aireAcondicionado == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Cojineria: </td>
+                                {%if checklistSalidaVehiculo.cojineria == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Luces Internas: </td>
+                                {%if checklistSalidaVehiculo.lucesInternas == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Luces Medias, Delanteras y Traseras: </td>
+                                {%if checklistSalidaVehiculo.lucesMediasDelanterasYTraseras == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Luces Altas y Bajas: </td>
+                                {%if checklistSalidaVehiculo.lucesAltasYBajas == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Direccionales Delanteras y Traseras: </td>
+                                {%if checklistSalidaVehiculo.direccionalesDelantesYTraseras == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Luz de Freno: </td>
+                                {%if checklistSalidaVehiculo.luzDeFreno == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Luz de Reversa: </td>
+                                {%if checklistSalidaVehiculo.luzDeReversa == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Antena de Radio: </td>
+                                {%if checklistSalidaVehiculo.antenaDeRadio == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Rines: </td>
+                                {%if checklistSalidaVehiculo.rines == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Farolas y Stops: </td>
+                                {%if checklistSalidaVehiculo.farolasYStops == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Exploradoras: </td>
+                                {%if checklistSalidaVehiculo.exploradoras == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Retrovisores: </td>
+                                {%if checklistSalidaVehiculo.retrovisores == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Cristales (Vidrios): </td>
+                                {%if checklistSalidaVehiculo.cristalesVidrios == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Chapas: </td>
+                                {%if checklistSalidaVehiculo.chapas == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Llaves: </td>
+                                {%if checklistSalidaVehiculo.llaves == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Kit Carretera: </td>
+                                {%if checklistSalidaVehiculo.kitCarretera == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+            <div class="span3">
+                {%if checklistRetornoExists %}
+                    <table class="table-bordered table-striped table-hover">
+                        <tbody>
+                            <h4>Checklist de Retorno del Vehiculo.</h4>
+                            <tr>
+                                <td>Documentos del Auto: </td>
+                                {%if checklistRetornoVehiculo.documentosDelAuto == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Radio: </td>
+                                {%if checklistRetornoVehiculo.radio == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Tapetes: </td>
+                                {%if checklistRetornoVehiculo.tapetes == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Gato: </td>
+                                {%if checklistRetornoVehiculo.gato == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Cruceta: </td>
+                                {%if checklistRetornoVehiculo.cruceta == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Nivel de Aceite del Motor y Frenos: </td>
+                                {%if checklistRetornoVehiculo.nivelAceiteDelMotorFrenos == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Nivel de Refrigerante: </td>
+                                {%if checklistRetornoVehiculo.nivelRefrigerante == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Latoneria y Pintura: </td>
+                                {%if checklistRetornoVehiculo.latoneriaYPintura == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Tapizado: </td>
+                                {%if checklistRetornoVehiculo.tapizado == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Cinturones de Seguridad: </td>
+                                {%if checklistRetornoVehiculo.cinturonesDeSeguridad == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Controles Internos: </td>
+                                {%if checklistRetornoVehiculo.controlesInternos == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Instrumentos del Panel: </td>
+                                {%if checklistRetornoVehiculo.instrumentosDelPanel == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Pito: </td>
+                                {%if checklistRetornoVehiculo.pito == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Reloj con Hora Correcta: </td>
+                                {%if checklistRetornoVehiculo.relojConHoraCorrecta == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Limpiabrisas: </td>
+                                {%if checklistRetornoVehiculo.limpiabrisas == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Liquido de Limpiabrisas: </td>
+                                {%if checklistRetornoVehiculo.liquidoDeLimpiabrisas == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Seguro Central: </td>
+                                {%if checklistRetornoVehiculo.seguroCentral == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Eleva Vidrios: </td>
+                                {%if checklistRetornoVehiculo.elevaVidrios == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Aire Acondicionado: </td>
+                                {%if checklistRetornoVehiculo.aireAcondicionado == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Cojineria: </td>
+                                {%if checklistRetornoVehiculo.cojineria == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Luces Internas: </td>
+                                {%if checklistRetornoVehiculo.lucesInternas == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Luces Medias, Delanteras y Traseras: </td>
+                                {%if checklistRetornoVehiculo.lucesMediasDelanterasYTraseras == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Luces Altas y Bajas: </td>
+                                {%if checklistRetornoVehiculo.lucesAltasYBajas == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Direccionales Delanteras y Traseras: </td>
+                                {%if checklistRetornoVehiculo.direccionalesDelantesYTraseras == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Luz de Freno: </td>
+                                {%if checklistRetornoVehiculo.luzDeFreno == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Luz de Reversa: </td>
+                                {%if checklistRetornoVehiculo.luzDeReversa == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Antena de Radio: </td>
+                                {%if checklistRetornoVehiculo.antenaDeRadio == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Rines: </td>
+                                {%if checklistRetornoVehiculo.rines == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Farolas y Stops: </td>
+                                {%if checklistRetornoVehiculo.farolasYStops == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Exploradoras: </td>
+                                {%if checklistRetornoVehiculo.exploradoras == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Retrovisores: </td>
+                                {%if checklistRetornoVehiculo.retrovisores == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Cristales (Vidrios): </td>
+                                {%if checklistRetornoVehiculo.cristalesVidrios == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Chapas: </td>
+                                {%if checklistRetornoVehiculo.chapas == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Llaves: </td>
+                                {%if checklistRetornoVehiculo.llaves == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                            <tr>
+                                <td>Kit Carretera: </td>
+                                {%if checklistRetornoVehiculo.kitCarretera == 1 %}
+                                <td>Si</td>
+                                {%else %}
+                                <td>No</td>
+                                {%endif%}
+                            </tr>
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+            <div class="span3">
+                {%if registro %}
+                    <table class="table-bordered table-striped table-hover">
+                        <tbody>
+                            <h4>Cambios en el vehiculo</h4>
+                            <tr>
+                                <td>Documentos del Auto</td>
+                                <td>{{registro.10}}</td>
+                            </tr>
+                            <tr>
+                                <td>Radio: </td>
+                                <td>{{registro.3}}</td>
+                            </tr>
+                            <tr>
+                                <td>Tapetes: </td>
+                                <td>{{registro.31}}</td>
+                            </tr>
+                            <tr>
+                                <td>Gato: </td>
+                                <td>{{registro.11}}</td>
+                            </tr>
+                            <tr>
+                                <td>Cruceta: </td>
+                                <td>{{registro.25}}</td>
+                            </tr>
+                            <tr>
+                                <td>Nivel de Aceite del Motor y Frenos: </td>
+                                <td>{{registro.26}}</td>
+                            </tr>
+                            <tr>
+                                <td>Nivel de Refrigerante: </td>
+                                <td>{{registro.22}}</td>
+                            </tr>
+                            <tr>
+                                <td>Latoneria y Pintura: </td>
+                                <td>{{registro.2}}</td>
+                            </tr>
+                            <tr>
+                                <td>Tapizado: </td>
+                                <td>{{registro.7}}</td>
+                            </tr>
+                            <tr>
+                                <td>Cinturones de Seguridad: </td>
+                                <td>{{registro.16}}</td>
+                            </tr>
+                            <tr>
+                                <td>Controles Internos: </td>
+                                <td>{{registro.18}}</td>
+                            </tr>
+                            <tr>
+                                <td>Instrumentos del Panel: </td>
+                                <td>{{registro.14}}</td>
+                            </tr>
+                            <tr>
+                                <td>Pito: </td>
+                                <td>{{registro.33}}</td>
+                            </tr>
+                            <tr>
+                                <td>Reloj con Hora Correcta: </td>
+                                <td>{{registro.17}}</td>
+                            </tr>
+                            <tr>
+                                <td>Limpiabrisas: </td>
+                                <td>{{registro.21}}</td>
+                            </tr>
+                            <tr>
+                                <td>Liquido de Limpiabrisas: </td>
+                                <td>{{registro.5}}</td>
+                            </tr>
+                            <tr>
+                                <td>Seguro Central: </td>
+                                <td>{{registro.28}}</td>
+                            </tr>
+                            <tr>
+                                <td>Eleva Vidrios: </td>
+                                <td>{{registro.30}}</td>
+                            </tr>
+                            <tr>
+                                <td>Aire Acondicionado: </td>
+                                <td>{{registro.15}}</td>
+                            </tr>
+                            <tr>
+                                <td>Cojineria: </td>
+                                <td>{{registro.20}}</td>
+                            </tr>
+                            <tr>
+                                <td>Luces Internas: </td>
+                                <td>{{registro.8}}</td>
+                            </tr>
+                            <tr>
+                                <td>Luces Medias, Delanteras y Traseras: </td>
+                                <td>{{registro.12}}</td>
+                            </tr>
+                            <tr>
+                                <td>Luces Altas y Bajas: </td>
+                                <td>{{registro.13}}</td>
+                            </tr>
+                            <tr>
+                                <td>Direccionales Delanteras y Traseras: </td>
+                                <td>{{registro.34}}</td>
+                            </tr>
+                            <tr>
+                                <td>Luz de Freno: </td>
+                                <td>{{registro.24}}</td>
+                            </tr>
+                            <tr>
+                                <td>Luz de Reversa: </td>
+                                <td>{{registro.0}}</td>
+                            </tr>
+                            <tr>
+                                <td>Antena de Radio: </td>
+                                <td>{{registro.9}}</td>
+                            </tr>
+                            <tr>
+                                <td>Rines: </td>
+                                <td>{{registro.6}}</td>
+                            </tr>
+                            <tr>
+                                <td>Farolas y Stops: </td>
+                                <td>{{registro.29}}</td>
+                            </tr>
+                            <tr>
+                                <td>Exploradoras: </td>
+                                <td>{{registro.32}}</td>
+                            </tr>
+                            <tr>
+                                <td>Retrovisores: </td>
+                                <td>{{registro.27}}</td>
+                            </tr>
+                            <tr>
+                                <td>Cristales (Vidrios): </td>
+                                <td>{{registro.4}}</td>
+                            </tr>
+                            <tr>
+                                <td>Chapas: </td>
+                                <td>{{registro.23}}</td>
+                            </tr>
+                            <tr>
+                                <td>Llaves: </td>
+                                <td>{{registro.1}}</td>
+                            </tr>
+                            <tr>
+                                <td>Kit Carretera: </td>
+                                <td>{{registro.35}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}
