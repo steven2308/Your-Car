@@ -2,6 +2,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
+from django.forms.models import model_to_dict
 from django.contrib.auth import login, authenticate, logout
 from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, ClientePotencial, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado, DatosAlquiler, ChecklistVehiculo, Factura, CobroAdicional, Proveedor, Servicio
 from YourCar.alquiler.parametros import parametros
@@ -405,6 +406,7 @@ def agregarVehiculoControl(request):
 			errorModelo = not re.match("^([0-9]{4})$",modelo) and modelo != "0"
 			errorValorGarantia = not re.match("^([0-9]{5,7})$",valorGarantia) and valorGarantia != "0"
 			errorKilometraje = not re.match("^([0-9]{1,6})$",kilometraje)
+			errorCilindraje = not re.match("^([0-9]{1,10})$",cilindraje)
 			errorCajaDeCambios = (cajaDeCambios not in parametros["cajasDeCambios"])
 			errorEstado = (estado not in parametros["estadosVehiculo"])
 			errorTipoDeDireccion = (tipoDeDireccion not in parametros["tipoDeDirecciones"])
@@ -419,7 +421,7 @@ def agregarVehiculoControl(request):
 				errorEnteros = True
 			errorLongDatos = len(marca)>15 or len (referencia)>15 or len(color)>15 or len(descripcionBasica)>100
 			#manejo de errores
-			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh or errorFechas or errorEnteros or errorLongDatos):
+			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCilindraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh or errorFechas or errorEnteros or errorLongDatos):
 				errorExist = True
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 
@@ -1152,13 +1154,7 @@ def mayor21(fecha):
 	diferencia = datetime.now()-fecha
 	return diferencia.days/365 >= 21
 
-#km inicial no es un dato obligatorio, se asume por defecto que es 0 si no esta presente como dato en el auto?
-#cual es la diferencia entre valorAlquiler y total dias?
-#si se actualiza de nuevo la pagina despues del cierre, se borran los cambios
-#si ocurre un error en el formulario de cierre, no se cargan de nuevo ningun dato ya ingresado
 #<th><a href="#4"><img src="images/lupa.png" title="Visualizar" class="visuUsuario1" width="20px"></a></th>
-#si no hay vouchers, se muestra igual la lista
-#mensajes de exito al agregar checklists
 def alquileresControl (request,pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
@@ -1227,6 +1223,7 @@ def agregarDatosAlquilerControl(request):
 			errorIdContratoExists=False
 			errorIdReserva=False
 			errorIdReservaExists=False
+			errorContratoReserva=False
 			try:
 				contrato = Contrato.objects.get(idContrato=idContrato)
 			except:
@@ -1234,7 +1231,6 @@ def agregarDatosAlquilerControl(request):
 
 			kmInicial = contrato.idVehiculo.kilometraje
 			tarifaEstablecida = contrato.idVehiculo.tarifa
-
 			try:
 				if idReserva == None:
 					reserva = None
@@ -1242,6 +1238,10 @@ def agregarDatosAlquilerControl(request):
 					reserva = Reserva.objects.get(idReserva=idReserva)
 			except:
 				errorIdReserva=True
+			if reserva != None:
+				if ((contrato.idVehiculo != reserva.idVehiculo) and (contrato.fechaInicio != reserva.fechaInicio) and (contrato.fechaFin != reserva.fechaFin)):
+					errorContratoReserva=True
+
 			#evalua si el contrato y/0 la reserva ya se encuentra asociado a otros datos de alquiler
 			try:
 				DatosAlquiler.objects.get(idContrato=contrato)
@@ -1249,10 +1249,11 @@ def agregarDatosAlquilerControl(request):
 			except:
 				pass
 			try:
-				if idReserva != None: DatosAlquiler.objects.get(idReserva=reserva)
-				errorIdReservaExists=True
+				r=DatosAlquiler.objects.get(idReserva=reserva)
 			except:
 				pass
+			if reserva != None and r: 
+				errorIdReservaExists=True
 
 			errorLugares=False
 			try:
@@ -1274,7 +1275,7 @@ def agregarDatosAlquilerControl(request):
 			dias = diasReal
 			totalDias=dias
 
-			if (errorIdContrato or errorIdContratoExists or errorIdReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago or errorLugares):
+			if (errorIdContrato or errorIdContratoExists or errorIdReserva or errorIdReservaExists or errorContratoReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago or errorLugares):
 				return render_to_response('agregarDatosAlquiler.html', locals(), context_instance = RequestContext(request))
 
 			if modificarDatosAlquiler:
@@ -1296,6 +1297,20 @@ def agregarDatosAlquilerControl(request):
 				horaDevolucion = formatearHora(contrato.fechaFin)
 			except:
 				pass
+			try:
+				idReserva = request.GET["idReserva"]
+				reserva = Reserva.objects.get(idReserva=idReserva)
+				tarifaEstablecida = reserva.idVehiculo.tarifa
+				kmInicial = reserva.idVehiculo.kilometraje
+				fechaAlquiler = formatearFecha(reserva.fechaInicio)
+				horaAlquiler = formatearHora(reserva.fechaInicio)
+				fechaDevolucion = formatearFecha(reserva.fechaFin)
+				horaDevolucion = formatearHora(reserva.fechaFin)
+				lugarRecogida=reserva.lugarRecogida
+				lugarEntrega=reserva.lugarEntrega
+			except:
+				pass
+
 			metodosPago = parametros["metodosPago"]
 			return render_to_response('agregarDatosAlquiler.html',locals(), context_instance = RequestContext(request))
 	else:
@@ -1339,70 +1354,48 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 			vehiculo = contrato.idVehiculo
 		except:
 			return HttpResponseRedirect('/alquiler')
+
+		checklistSalidaVehiculo=None
+		checklistRetornoVehiculo=None
+		checklist1=None
+		checklist2=None
 		try:
-			checklistVehiculo = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre)
-			checklistExists=True
+			checklistSalidaVehiculo = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=False)
+			checklistSalidaExists=True
 		except:
-			checklistExists=False
+			checklistSalidaExists=False
+		try:
+			checklistRetornoVehiculo = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=True)
+			checklistRetornoExists=True
+		except:
+			checklistRetornoExists=False
 
+		try:
+			checklist1=model_to_dict(checklistSalidaVehiculo, exclude=["idChecklistVehiculo", "idDatosAlquiler", "cierre"])
+			checklist2=model_to_dict(checklistRetornoVehiculo, exclude=["idChecklistVehiculo", "idDatosAlquiler", "cierre"])
+			keys=checklist1.keys()
+		except:
+			pass
 
-		registroCierre={}
-		registroCierre["docsDelAuto"]="Ningun cambio"
-
-		"""if datosAlquiler.cierre:
-			try:
-				checklist1 = ChecklistVehiculo.objects.filter(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre)
-				checklist2 = ChecklistVehiculo.objects.filter(idDatosAlquiler=datosAlquiler, cierre=not datosAlquiler.cierre)
-			except:
-				pass
-
-			for v in checklist1:
-				if checklist1[v] != checklist2[v]:
-					registroCierre[v]="Valor de Salida: "+checklist1+" Valor de Entrada: "+checklist2"""
-
-
-
-		"""registroCierre={}
-		registroCierre["metodoPago"]="Ningun cambio"
-		registroCierre["tarifaAplicada"]="Ningun cambio"
-		registroCierre["fechaAlquiler"]="Ningun cambio"
-		registroCierre["fechaDevolucion"]="Ningun cambio"
-		registroCierre["kmFinal"]="Ningun cambio"
-		registroCierre["totalDias"]="Ningun cambio"
-		registroCierre["valorAlquiler"]="Ningun cambio"
-
-		if datosAlquilerOriginal:
-			cierre=True
-			if datosAlquilerOriginal.metodoPago != datosAlquiler.metodoPago:
-				registroCierre["metodoPago"]="cambio de "+datosAlquilerOriginal.metodoPago+" a "+datosAlquiler.metodoPago
-			if datosAlquilerOriginal.tarifaAplicada != datosAlquiler.tarifaAplicada:
-				registroCierre["tarifaAplicada"]="cambio de %i a %i" % (datosAlquilerOriginal.tarifaAplicada, datosAlquiler.tarifaAplicada)
-			if datosAlquilerOriginal.fechaAlquiler != datosAlquiler.fechaAlquiler:
-				registroCierre["fechaAlquiler"]="cambio de "+datosAlquilerOriginal.fechaAlquiler.strftime("%Y-%m-%d %H:%M")+" a "+datosAlquiler.fechaAlquiler.strftime("%Y-%m-%d %H:%M")
-			if datosAlquilerOriginal.fechaDevolucion != datosAlquiler.fechaDevolucion:
-				registroCierre["fechaDevolucion"]="cambio de "+datosAlquilerOriginal.fechaDevolucion+" a "+datosAlquiler.fechaDevolucion
-			if datosAlquilerOriginal.kmFinal != datosAlquiler.kmFinal:
-				registroCierre["kmFinal"]="cambio de %i a %i" % (datosAlquilerOriginal.kmFinal, datosAlquiler.kmFinal)
-			if datosAlquilerOriginal.totalDias != datosAlquiler.totalDias:
-				registroCierre["totalDias"]="cambio de %i a %i" % (datosAlquilerOriginal.totalDias, datosAlquiler.totalDias)
-			if datosAlquilerOriginal.valorAlquiler != datosAlquiler.valorAlquiler:
-				registroCierre["valorAlquiler"]="cambio de %i a %i" % (datosAlquilerOriginal.valorAlquiler, datosAlquiler.valorAlquiler)"""
+		registro=[]
+		if checklist1 and checklist2:
+			for k in keys:
+				if checklist1[k] != checklist2[k]:
+					if checklist1[k] == 1: 
+						s="Si"
+					elif checklist1[k] == 0:
+						s="No"
+					if checklist2[k] == 1: 
+						r="Si"
+					elif checklist2[k] == 0:
+						r="No"
+					reg="Salida: "+s+" Retorno: "+r
+				else:
+					reg="Sin cambios "
+				registro.append(reg)
 
 		return render_to_response('detallesDatosAlquiler.html',locals(), context_instance = RequestContext(request))
 	return HttpResponseRedirect('/404')
-
-def comparar(checklist1, checklist2):
-	registroCierre={}
-	docsdelAuto1=""
-	docsdelAuto2=""
-	if checklist1.docsDelAuto == 0: docsDelAuto1 = "Si"
-	if checklist1.docsDelAuto == 1: docsDelAuto1 = "No"
-	if checklist2.docsDelAuto == 0: docsDelAuto2 = "Si"
-	if checklist2.docsDelAuto == 1: docsDelAuto2 = "No"
-	if checklist1.docsDelAuto != checklist2.docsDelAuto:
-		registroCierre["docsDelAuto"]="Salida: "+docsdelAuto1+" Entrada: "+docsDelAuto2
-
-	return registroCierre
 
 def cierreDatosAlquilerControl(request):
 	lugaresCostos = parametros["lugaresCostos"]
@@ -1420,8 +1413,8 @@ def cierreDatosAlquilerControl(request):
 			horaDevolucion = request.POST["horaDevolucion"] #c
 			kmInicial = request.POST["kmInicial"]
 			kmFinal = request.POST["kmFinal"] #c
-			lugarRecogida = request.POST["lugarRecogida"]
-			lugarEntrega = request.POST["lugarEntrega"]
+			lugarRecogida=request.POST["lugarRecogida"]
+			lugarEntrega=request.POST["lugarEntrega"]
 
 			if request.POST["idReserva"]: 
 				idReserva = request.POST["idReserva"]
@@ -1440,10 +1433,15 @@ def cierreDatosAlquilerControl(request):
 			except:
 				pass
 
+			errorLugares=False
+			try:
+				costoRecogida=int(lugaresCostos[lugarRecogida])
+				costoEntrega=int(lugaresCostos[lugarEntrega])
+			except:
+				errorLugares = True
 			errorKmInicial = not re.match("^([0-9]{1,6})$",kmInicial)
 			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
 			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
-			errorLugares = (lugarRecogida not in lugares) or (lugarEntrega not in lugares)
 			errorFormatoFechas = not fechaCorrecta(fechaAlquiler) or not fechaCorrecta(fechaDevolucion)
 			errorHoras = not re.match('[0-9]{2}:[0-9]{2}',horaAlquiler) or  not re.match('[0-9]{2}:[0-9]{2}',horaDevolucion)
 			if not errorFormatoFechas and not errorHoras:
@@ -1495,7 +1493,7 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 		if request.method == 'POST':
 			idDatosAlquiler = request.POST["idDatosAlquiler"]
 			documentosDelAuto = request.POST["documentosDelAuto"]
-			"""radio = request.POST["radio"]
+			radio = request.POST["radio"]
 			tapetes = request.POST["tapetes"]
 			llantaDeRepuesto = request.POST["llantaDeRepuesto"]
 			gato = request.POST["gato"]
@@ -1529,7 +1527,7 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 			cristalesVidrios = request.POST["cristalesVidrios"]
 			chapas = request.POST["chapas"]
 			llaves = request.POST["llaves"]
-			kitCarretera = request.POST["kitCarretera"]"""
+			kitCarretera = request.POST["kitCarretera"]
 			
 			try:
 				datosAlquiler=DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
@@ -1546,14 +1544,14 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 			except:
 				pass
 
-			if checklist1 and checklist2:
-					errorChecklistExists=True
+			if ((checklist1 and checklist2) or (checklist1 and not datosAlquiler.cierre) or (checklist2 and datosAlquiler.cierre)):
+				errorChecklistExists=True
 
 			if (errorChecklistExists):
 				return render_to_response('ChecklistVehiculo.html', locals(), context_instance = RequestContext(request))
 
-			checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, documentosDelAuto=documentosDelAuto)
-			#checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, documentosDelAuto=documentosDelAuto, radio=radio, tapetes=tapetes, llantaDeRepuesto=llantaDeRepuesto, gato=gato, cruceta=cruceta, nivelAceiteDelMotorFrenos=nivelAceiteDelMotorFrenos, nivelRefrigerante=nivelRefrigerante, latoneriaYPintura=latoneriaYPintura, tapizado=tapizado, cinturonesDeSeguridad=cinturonesDeSeguridad, controlesInternos=controlesInternos, instrumentosDelPanel=instrumentosDelPanel, pito=pito, relojConHoraCorrecta=relojConHoraCorrecta, limpiabrisas=limpiabrisas, liquidoDeLimpiabrisas=liquidoDeLimpiabrisas, seguroCentral=seguroCentral, elevaVidrios=elevaVidrios, aireAcondicionado=aireAcondicionado, cojineria=cojineria, lucesInternas=lucesInternas, lucesMediasDelanterasYTraseras=lucesMediasDelanterasYTraseras, lucesAltasYBajas=lucesAltasYBajas, direccionalesDelantesYTraseras=direccionalesDelantesYTraseras, luzDeFreno=luzDeFreno, luzDeReversa=luzDeReversa, antenaDeRadio=antenaDeRadio, rines=rines, farolasYStops=farolasYStops, exploradoras=exploradoras, retrovisores=retrovisores, cristalesVidrios=cristalesVidrios, chapas=chapas, llaves=llaves, kitCarretera=kitCarretera)
+			#checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, documentosDelAuto=documentosDelAuto)
+			checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, documentosDelAuto=documentosDelAuto, radio=radio, tapetes=tapetes, llantaDeRepuesto=llantaDeRepuesto, gato=gato, cruceta=cruceta, nivelAceiteDelMotorFrenos=nivelAceiteDelMotorFrenos, nivelRefrigerante=nivelRefrigerante, latoneriaYPintura=latoneriaYPintura, tapizado=tapizado, cinturonesDeSeguridad=cinturonesDeSeguridad, controlesInternos=controlesInternos, instrumentosDelPanel=instrumentosDelPanel, pito=pito, relojConHoraCorrecta=relojConHoraCorrecta, limpiabrisas=limpiabrisas, liquidoDeLimpiabrisas=liquidoDeLimpiabrisas, seguroCentral=seguroCentral, elevaVidrios=elevaVidrios, aireAcondicionado=aireAcondicionado, cojineria=cojineria, lucesInternas=lucesInternas, lucesMediasDelanterasYTraseras=lucesMediasDelanterasYTraseras, lucesAltasYBajas=lucesAltasYBajas, direccionalesDelantesYTraseras=direccionalesDelantesYTraseras, luzDeFreno=luzDeFreno, luzDeReversa=luzDeReversa, antenaDeRadio=antenaDeRadio, rines=rines, farolasYStops=farolasYStops, exploradoras=exploradoras, retrovisores=retrovisores, cristalesVidrios=cristalesVidrios, chapas=chapas, llaves=llaves, kitCarretera=kitCarretera)
 			checklistVehiculo.save()
 			request.method = 'GET'
 			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=True)
@@ -1576,7 +1574,7 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 				try:
 					checklistVehiculo=ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler)
 					documentosDelAuto=checklistVehiculo.documentosDelAuto
-					"""radio=checklistVehiculo.radio
+					radio=checklistVehiculo.radio
 					tapetes=checklistVehiculo.tapetes
 					llantaDeRepuesto=checklistVehiculo.llantaDeRepuesto
 					gato=checklistVehiculo.gato
@@ -1610,7 +1608,7 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 					cristalesVidrios=checklistVehiculo.cristalesVidrios
 					chapas=checklistVehiculo.chapas
 					llaves=checklistVehiculo.llaves
-					kitCarretera=checklistVehiculo.kitCarretera"""
+					kitCarretera=checklistVehiculo.kitCarretera
 				except:
 					pass
 			return render_to_response('ChecklistVehiculo.html', locals(), context_instance = RequestContext(request))

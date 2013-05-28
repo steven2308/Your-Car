@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar un Vehículo{% endblock %}
 {% block contenido %}
-	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh or errorFechas  or errorEnteros or errorLongDatos%}
+	{%if errorPlaca or errorTipoDeFrenos or errorNumDePasajeros or errorGama or errorAirbags or errorMdelo or errorValorGarantia or errorKilometraje or errorCilindraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDetraccion or errorCamposVaciosVeh or errorFechas  or errorEnteros or errorLongDatos%}
 		<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -25,6 +25,9 @@
 			{% endif %}
 			{% if errorKilometraje %}
 				El kilometraje que ingresaste es incorrecto.<br>
+			{% endif %}
+			{% if errorCilindraje %}
+				El cilindraje que ingresaste es incorrecto.<br>
 			{% endif %}
 			{% if errorCajaDeCambios %}
 				la caja de cambios que seleccionaste es incorrecta.<br>
@@ -110,7 +113,7 @@
 					    </tr>
 					    <tr>
 					        <td><label>Cilindraje:</label></td>
-					        <td><input type="text" name="cilindraje" required="true" value="{{cilindraje}}"/>*</td>
+					        <td><input type="text" name="cilindraje" required="true" value="{{cilindraje}}" pattern="[0-9]{1,10}"/>*</td>
 					    </tr>
 					    <tr>
 					        <td><label>Color:</label></td>

@@ -123,7 +123,6 @@ class DatosAlquiler(models.Model):
 	lugarRecogida = models.CharField(max_length=15)
 	lugarEntrega = models.CharField(max_length=15)
 	cierre = models.BooleanField(default=False)
-	#valorAlquiler = models.IntegerField()
 	def __unicode__(self):
 		return "Datos de alquiler id: %s " %(self.idDatosAlquiler)
 	class Meta:
@@ -133,8 +132,8 @@ class ChecklistVehiculo(models.Model):
 	idChecklistVehiculo = models.AutoField(primary_key=True)
 	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
 	cierre = models.BooleanField(default=False)
-	documentosDelAuto = models.IntegerField(max_length=1) #0 True, 1 False
-	"""radio = models.IntegerField(max_length=1)
+	documentosDelAuto = models.IntegerField(max_length=1) #0 False, 1 True
+	radio = models.IntegerField(max_length=1)
 	tapetes = models.IntegerField(max_length=1)
 	llantaDeRepuesto = models.IntegerField(max_length=1)
 	gato = models.IntegerField(max_length=1)
@@ -168,7 +167,7 @@ class ChecklistVehiculo(models.Model):
 	cristalesVidrios = models.IntegerField(max_length=1)
 	chapas = models.IntegerField(max_length=1)
 	llaves = models.IntegerField(max_length=1)
-	kitCarretera = models.IntegerField(max_length=1)"""
+	kitCarretera = models.IntegerField(max_length=1)
 	def __unicode__(self):
 		return "Checklist con id: %s de %s" %((self.idChecklistVehiculo),unicode(self.idDatosAlquiler))
 

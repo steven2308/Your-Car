@@ -89,7 +89,33 @@
 					        <td><input type="text" name="kmFinal"  required="true" value="{{kmFinal}}" pattern="[0-9]{1,6}"/>*</td>
 					    </tr>
 					    <tr>
-					    	<td><input type="hidden" name="idDatosAlquiler" value="{{idDatosAlquiler}}" required="true"/>*</td>
+					    	<td><label>Lugar de Recogida:</label></td>
+					    	<td>
+	                            <select name="lugarRecogida" required="true">
+	                                <option selected>{{lugarRecogida}}</option>
+	                                {% for l in  lugares%}
+	                                    {% if l != lugarRecogida %}
+                                            <option>{{l}}</option>
+                                        {% endif %}
+	                                {% endfor %}
+	                            </select>*
+                        	</td>
+					    </tr>
+					    <tr>
+					    	<td><label>Lugar de Entrega:</label></td>
+					    	<td>
+	                            <select name="lugarEntrega" required="true">
+	                                <option selected>{{lugarEntrega}}</option>
+	                                {% for l in  lugares%}
+	                                    {% if l != lugarEntrega %}
+                                            <option>{{l}}</option>
+                                        {% endif %}
+	                                {% endfor %}
+	                            </select>*
+                        	</td>
+					    </tr>	
+					    <tr>
+					    	<td><input type="hidden" name="idDatosAlquiler" value="{{idDatosAlquiler}}" required="true"/></td>
 					    	<td><input class='btn' type="submit" value="Cerrar Datos de Alquiler" name="cierreDatosAlquiler"/></td>
 						</tr>
 					</tbody>

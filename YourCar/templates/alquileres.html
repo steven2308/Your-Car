@@ -12,7 +12,6 @@
                     <p>Hay en total {{ listadatosalquiler|length }} datos de alquiler{{listadatosalquiler|pluralize}}.</p>
                 </div>
             </div>
-        <a class="btn" href="/alquiler/agregar/">Agregar Alquiler</a>
         {% if listadatosalquiler %}
             <form method="POST" action="/alquiler/" name="filtrarContratos">
                 {% csrf_token %}

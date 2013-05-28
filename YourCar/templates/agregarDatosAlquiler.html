@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar Datos de Alquiler{% endblock %}
 {% block contenido %}
-	{%if errorIdContrato or errorIdContratoExists or errorIdReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago or errorLugares%}
+	{%if errorIdContrato or errorIdContratoExists or errorIdReserva or errorIdReservaExists or errorContratoReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago or errorLugares%}
 	<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -13,6 +13,12 @@
 			{% endif %}
 			{% if errorIdReserva %}
 				el Id de la reserva asociada no existe o es invalida.<br>
+			{% endif %}
+			{% if errorIdReservaExists %}
+				el Id de la reserva asociada ya esta asociado a otros datos de alquiler.<br>
+			{% endif %}
+			{% if errorContratoReserva %}
+				los datos de esta reserva no coinciden con los datos del contrato.<br>
 			{% endif %}
 			{% if errorFechas %}
 				La fecha de devolucion tiene que ser despues de la fecha de alquiler y de la fecha actual.<br>

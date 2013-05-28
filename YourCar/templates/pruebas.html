@@ -1,6 +1,10 @@
 {%extends "base.html"%}
 {% block titulo %}Contratos{% endblock %}
 {% block contenido %}
-{{email}}
-{{clientePotencial.email}}
+<h3>llaves</h3>
+<h3>{{keys}}</h3>
+<h3>----------------------------------------------</h3>
+{% for r in  registro%}
+	<h3>{{r}}</h3>
+{% endfor %}
 {% endblock  %}
