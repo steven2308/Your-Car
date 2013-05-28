@@ -2,6 +2,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
+from django.forms.models import model_to_dict
 from django.contrib.auth import login, authenticate, logout
 from YourCar.alquiler.models import Vehiculo, ClienteAlquiler, ClientePotencial, Mantenimiento, Voucher, Reserva, Contrato,ConductorAutorizado, DatosAlquiler, ChecklistVehiculo, Factura, CobroAdicional, Proveedor, Servicio
 from YourCar.alquiler.parametros import parametros
@@ -405,6 +406,7 @@ def agregarVehiculoControl(request):
 			errorModelo = not re.match("^([0-9]{4})$",modelo) and modelo != "0"
 			errorValorGarantia = not re.match("^([0-9]{5,7})$",valorGarantia) and valorGarantia != "0"
 			errorKilometraje = not re.match("^([0-9]{1,6})$",kilometraje)
+			errorCilindraje = not re.match("^([0-9]{1,10})$",cilindraje)
 			errorCajaDeCambios = (cajaDeCambios not in parametros["cajasDeCambios"])
 			errorEstado = (estado not in parametros["estadosVehiculo"])
 			errorTipoDeDireccion = (tipoDeDireccion not in parametros["tipoDeDirecciones"])
@@ -419,7 +421,7 @@ def agregarVehiculoControl(request):
 				errorEnteros = True
 			errorLongDatos = len(marca)>15 or len (referencia)>15 or len(color)>15 or len(descripcionBasica)>100
 			#manejo de errores
-			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh or errorFechas or errorEnteros or errorLongDatos):
+			if (errorTipoDeFrenos or errorPlaca or errorNumDePasajeros or errorGama or errorAirbags or errorModelo or errorValorGarantia or errorKilometraje or errorCilindraje or errorCajaDeCambios or errorEstado or errorTipoDeDireccion or errorTipoDeTraccion or errorFoto or errorCamposVaciosVeh or errorFechas or errorEnteros or errorLongDatos):
 				errorExist = True
 				return render_to_response('agregarVehiculo.html', locals(), context_instance = RequestContext(request))
 
@@ -1339,6 +1341,7 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 			vehiculo = contrato.idVehiculo
 		except:
 			return HttpResponseRedirect('/alquiler')
+		checklistVehiculo=None
 		try:
 			checklistVehiculo = ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre)
 			checklistExists=True
@@ -1346,8 +1349,30 @@ def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
 			checklistExists=False
 
 
-		registroCierre={}
-		registroCierre["docsDelAuto"]="Ningun cambio"
+		#registroCierre={}
+		#registroCierre["docsDelAuto"]="Ningun cambio"
+
+		check1=None
+		check2=None
+		checklist1=None
+		checklist2=None
+		try:
+			check1=ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=False)
+			check2=ChecklistVehiculo.objects.get(idDatosAlquiler=datosAlquiler, cierre=True)
+			checklist1=model_to_dict(check1, exclude=["idChecklistVehiculo", "idDatosAlquiler", "cierre"])
+			checklist2=model_to_dict(check2, exclude=["idChecklistVehiculo", "idDatosAlquiler", "cierre"])
+			keys=checklist1.keys()
+		except:
+			checklist1="braaam error"
+			pass
+
+		#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
+
+		a="no hubo cambio"
+		if checklist1 and checklist2:
+			for k in keys:
+				if checklist1[k] != checklist2[k]:
+					a="hubo cambio"
 
 		"""if datosAlquiler.cierre:
 			try:
@@ -1440,10 +1465,15 @@ def cierreDatosAlquilerControl(request):
 			except:
 				pass
 
+			errorLugares=False
+			try:
+				costoRecogida=int(lugaresCostos[lugarRecogida])
+				costoEntrega=int(lugaresCostos[lugarEntrega])
+			except:
+				errorLugares = True
 			errorKmInicial = not re.match("^([0-9]{1,6})$",kmInicial)
 			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
 			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
-			errorLugares = (lugarRecogida not in lugares) or (lugarEntrega not in lugares)
 			errorFormatoFechas = not fechaCorrecta(fechaAlquiler) or not fechaCorrecta(fechaDevolucion)
 			errorHoras = not re.match('[0-9]{2}:[0-9]{2}',horaAlquiler) or  not re.match('[0-9]{2}:[0-9]{2}',horaDevolucion)
 			if not errorFormatoFechas and not errorHoras:
@@ -1546,8 +1576,8 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 			except:
 				pass
 
-			if checklist1 and checklist2:
-					errorChecklistExists=True
+			if ((checklist1 and checklist2) or (checklist1 and not datosAlquiler.cierre) or (checklist2 and datosAlquiler.cierre)):
+				errorChecklistExists=True
 
 			if (errorChecklistExists):
 				return render_to_response('ChecklistVehiculo.html', locals(), context_instance = RequestContext(request))

@@ -133,7 +133,7 @@ class ChecklistVehiculo(models.Model):
 	idChecklistVehiculo = models.AutoField(primary_key=True)
 	idDatosAlquiler = models.ForeignKey(DatosAlquiler)
 	cierre = models.BooleanField(default=False)
-	documentosDelAuto = models.IntegerField(max_length=1) #0 True, 1 False
+	documentosDelAuto = models.IntegerField(max_length=1) #0 False, 1 True
 	"""radio = models.IntegerField(max_length=1)
 	tapetes = models.IntegerField(max_length=1)
 	llantaDeRepuesto = models.IntegerField(max_length=1)
