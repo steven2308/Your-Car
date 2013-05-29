@@ -52,10 +52,6 @@
                                 <label>Fecha Devolucion</label>
                                 <input id="btnIdCliente" name="orderBy" type="radio" value="fechaDevolucion">
                             </li>
-                            <li>
-                                <label>Valor Alquiler</label>
-                                <input id="btnIdCliente" name="orderBy" type="radio" value="valorAlquiler">
-                            </li>
                         </ul>
                     </div>
                     <div class="span4">
@@ -86,7 +82,6 @@
                     <th>Fecha Devolucion</th>
                     <th>Total Dias</th>
                     <th>Kilometraje Inicial</th>
-                    <th>Valor Alquiler</th>
                 </thead>
                 <tbody>
                     {% for da in listadatosalquiler %}
@@ -100,7 +95,6 @@
                             <td>{{da.fechaDevolucion}}</td>
                             <td>{{da.totalDias}}</td>
                             <td>{{da.kmInicial}}</td>
-                            <td>{{da.valorAlquiler}}</td>
                     {% endfor %}
                 </tbody>
             </table>
@@ -117,7 +111,7 @@
                 <strong>Página {{listadatosalquiler.number}} de {{listadatosalquiler.paginator.num_pages}}</strong>
             </div>
     	{% elif filtrados%}
-    	    <p>No hay datos de alquiler con las características que buscas, intenta menos parámetros.</p>
+    	    <p>No hay datos de alquiler con las características que buscas.</p>
             <a class="btn" href="/alquiler/">Ver todos</a>
         {% else %}
             <p>No hay datos de alquiler.</p>

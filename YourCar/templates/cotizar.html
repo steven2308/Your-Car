@@ -50,7 +50,9 @@
                 <thead>
                     <th>Lugar Recogida</th>
                     <th>Lugar Entrega</th>
+                    {%if not is_authenticated %}
                     <th>Email</th>
+                    {% endif %}
                 </thead>
                 <tbody>
                         <td>
@@ -73,7 +75,9 @@
                                     {% endfor %}
                                 </select>
                             </td>
+                        {%if not is_authenticated %}
                         <td><input type="email" name="email" value="{{email}}"></td>
+                        {%endif %}
 					</tr>
 				</tbody>
 			</table>

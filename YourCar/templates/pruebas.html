@@ -1,10 +1,6 @@
 {%extends "base.html"%}
 {% block titulo %}Contratos{% endblock %}
 {% block contenido %}
-<h3>llaves</h3>
-<h3>{{keys}}</h3>
-<h3>----------------------------------------------</h3>
-{% for r in  registro%}
-	<h3>{{r}}</h3>
-{% endfor %}
+<h3>{{contrato.fechaInicio}}</h3>
+<h3>{{horaAlquiler}}</h3>
 {% endblock  %}

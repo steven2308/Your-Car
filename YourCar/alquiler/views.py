@@ -280,11 +280,17 @@ def cotizarControl(request):
 			lugarEntrega = request.POST["lugarEntrega"]
 
 			try:
-				email = request.POST["email"]
+				if request.user.is_authenticated and not request.user.is_staff:
+					email = request.user.email
+				elif request.POST["email"]:
+					email = request.POST["email"]
 				clientePotencial = ClientePotencial(email=email)
 				clientePotencial.save()
 			except:
 				pass
+
+			is_authenticated=False
+			if request.user.is_authenticated(): is_authenticated=True
 
 			#Hago validaciones
 			errorLugares = False
@@ -320,6 +326,8 @@ def cotizarControl(request):
 			placa=request.GET["placaActual"]
 		except:
 			pass
+		is_authenticated=False
+		if request.user.is_authenticated(): is_authenticated=True
 		return render_to_response('cotizar.html',locals(), context_instance = RequestContext(request))
 
 def intWithCommas(x):
@@ -1284,7 +1292,10 @@ def agregarDatosAlquilerControl(request):
 				datosAlquiler = DatosAlquiler(idContrato=contrato, idReserva=reserva, metodoPago=metodoPago, tarifaEstablecida=tarifaEstablecida, tarifaAplicada=tarifaAplicada, fechaAlquiler=fechaAlq, fechaDevolucion=fechaDev, totalDias=totalDias, kmInicial=kmInicial, kmFinal=kmFinal, lugarRecogida=lugarRecogida, lugarEntrega=lugarEntrega, cierre=False)
 			datosAlquiler.save()
 			request.method = 'GET'
-			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=True)
+			if not modificarDatosAlquiler:
+				return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=1)
+			else:
+				return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=2)
 		else:
 			try:
 				idContrato =  request.GET["idContrato"]
@@ -1346,7 +1357,7 @@ def modificarDatosAlquilerControl(request):
 	else:
 		return HttpResponseRedirect('/404')
 
-def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=False):
+def detallesDatosAlquilerControl(request, idDatosAlquiler, addSuccess=0):
 	if request.user.is_authenticated() and request.user.is_staff:
 		try:
 			datosAlquiler = DatosAlquiler.objects.get(idDatosAlquiler=idDatosAlquiler)
@@ -1554,7 +1565,7 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 			checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, documentosDelAuto=documentosDelAuto, radio=radio, tapetes=tapetes, llantaDeRepuesto=llantaDeRepuesto, gato=gato, cruceta=cruceta, nivelAceiteDelMotorFrenos=nivelAceiteDelMotorFrenos, nivelRefrigerante=nivelRefrigerante, latoneriaYPintura=latoneriaYPintura, tapizado=tapizado, cinturonesDeSeguridad=cinturonesDeSeguridad, controlesInternos=controlesInternos, instrumentosDelPanel=instrumentosDelPanel, pito=pito, relojConHoraCorrecta=relojConHoraCorrecta, limpiabrisas=limpiabrisas, liquidoDeLimpiabrisas=liquidoDeLimpiabrisas, seguroCentral=seguroCentral, elevaVidrios=elevaVidrios, aireAcondicionado=aireAcondicionado, cojineria=cojineria, lucesInternas=lucesInternas, lucesMediasDelanterasYTraseras=lucesMediasDelanterasYTraseras, lucesAltasYBajas=lucesAltasYBajas, direccionalesDelantesYTraseras=direccionalesDelantesYTraseras, luzDeFreno=luzDeFreno, luzDeReversa=luzDeReversa, antenaDeRadio=antenaDeRadio, rines=rines, farolasYStops=farolasYStops, exploradoras=exploradoras, retrovisores=retrovisores, cristalesVidrios=cristalesVidrios, chapas=chapas, llaves=llaves, kitCarretera=kitCarretera)
 			checklistVehiculo.save()
 			request.method = 'GET'
-			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=True)
+			return detallesDatosAlquilerControl(request, idDatosAlquiler=datosAlquiler.idDatosAlquiler, addSuccess=3)
 		else:
 			if idDatosAlquilerCerrando != 0:
 				idDatosAlquiler=idDatosAlquilerCerrando
@@ -1619,27 +1630,22 @@ def listaClientesPasadosControl(request, pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method=="POST":
 			query = {}
-			fecha=request.POST["fecha"]
-			#Los datos que no son vacios los agrego al query
-			if fecha:
-				query["fecha"]=fecha
-			#Si la consulta no es vacia la hago
-			if query:
-				listaFacturas= Factura.objects.filter(**query)
-				filtrados=True
+			if request.POST["ascDesc"]=="True":
+				order = request.POST["orderBy"]
 			else:
-				listaFacturas = Factura.objects.all()
+				order = "-"+request.POST["orderBy"]
+			listaFacturas = Factura.objects.all().order_by(order)
 			clientesPasados=paginar(listaFacturas,pagina)
 			return render_to_response('listaClientesPasados.html',locals(), context_instance = RequestContext(request))
 		listaFacturas = Factura.objects.all()
 		clientesPasados=paginar(listaFacturas,pagina)
 		return render_to_response('listaClientesPasados.html',locals(), context_instance = RequestContext(request))
-	else:
 		return HttpResponseRedirect('/404')
 
 def listaClientesPotencialesControl(request, pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
-		listaClientesPotenciales = ClientePotencial.objects.all()
+		#listaClientesPotenciales = ClientePotencial.objects.all()
+		listaClientesPotenciales = ClientePotencial.objects.values('email').distinct()
 		clientesPotenciales=paginar(listaClientesPotenciales,pagina)
 		return render_to_response('listaClientesPotenciales.html',locals(), context_instance = RequestContext(request))
 	else:
