@@ -888,7 +888,7 @@ def parametrizarControl(request):
 				parametros["servicios"] = ast.literal_eval(request.POST["servicios"])
 				exito=True
 				param=parametros
-				newInfo = "parametros = "+str(parametros).replace(': u"',': "').replace('"(','(').replace(')",','),\n').replace(')"}',')}')
+				newInfo = "parametros = "+str(parametros).replace(': u"',': "').replace('"(','(').replace(')",','),').replace(')"}',')}')
 				paramFile=open('YourCar\\alquiler\parametros2.py','a')
 				paramFile.write(newInfo)
 				paramFile.close()
@@ -1158,7 +1158,6 @@ def mayor21(fecha):
 	diferencia = datetime.now()-fecha
 	return diferencia.days/365 >= 21
 
-#<th><a href="#4"><img src="images/lupa.png" title="Visualizar" class="visuUsuario1" width="20px"></a></th>
 def alquileresControl (request,pagina=1):
 	if request.user.is_authenticated() and request.user.is_staff:
 		if request.method == 'POST':
@@ -1556,7 +1555,7 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 				errorChecklistExists=True
 
 			if (errorChecklistExists):
-				return render_to_response('ChecklistVehiculo.html', locals(), context_instance = RequestContext(request))
+				return render_to_response('checklistVehiculo.html', locals(), context_instance = RequestContext(request))
 
 			#checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, documentosDelAuto=documentosDelAuto)
 			checklistVehiculo=ChecklistVehiculo(idDatosAlquiler=datosAlquiler, cierre=datosAlquiler.cierre, documentosDelAuto=documentosDelAuto, radio=radio, tapetes=tapetes, llantaDeRepuesto=llantaDeRepuesto, gato=gato, cruceta=cruceta, nivelAceiteDelMotorFrenos=nivelAceiteDelMotorFrenos, nivelRefrigerante=nivelRefrigerante, latoneriaYPintura=latoneriaYPintura, tapizado=tapizado, cinturonesDeSeguridad=cinturonesDeSeguridad, controlesInternos=controlesInternos, instrumentosDelPanel=instrumentosDelPanel, pito=pito, relojConHoraCorrecta=relojConHoraCorrecta, limpiabrisas=limpiabrisas, liquidoDeLimpiabrisas=liquidoDeLimpiabrisas, seguroCentral=seguroCentral, elevaVidrios=elevaVidrios, aireAcondicionado=aireAcondicionado, cojineria=cojineria, lucesInternas=lucesInternas, lucesMediasDelanterasYTraseras=lucesMediasDelanterasYTraseras, lucesAltasYBajas=lucesAltasYBajas, direccionalesDelantesYTraseras=direccionalesDelantesYTraseras, luzDeFreno=luzDeFreno, luzDeReversa=luzDeReversa, antenaDeRadio=antenaDeRadio, rines=rines, farolasYStops=farolasYStops, exploradoras=exploradoras, retrovisores=retrovisores, cristalesVidrios=cristalesVidrios, chapas=chapas, llaves=llaves, kitCarretera=kitCarretera)
@@ -1619,7 +1618,7 @@ def checklistVehiculoControl(request, idDatosAlquilerCerrando=0):
 					kitCarretera=checklistVehiculo.kitCarretera
 				except:
 					pass
-			return render_to_response('ChecklistVehiculo.html', locals(), context_instance = RequestContext(request))
+			return render_to_response('checklistVehiculo.html', locals(), context_instance = RequestContext(request))
 	else:
 		return HttpResponseRedirect('/404')
 

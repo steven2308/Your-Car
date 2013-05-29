@@ -1,6 +1,6 @@
 parametros = {'gamas': ('Baja', 'Media', 'Alta'),
  'tipoPersonas': ('Natural', 'Empresa'),
- 'servicios': {'Alquiler': 1, 'Conductor': 4, 'Gasolina': 2, 'Lavada': 3, 'Recogida': 6, 'Entrega': 5}, 'tiposTraccion': ('', 'Delantera', 'Trasera', '4x4'),
+ 'servicios': {'Otro': 8, 'Alquiler': 1, 'Conductor': 4, 'Gasolina': 2, 'Lavada': 3, 'Recogida': 6, 'Entrega': 5}, 'tiposTraccion': ('', 'Delantera', 'Trasera', '4x4'),
  'tiposMantenimiento': ('Preventivo', 'Correctivo', 'Otro'),
  'misionInicio': u'En este campo se ingresa la misi\xf3n de la empresa.', 'tipoDocumentos': ('C.C.', 'Pasaporte', 'NIT', 'Otro'),
  'tipoDeDirecciones': ('', 'Mecanica', 'Hidraulica', 'Electronica'),
