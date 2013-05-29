@@ -458,7 +458,6 @@ def modificarVehiculoControl(request):
 			fechaVencSeguroTodoRiesgo = formatearFecha(vehiculo.fechaVencSeguroTodoRiesgo)
 			fechaVencRevisionTecMec = formatearFecha(vehiculo.fechaVencRevisionTecMec)
 			fechaVencCambioAceite = formatearFecha(vehiculo.fechaVencCambioAceite)
-			#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
 			return render_to_response('modificarVehiculo.html',locals(), context_instance = RequestContext(request))
 		except:
 			HttpResponseRedirect('/vehiculos')
@@ -926,7 +925,7 @@ def formatearHora(fecha):
 	try:
 		date = datetime.strptime(str(fecha)[:-6], '%Y-%m-%d %H:%M:%S')
 		tt = date.timetuple()
-		hora = str(tt[3])
+		hora = str((tt[3]+19)%24) #Resto 5 (por el gmt) de manera modular
 		if len(hora)==1:
 			hora="0"+hora
 		mins = str(tt[4])
@@ -1007,9 +1006,6 @@ def contratosControl(request,pagina=1):
 				query["idVoucher"]=idVoucher
 			if idVehiculo and re.match("^([A-Z]{3}[0-9]{3})$",idVehiculo):
 				query["idVehiculo"]=idVehiculo
-
-			#squery = str(query)
-			#return render_to_response('pruebas.html',locals(), context_instance = RequestContext(request))
 			#Si la consulta no es vacia la hago
 			if query:
 				listacontratos= Contrato.objects.filter(**query).order_by(order)
@@ -1306,6 +1302,7 @@ def agregarDatosAlquilerControl(request):
 				horaAlquiler = formatearHora(contrato.fechaInicio)
 				fechaDevolucion = formatearFecha(contrato.fechaFin)
 				horaDevolucion = formatearHora(contrato.fechaFin)
+				strFecha = str(contrato.fechaInicio)
 			except:
 				pass
 			try:
