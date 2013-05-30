@@ -1466,6 +1466,8 @@ def cierreDatosAlquilerControl(request):
 
 			datosAlquiler = DatosAlquiler(idDatosAlquiler=idDatosAlquiler, idContrato=contrato, idReserva=reserva, metodoPago=metodoPago, tarifaEstablecida=tarifaEstablecida, tarifaAplicada=tarifaAplicada, fechaAlquiler=fechaAlq, fechaDevolucion=fechaDev, totalDias=totalDias, kmInicial=kmInicial, kmFinal=kmFinal, lugarRecogida=lugarRecogida, lugarEntrega=lugarEntrega, cierre=True)
 			datosAlquiler.save()
+			vehiculo = Vehiculo(placa = contrato.idVehiculo.placa, marca = contrato.idVehiculo.marca, referencia = contrato.idVehiculo.referencia, gama = contrato.idVehiculo.gama, descripcionBasica = contrato.idVehiculo.descripcionBasica, numDePasajeros = contrato.idVehiculo.numDePasajeros, cilindraje = contrato.idVehiculo.cilindraje, color = contrato.idVehiculo.color, cajaDeCambios = contrato.idVehiculo.cajaDeCambios, limiteKilometraje = contrato.idVehiculo.limiteKilometraje, tarifa = contrato.idVehiculo.tarifa, estado = contrato.idVehiculo.estado, fechaVencSOAT = contrato.idVehiculo.fechaVencSOAT, fechaVencSeguroTodoRiesgo = contrato.idVehiculo.fechaVencSeguroTodoRiesgo, fechaVencRevisionTecMec = contrato.idVehiculo.fechaVencRevisionTecMec, fechaVencCambioAceite = contrato.idVehiculo.fechaVencCambioAceite, tipoDeFrenos = contrato.idVehiculo.tipoDeFrenos, airbags = contrato.idVehiculo.airbags, tipoDeDireccion = contrato.idVehiculo.tipoDeDireccion, tipoDeTraccion = contrato.idVehiculo.tipoDeTraccion, modelo = contrato.idVehiculo.modelo, valorGarantia = contrato.idVehiculo.valorGarantia, kilometraje = kmFinal, foto=contrato.idVehiculo.foto)
+			vehiculo.save()
 			request.method = 'GET'
 			return checklistVehiculoControl(request, idDatosAlquilerCerrando=idDatosAlquiler)
 		else:
