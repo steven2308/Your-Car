@@ -280,9 +280,9 @@ def cotizarControl(request):
 			lugarEntrega = request.POST["lugarEntrega"]
 
 			try:
-				if request.user.is_authenticated and not request.user.is_staff:
+				if request.user.is_authenticated() and not request.user.is_staff:
 					email = request.user.email
-				elif request.POST["email"]:
+				elif not request.user.is_authenticated() and request.POST["email"]:
 					email = request.POST["email"]
 				clientePotencial = ClientePotencial(email=email)
 				clientePotencial.save()
@@ -1266,6 +1266,7 @@ def agregarDatosAlquilerControl(request):
 				errorLugares = True
 			errorKmInicial = not (kmInicial >= 0 and kmInicial <= 999999)
 			errorKmFinal = not re.match("^([0-9]{1,6})$",kmFinal)
+			errorKm = kmInicial > int(kmFinal)
 			errorMetodoPago = (metodoPago not in parametros["metodosPago"])
 			errorFormatoFechas = not fechaCorrecta(fechaAlquiler) or not fechaCorrecta(fechaDevolucion)
 			errorHoras = not re.match('[0-9]{2}:[0-9]{2}',horaAlquiler) or  not re.match('[0-9]{2}:[0-9]{2}',horaDevolucion)
@@ -1278,7 +1279,7 @@ def agregarDatosAlquilerControl(request):
 			dias = diasReal
 			totalDias=dias
 
-			if (errorIdContrato or errorIdContratoExists or errorIdReserva or errorIdReservaExists or errorContratoReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago or errorLugares):
+			if (errorIdContrato or errorIdContratoExists or errorIdReserva or errorIdReservaExists or errorContratoReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorKm or errorMetodoPago or errorLugares):
 				return render_to_response('agregarDatosAlquiler.html', locals(), context_instance = RequestContext(request))
 
 			if modificarDatosAlquiler:

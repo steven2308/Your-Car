@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Agregar Datos de Alquiler{% endblock %}
 {% block contenido %}
-	{%if errorIdContrato or errorIdContratoExists or errorIdReserva or errorIdReservaExists or errorContratoReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorMetodoPago or errorLugares%}
+	{%if errorIdContrato or errorIdContratoExists or errorIdReserva or errorIdReservaExists or errorContratoReserva or errorFechas or errorFormatoFechas or errorHoras or errorKmInicial or errorKmFinal or errorKm or errorMetodoPago or errorLugares%}
 	<div class="container">
 		<h4>Corrige los siguientes errores para continuar:</h4>
 		<p class="text-error">
@@ -40,6 +40,9 @@
 			{% endif %}
 			{% if errorKmFinal %}
 				el kilometraje final es invalido.<br>
+			{% endif %}
+			{% if errorKm %}
+				el kilometraje inicial debe ser mayor al kilometraje final.<br>
 			{% endif %}
 			{% if errorMetodoPago %}
 				El metodo de pago ingresado es invalido.<br>
