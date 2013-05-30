@@ -105,7 +105,7 @@ def loginControl(request):
 			usuario = request.user
 			conectado= True
 			if request.user.is_superuser:
-				return HttpResponseRedirect('/vehiculos')
+				return HttpResponseRedirect('/admin')
 			return HttpResponseRedirect('/vehiculos')
 	except:
 		return HttpResponseRedirect('/')
